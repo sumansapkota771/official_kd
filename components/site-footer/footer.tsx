@@ -1,0 +1,73 @@
+import Link from "next/link";
+import Image from "next/image";
+import { Mail01Icon, Location01Icon, Call02Icon } from "hugeicons-react";
+import { Container } from "@/components/ui/container";
+import { navGroups } from "@/lib/data/nav";
+
+export function Footer() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="border-t-[0.5px] border-border bg-footer-bg text-footer-text">
+      <Container className="grid gap-10 py-14 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="flex flex-col gap-4">
+          <div className="relative h-11 w-44">
+            <Image
+              src="/images/logo.png"
+              alt="KodeDristi Software Pvt. Ltd."
+              fill
+              className="object-contain object-left"
+            />
+          </div>
+          <p className="max-w-xs text-sm leading-relaxed text-footer-text-muted">
+            One platform for software delivery, applied AI and technical learning.
+            <span className="block font-semibold text-footer-text">#WithYouEveryStep</span>
+          </p>
+          <div className="flex flex-col gap-2 text-sm text-footer-text-muted">
+            <a href="tel:+9779842863398" className="flex items-center gap-2 hover:text-footer-heading">
+              <Call02Icon className="h-4 w-4 text-brand-green" /> +977 9842863398
+            </a>
+            <a href="mailto:hello@kodedristi.com" className="flex items-center gap-2 hover:text-footer-heading">
+              <Mail01Icon className="h-4 w-4 text-brand-green" /> hello@kodedristi.com
+            </a>
+            <span className="flex items-center gap-2">
+              <Location01Icon className="h-4 w-4 text-brand-green" /> Kathmandu, Nepal
+            </span>
+          </div>
+        </div>
+
+        {navGroups.map((group) => (
+          <div key={group.label} className="flex flex-col gap-3">
+            <h3 className="text-sm font-semibold text-footer-heading">{group.label}</h3>
+            <ul className="flex flex-col gap-2">
+              {group.items.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-sm text-footer-text-muted hover:text-brand-green">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </Container>
+
+      <div className="border-t border-footer-divider">
+        <Container className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-footer-text-muted sm:flex-row">
+          <p>&copy; {year} KodeDristi Software Pvt. Ltd. All rights reserved.</p>
+          <div className="flex items-center gap-5">
+            <Link href="/hackathon" className="hover:text-brand-green">
+              National AI Hackathon
+            </Link>
+            <Link href="/insights" className="hover:text-brand-green">
+              Articles
+            </Link>
+            <Link href="/contact" className="hover:text-brand-green">
+              Contact
+            </Link>
+          </div>
+        </Container>
+      </div>
+    </footer>
+  );
+}
