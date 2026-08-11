@@ -1,23 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Cancel01Icon, InformationSquareIcon } from "hugeicons-react";
 
-export function CookieConsent() {
-  const [visible, setVisible] = useState(false);
+const CONSENT_EVENT = "kd-consent-change";
 
-  useEffect(() => {
-    if (!document.cookie.split(";").some((c) => c.trim().startsWith("kd_consent="))) {
-      setVisible(true);
-    }
-  }, []);
+function getSnapshot(): string {
+  return typeof document === "undefined" ? "" : document.cookie;
+}
+
+function getServerSnapshot(): string {
+  return "";
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CONSENT_EVENT, onChange);
+  return () => window.removeEventListener(CONSENT_EVENT, onChange);
+}
+
+export function CookieConsent() {
+  const cookie = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const consented = cookie.split(";").some((c) => c.trim().startsWith("kd_consent="));
+
+  if (consented) return null;
 
   function choose(value: "accepted" | "essential") {
     document.cookie = `kd_consent=${value}; path=/; max-age=31536000; samesite=lax`;
-    setVisible(false);
+    window.dispatchEvent(new Event(CONSENT_EVENT));
   }
-
-  if (!visible) return null;
 
   return (
     <div className="fixed inset-x-4 bottom-4 z-[90] sm:inset-x-auto sm:right-6 sm:bottom-6 sm:w-[400px]">
