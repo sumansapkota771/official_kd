@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GoogleLogo } from "@/components/ui/google-logo";
 import { cn } from "@/lib/utils";
@@ -83,6 +84,7 @@ export function SignInButton({ compact = false }: { compact?: boolean }) {
 }
 
 function LogoutButton() {
+  const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   return (
     <button
@@ -92,7 +94,7 @@ function LogoutButton() {
       onClick={async () => {
         setLoggingOut(true);
         await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
-        window.location.href = "/";
+        router.push("/");
       }}
       className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-border bg-white text-text-secondary shadow-sm transition-colors hover:bg-background-secondary disabled:opacity-60"
     >

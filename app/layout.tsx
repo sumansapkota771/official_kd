@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/site-header/navbar";
 import { Footer } from "@/components/site-footer/footer";
+import { GlobalChrome } from "@/components/global-chrome";
 import { AnalyticsTracker } from "@/components/auth/analytics-tracker";
 import { CookieConsent } from "@/components/auth/cookie-consent";
 
@@ -39,20 +40,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-background text-text-secondary">
         <ThemeProvider>
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-brand-blue focus:px-4 focus:py-2 focus:text-white"
-            >
-              Skip to content
-            </a>
-            <Navbar />
-            <main id="main-content" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-            <AnalyticsTracker />
-            <CookieConsent />
-          </ThemeProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-brand-blue focus:px-4 focus:py-2 focus:text-white"
+          >
+            Skip to content
+          </a>
+          <GlobalChrome navbar={<Navbar />} footer={<Footer />}>
+            {children}
+          </GlobalChrome>
+          <AnalyticsTracker />
+          <CookieConsent />
+        </ThemeProvider>
       </body>
     </html>
   );

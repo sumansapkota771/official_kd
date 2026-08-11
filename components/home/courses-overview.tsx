@@ -3,18 +3,26 @@ import { ArrowRight01Icon, Time02Icon, Wifi01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { courses } from "@/lib/data/courses";
+import { getCourses, getSectionHeading } from "@/lib/content/resolvers";
 
-export function CoursesOverview() {
+export async function CoursesOverview() {
+  const [courses, heading] = await Promise.all([
+    getCourses(),
+    getSectionHeading("courses-overview"),
+  ]);
+
   return (
     <section className="bg-background-secondary py-20 sm:py-24">
       <Container className="flex flex-col gap-12">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
-            eyebrow="Learn"
-            eyebrowTone="green"
-            title="Applied IT courses, taught by practitioners"
-            description="Six live cohort-based programs — built from the same work our engineering team ships for clients."
+            eyebrow={heading?.eyebrow ?? "Learn"}
+            eyebrowTone={heading?.eyebrowTone ?? "green"}
+            title={heading?.title ?? "Applied IT courses, taught by practitioners"}
+            description={
+              heading?.description ??
+              "Six live cohort-based programs — built from the same work our engineering team ships for clients."
+            }
           />
           <Button href="/learn" variant="outline" className="shrink-0">
             View all courses <ArrowRight01Icon className="h-4 w-4" />

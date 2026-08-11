@@ -15,9 +15,12 @@ import {
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { courses, getCourse } from "@/lib/data/courses";
+import { getCourse, getCourses } from "@/lib/content/resolvers";
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const courses = await getCourses();
   return courses.map((c) => ({ slug: c.slug }));
 }
 
@@ -27,7 +30,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getCourse(slug);
   if (!course) return {};
   return { title: course.name, description: course.summary };
 }
@@ -48,7 +51,7 @@ export default async function CourseDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const course = getCourse(slug);
+  const course = await getCourse(slug);
   if (!course) notFound();
 
   const fields: [keyof typeof FIELD_ICONS, string][] = [
@@ -61,7 +64,8 @@ export default async function CourseDetailPage({
     ["Instructor", course.instructor],
   ];
 
-  const other = courses.filter((c) => c.slug !== course.slug).slice(0, 3);
+  const all = await getCourses();
+  const other = all.filter((c) => c.slug !== course.slug).slice(0, 3);
 
   return (
     <>

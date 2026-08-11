@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
+import { resolveRedirectUri } from "@/lib/oauth";
 
 export const runtime = "nodejs";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-export async function GET() {
+export async function GET(req: Request) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) {
     return NextResponse.redirect(new URL("/admin/login?error=google_unconfigured", SITE));
   }
 
   const state = randomBytes(24).toString("hex");
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? `${SITE}/api/auth/google/callback`;
+  const redirectUri = resolveRedirectUri(new URL(req.url).host);
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,

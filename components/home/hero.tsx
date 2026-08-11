@@ -4,8 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowRight01Icon, Rocket01Icon, SparklesIcon, Mortarboard01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import type { HomeHeroData } from "@/lib/content/schemas";
 
-export function Hero() {
+export function Hero({ content }: { content: HomeHeroData }) {
   return (
     <section className="relative overflow-hidden bg-background-secondary">
       <Container className="relative grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
@@ -16,27 +17,25 @@ export function Hero() {
           className="flex flex-col gap-6"
         >
           <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-blue">
-            #WithYouEveryStep
+            {content.eyebrow}
           </span>
           <h1 className="max-w-xl text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-text-primary sm:text-5xl lg:text-[3.4rem]">
-            One platform for software, AI and the people who build them.
+            {content.title}
           </h1>
           <p className="max-w-lg text-[17px] leading-relaxed text-text-secondary">
-            KodeDristi designs and ships web, mobile, SaaS and AI products for growing
-            businesses — and trains the next generation of engineers to build them.
-            10+ projects delivered, 4+ institutional partners.
+            {content.paragraph}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button href="/contact" size="lg">
-              Start a Project <ArrowRight01Icon className="h-4 w-4" />
+            <Button href={content.primaryHref} size="lg">
+              {content.primaryLabel} <ArrowRight01Icon className="h-4 w-4" />
             </Button>
-            <Button href="/learn" variant="secondary" size="lg">
-              Explore Programs
+            <Button href={content.secondaryHref} variant="secondary" size="lg">
+              {content.secondaryLabel}
             </Button>
           </div>
-          <Button href="/hackathon" variant="ghost" size="sm" className="w-fit">
-            Register for the National AI Hackathon <ArrowRight01Icon className="h-3.5 w-3.5" />
+          <Button href={content.tertiaryHref} variant="ghost" size="sm" className="w-fit">
+            {content.tertiaryLabel} <ArrowRight01Icon className="h-3.5 w-3.5" />
           </Button>
         </motion.div>
 

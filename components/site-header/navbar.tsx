@@ -45,12 +45,8 @@ export function Navbar() {
 
   const navLinks = (
     <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
-      {navGroups.map((group, i) => (
-        <NavDropdown
-          key={group.label}
-          group={group}
-          align={i === navGroups.length - 1 ? "end" : "start"}
-        />
+      {navGroups.map((group) => (
+        <NavDropdown key={group.label} group={group} />
       ))}
     </nav>
   );

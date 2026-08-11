@@ -4,7 +4,14 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { leadership } from "@/lib/data/content";
+import {
+  getCapabilities,
+  getLeadership,
+  getPageHero,
+  getValues,
+} from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "About",
@@ -12,29 +19,23 @@ export const metadata: Metadata = {
     "KodeDristi's mission, values, leadership, capabilities and work culture — the company behind #WithYouEveryStep.",
 };
 
-const VALUES = [
-  { title: "Ship what we promise", description: "Every engagement ends in something running in production, not a slide deck." },
-  { title: "Stay close to the problem", description: "We model your real workflow before we write a line of code." },
-  { title: "Teach as we build", description: "Our courses and client work run on the same standard — no separate 'training-grade' shortcuts." },
-  { title: "Grow people, not just projects", description: "We invest in engineers who stay curious, on client work and in the classroom." },
-];
+export default async function AboutPage() {
+  const [values, capabilities, leadership, hero] = await Promise.all([
+    getValues(),
+    getCapabilities(),
+    getLeadership(),
+    getPageHero("about"),
+  ]);
 
-const CAPABILITIES = [
-  "Web & mobile product engineering",
-  "SaaS architecture & multi-tenant systems",
-  "Applied AI, automation & LLM integration",
-  "Cloud infrastructure & DevOps",
-  "Custom enterprise software",
-  "Technical training & curriculum design",
-];
-
-export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="Company"
-        title="Software and skills, built together"
-        description="KodeDristi is a Kathmandu-based software company that builds client products and runs applied IT courses from the same engineering bench — #WithYouEveryStep."
+        eyebrow={hero?.eyebrow ?? "Company"}
+        title={hero?.title ?? "Software and skills, built together"}
+        description={
+          hero?.description ??
+          "KodeDristi is a Kathmandu-based software company that builds client products and runs applied IT courses from the same engineering bench — #WithYouEveryStep."
+        }
       >
         <div className="flex flex-wrap items-center gap-3">
           <Button href="/team" size="lg">
@@ -60,7 +61,7 @@ export default function AboutPage() {
             <Compass className="h-5.5 w-5.5 text-brand-green-hover" />
             <h2 className="mt-4 text-xl font-semibold text-text-primary">Values</h2>
             <ul className="mt-3 flex flex-col gap-2">
-              {VALUES.slice(0, 2).map((v) => (
+              {values.slice(0, 2).map((v) => (
                 <li key={v.title} className="text-sm text-text-muted">
                   <span className="font-semibold text-text-secondary">{v.title}.</span>{" "}
                   {v.description}
@@ -75,7 +76,7 @@ export default function AboutPage() {
         <Container className="flex flex-col gap-10">
           <SectionHeading title="What we value" />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {VALUES.map((v) => (
+            {values.map((v) => (
               <div key={v.title} className="card p-6">
                 <Heart className="h-5 w-5 text-brand-green-hover" />
                 <h3 className="mt-3 font-semibold text-text-primary">{v.title}</h3>
@@ -110,9 +111,9 @@ export default function AboutPage() {
           <div>
             <SectionHeading eyebrow="Capabilities" eyebrowTone="green" title="What we're built to do" />
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-              {CAPABILITIES.map((c) => (
-                <li key={c} className="tile p-4 text-sm text-text-secondary">
-                  {c}
+              {capabilities.map((c) => (
+                <li key={c.slug} className="tile p-4 text-sm text-text-secondary">
+                  {c.label}
                 </li>
               ))}
             </ul>

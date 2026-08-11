@@ -65,7 +65,7 @@ export function SubmissionsPanel({
       <ul className="divide-y divide-border">
         {filtered.map((s) => {
           const open = expanded === s.id;
-          const rows = Object.entries(s.data).filter(([k, v]) => v !== "" && v != null);
+          const rows = Object.entries(s.data).filter(([, v]) => v !== "" && v != null);
           return (
             <li key={s.id}>
               <button

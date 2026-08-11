@@ -1,22 +1,34 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { techStack, deliveryApproach } from "@/lib/data/content";
+import {
+  getDeliveryApproach,
+  getSectionHeading,
+  getTechStack,
+} from "@/lib/content/resolvers";
 
 const SDLC_STEPS = ["Plan", "Design", "Build", "Test", "Deploy", "Support"];
 
-export function TechDelivery() {
+export async function TechDelivery() {
+  const [techStack, deliveryApproach, heading] = await Promise.all([
+    getTechStack(),
+    getDeliveryApproach(),
+    getSectionHeading("tech-delivery"),
+  ]);
+
   return (
     <section className="py-20 sm:py-24">
       <Container className="flex flex-col gap-16">
         <div className="flex flex-col gap-8">
           <SectionHeading
-            eyebrow="Technology"
-            title="A stack chosen for reliability, not resume-padding"
+            eyebrow={heading?.eyebrow ?? "Technology"}
+            eyebrowTone={heading?.eyebrowTone}
+            title={heading?.title ?? "A stack chosen for reliability, not resume-padding"}
+            description={heading?.description || undefined}
           />
           <div className="flex flex-wrap gap-3">
             {techStack.map((tech) => (
               <span
-                key={tech.name}
+                key={tech.slug}
                 className="rounded-full border-[0.5px] border-border bg-surface px-4 py-2 font-mono text-sm font-medium text-text-secondary"
               >
                 {tech.name}
@@ -30,7 +42,7 @@ export function TechDelivery() {
             <h3 className="text-xl font-semibold text-text-primary">Delivery approach</h3>
             <div className="flex flex-col gap-5">
               {deliveryApproach.map((step, i) => (
-                <div key={step.title} className="flex gap-4">
+                <div key={step.slug} className="flex gap-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-blue-light text-sm font-bold text-brand-blue">
                     {i + 1}
                   </span>

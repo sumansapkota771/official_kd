@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { encodeSession, SESSION_COOKIE, SESSION_MAX_AGE, isSuperAdminEmail } from "@/lib/auth";
 import { upsertUser } from "@/lib/db/queries";
+import { resolveRedirectUri } from "@/lib/oauth";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ export async function GET(req: Request) {
   const expectedState = store.get("kd_oauth_state")?.value;
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? `${SITE}/api/auth/google/callback`;
+  const redirectUri = resolveRedirectUri(url.host);
 
   if (!clientId || !clientSecret || !code || !state || state !== expectedState) {
     return NextResponse.redirect(new URL("/admin/login?error=google_failed", SITE));

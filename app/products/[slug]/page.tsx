@@ -5,9 +5,12 @@ import { ArrowRight, CheckCircle2, MessageSquare, Users } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { products, getProduct } from "@/lib/data/products";
+import { getProduct, getProducts } from "@/lib/content/resolvers";
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((p) => ({ slug: p.slug }));
 }
 
@@ -17,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) return {};
   return { title: product.name, description: product.tagline };
 }
@@ -28,12 +31,13 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) notFound();
 
   const Icon = product.icon;
   const isBlue = product.accent === "blue";
-  const other = products.filter((p) => p.slug !== product.slug).slice(0, 3);
+  const all = await getProducts();
+  const other = all.filter((p) => p.slug !== product.slug).slice(0, 3);
 
   return (
     <>

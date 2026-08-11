@@ -7,11 +7,16 @@ import { TechDelivery } from "@/components/home/tech-delivery";
 import { TeamOverview } from "@/components/home/team-overview";
 import { FinalCta } from "@/components/home/final-cta";
 import { Testimonials } from "@/components/home/testimonials";
+import { getHomeHeroData } from "@/lib/content/resolvers";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const hero = await getHomeHeroData();
+
   return (
     <>
-      <Hero />
+      <Hero content={hero} />
       <TrustStrip />
       <FlagshipProgram />
       <SolutionsOverview />

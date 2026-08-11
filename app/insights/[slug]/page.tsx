@@ -5,9 +5,12 @@ import { ArrowLeft, ArrowRight, Calendar, Clock } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { articles } from "@/lib/data/content";
+import { getArticle, getArticles } from "@/lib/content/resolvers";
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const articles = await getArticles();
   return articles.map((a) => ({ slug: a.slug }));
 }
 
@@ -17,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = articles.find((a) => a.slug === slug);
+  const article = await getArticle(slug);
   if (!article) return {};
   return { title: article.title, description: article.excerpt };
 }
@@ -28,10 +31,11 @@ export default async function ArticleDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = articles.find((a) => a.slug === slug);
+  const article = await getArticle(slug);
   if (!article) notFound();
 
-  const other = articles.filter((a) => a.slug !== article.slug).slice(0, 2);
+  const all = await getArticles();
+  const other = all.filter((a) => a.slug !== article.slug).slice(0, 2);
 
   return (
     <>

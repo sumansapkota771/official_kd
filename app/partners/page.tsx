@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { ArrowRight, GraduationCap, Handshake, Megaphone } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { partners } from "@/lib/data/content";
+import {
+  getPageHero,
+  getPartnerBenefits,
+  getPartners,
+} from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Partners",
@@ -12,19 +18,22 @@ export const metadata: Metadata = {
     "KodeDristi's institutional and academic partners, and how to become a partner.",
 };
 
-const PARTNER_BENEFITS = [
-  { icon: GraduationCap, title: "Curriculum collaboration", description: "Co-develop course tracks aligned with your institution's programs." },
-  { icon: Megaphone, title: "Joint programs", description: "Co-branded bootcamps, hackathon sponsorship and guest instruction." },
-  { icon: Handshake, title: "Hiring pipeline", description: "Direct access to graduating cohorts for internships and hiring." },
-];
+export default async function PartnersPage() {
+  const [partners, partnerBenefits, hero] = await Promise.all([
+    getPartners(),
+    getPartnerBenefits(),
+    getPageHero("partners"),
+  ]);
 
-export default function PartnersPage() {
   return (
     <>
       <PageHero
-        eyebrow="Partners"
-        title="Built with our partners, not just for them"
-        description="KodeDristi works with universities, training institutes and businesses to expand access to quality software education and delivery."
+        eyebrow={hero?.eyebrow ?? "Partners"}
+        title={hero?.title ?? "Built with our partners, not just for them"}
+        description={
+          hero?.description ??
+          "KodeDristi works with universities, training institutes and businesses to expand access to quality software education and delivery."
+        }
       >
         <Button href="#become-a-partner" size="lg">
           Become a Partner <ArrowRight className="h-4 w-4" />
@@ -48,10 +57,9 @@ export default function PartnersPage() {
         <Container className="flex flex-col gap-10">
           <SectionHeading eyebrow="Become a Partner" eyebrowTone="green" title="What partnership looks like" />
           <div className="grid gap-6 sm:grid-cols-3">
-            {PARTNER_BENEFITS.map((b) => (
+            {partnerBenefits.map((b) => (
               <div key={b.title} className="card p-6">
-                <b.icon className="h-5.5 w-5.5 text-brand-green-hover" />
-                <h3 className="mt-4 font-semibold text-text-primary">{b.title}</h3>
+                <h3 className="font-semibold text-text-primary">{b.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
                   {b.description}
                 </p>

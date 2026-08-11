@@ -5,7 +5,9 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { solutions } from "@/lib/data/solutions";
+import { getPageHero, getSolutions } from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Solutions",
@@ -13,14 +15,18 @@ export const metadata: Metadata = {
     "Web & mobile apps, SaaS products, AI & automation, custom software, cloud and DevOps, domain & hosting, design and marketing — KodeDristi's full service catalogue.",
 };
 
-export default function SolutionsPage() {
+export default async function SolutionsPage() {
+  const solutions = await getSolutions();
+  const hero = (await getPageHero("solutions")) ?? {
+    eyebrow: "Solutions",
+    title: `${solutions.length} delivery tracks. One accountable team.`,
+    description:
+      "Every solution below follows the same disciplined process — a clear problem statement, a defined approach, concrete deliverables and a realistic timeline.",
+  };
+
   return (
     <>
-      <PageHero
-        eyebrow="Solutions"
-        title={`${solutions.length} delivery tracks. One accountable team.`}
-        description="Every solution below follows the same disciplined process — a clear problem statement, a defined approach, concrete deliverables and a realistic timeline."
-      >
+      <PageHero eyebrow={hero.eyebrow} title={hero.title} description={hero.description}>
         <Button href="/contact" size="lg">
           Book a Consultation <ArrowRight className="h-4 w-4" />
         </Button>

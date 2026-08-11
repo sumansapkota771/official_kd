@@ -3,18 +3,27 @@ import { ArrowRight01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { solutions } from "@/lib/data/solutions";
+import { getSectionHeading, getSolutions } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export function SolutionsOverview() {
+export async function SolutionsOverview() {
+  const [solutions, heading] = await Promise.all([
+    getSolutions(),
+    getSectionHeading("solutions-overview"),
+  ]);
+
   return (
     <section className="py-20 sm:py-24">
       <Container className="flex flex-col gap-12">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
-            eyebrow="Solutions"
-            title={`${solutions.length} ways we help you ship`}
-            description="From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix."
+            eyebrow={heading?.eyebrow ?? "Solutions"}
+            eyebrowTone={heading?.eyebrowTone}
+            title={heading?.title ?? `${solutions.length} ways we help you ship`}
+            description={
+              heading?.description ??
+              "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix."
+            }
           />
           <Button href="/solutions" variant="outline" className="shrink-0">
             View all solutions <ArrowRight01Icon className="h-4 w-4" />

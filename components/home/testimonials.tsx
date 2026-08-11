@@ -1,22 +1,28 @@
 import { QuoteUpIcon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { testimonials } from "@/lib/data/content";
+import { getSectionHeading, getTestimonials } from "@/lib/content/resolvers";
 
-export function Testimonials() {
+export async function Testimonials() {
+  const [testimonials, heading] = await Promise.all([
+    getTestimonials(),
+    getSectionHeading("testimonials"),
+  ]);
+
   return (
     <section className="py-20 sm:py-24">
       <Container className="flex flex-col gap-12">
         <SectionHeading
-          eyebrow="Testimonials"
-          title="What our clients say"
+          eyebrow={heading?.eyebrow ?? "Testimonials"}
+          eyebrowTone={heading?.eyebrowTone}
+          title={heading?.title ?? "What our clients say"}
           align="center"
           className="mx-auto"
         />
         <div className="grid gap-5 lg:grid-cols-3">
           {testimonials.map((t) => (
             <figure
-              key={t.name}
+              key={t.slug}
               className="flex flex-col gap-4 card p-6"
             >
               <QuoteUpIcon className="h-6 w-6 text-brand-green" />

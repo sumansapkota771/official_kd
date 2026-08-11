@@ -9,10 +9,8 @@ import { cn } from "@/lib/utils";
 
 export function NavDropdown({
   group,
-  align = "start",
 }: {
   group: NavGroup;
-  align?: "start" | "end";
 }) {
   const [open, setOpen] = useState(false);
   const [headerEl, setHeaderEl] = useState<HTMLElement | null>(null);

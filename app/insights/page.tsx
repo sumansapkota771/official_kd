@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
-import { articles } from "@/lib/data/content";
+import { getArticles, getPageHero } from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "News & Insights",
@@ -11,14 +13,17 @@ export const metadata: Metadata = {
     "Articles on AI software development in Nepal, custom software, cloud migration and more from the KodeDristi engineering team.",
 };
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const articles = await getArticles();
+  const hero = (await getPageHero("insights")) ?? {
+    eyebrow: "Knowledge",
+    title: "News & Insights",
+    description: "Notes from our engineering and delivery teams — practical, not promotional.",
+  };
+
   return (
     <>
-      <PageHero
-        eyebrow="Knowledge"
-        title="News &amp; Insights"
-        description="Notes from our engineering and delivery teams — practical, not promotional."
-      />
+      <PageHero eyebrow={hero.eyebrow} title={hero.title} description={hero.description} />
 
       <section className="py-16 sm:py-20">
         <Container className="grid gap-6 lg:grid-cols-2">

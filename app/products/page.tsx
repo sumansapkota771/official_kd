@@ -7,8 +7,13 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { ProductTalkForm } from "@/components/contact/product-talk-form";
 import { cn } from "@/lib/utils";
-import { products } from "@/lib/data/products";
-import { partners, testimonials } from "@/lib/data/content";
+import { getFaqs } from "@/lib/content/resolvers";
+import { getPageHero } from "@/lib/content/resolvers";
+import { getPartners } from "@/lib/content/resolvers";
+import { getProducts } from "@/lib/content/resolvers";
+import { getTestimonials } from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -16,19 +21,24 @@ export const metadata: Metadata = {
     "Okil.ai, Billing Software, Accounting Software and LMS — in-house products built and maintained by KodeDristi.",
 };
 
-const FAQS = [
-  { q: "Can these products be white-labelled?", a: "Yes — Billing Software, Accounting Software and LMS all support white-label deployment for partners." },
-  { q: "Do you offer a trial?", a: "Every product has a guided demo; trial access is arranged during your first call." },
-  { q: "Can you build something similar for us?", a: "Yes — reach out via the contact card on any product page to scope a custom build." },
-];
+export default async function ProductsPage() {
+  const [products, partners, testimonials, faqs, hero] = await Promise.all([
+    getProducts(),
+    getPartners(),
+    getTestimonials(),
+    getFaqs("products"),
+    getPageHero("products"),
+  ]);
 
-export default function ProductsPage() {
   return (
     <>
       <PageHero
-        eyebrow="Products"
-        title="Products"
-        description="In-house software KodeDristi builds, ships and maintains — proof of the same engineering standard we bring to client work."
+        eyebrow={hero?.eyebrow ?? "Products"}
+        title={hero?.title ?? "Products"}
+        description={
+          hero?.description ??
+          "In-house software KodeDristi builds, ships and maintains — proof of the same engineering standard we bring to client work."
+        }
       />
 
       <section className="py-16 sm:py-20">
@@ -80,7 +90,7 @@ export default function ProductsPage() {
         <Container className="grid gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <SectionHeading eyebrow="FAQ" title="Product questions" />
-            <FaqAccordion items={FAQS} />
+            <FaqAccordion items={faqs} />
           </div>
 
           <div className="flex flex-col gap-6">

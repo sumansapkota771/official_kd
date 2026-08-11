@@ -6,9 +6,12 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { solutions, getSolution } from "@/lib/data/solutions";
+import { getSolution, getSolutions } from "@/lib/content/resolvers";
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const solutions = await getSolutions();
   return solutions.map((s) => ({ slug: s.slug }));
 }
 
@@ -18,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const solution = getSolution(slug);
+  const solution = await getSolution(slug);
   if (!solution) return {};
   return {
     title: solution.name,
@@ -32,12 +35,13 @@ export default async function SolutionDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const solution = getSolution(slug);
+  const solution = await getSolution(slug);
   if (!solution) notFound();
 
   const Icon = solution.icon;
   const isBlue = solution.accent === "blue";
-  const other = solutions.filter((s) => s.slug !== solution.slug).slice(0, 3);
+  const all = await getSolutions();
+  const other = all.filter((s) => s.slug !== solution.slug).slice(0, 3);
 
   return (
     <>

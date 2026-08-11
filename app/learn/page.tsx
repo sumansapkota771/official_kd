@@ -6,7 +6,12 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
-import { courses } from "@/lib/data/courses";
+import { getCourses } from "@/lib/content/resolvers";
+import { getFaqs } from "@/lib/content/resolvers";
+import { getPageHero } from "@/lib/content/resolvers";
+import { getProcessSteps } from "@/lib/content/resolvers";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Learn — IT Courses",
@@ -14,40 +19,24 @@ export const metadata: Metadata = {
     "Live, cohort-based IT courses from KodeDristi — AI & ML, full-stack web development, cloud & DevOps, mobile, data analytics and UI/UX.",
 };
 
-const PROCESS_STEPS = [
-  { title: "Apply", description: "Tell us about your background and the course you want." },
-  { title: "Reserve your seat", description: "Confirm enrollment with a deposit — seats are limited per cohort." },
-  { title: "Orientation", description: "Get your schedule, materials access and instructor introduction." },
-  { title: "Start learning", description: "Live sessions, weekly labs and a capstone project." },
-];
+export default async function LearnPage() {
+  const [courses, processSteps, faqs, hero] = await Promise.all([
+    getCourses(),
+    getProcessSteps(),
+    getFaqs("learn"),
+    getPageHero("learn"),
+  ]);
 
-const FAQS = [
-  {
-    q: "Are classes live or self-paced?",
-    a: "All KodeDristi courses are live, cohort-based sessions with a fixed schedule — not pre-recorded content.",
-  },
-  {
-    q: "What happens if I miss a session?",
-    a: "Every live session is recorded and shared with enrolled students within 24 hours.",
-  },
-  {
-    q: "Is there a certificate?",
-    a: "Yes — students who complete the capstone project receive a KodeDristi completion certificate.",
-  },
-  {
-    q: "Can my company sponsor a cohort seat?",
-    a: "Yes, reach out via the enquiry form below and we'll set up corporate billing.",
-  },
-];
-
-export default function LearnPage() {
   return (
     <>
       <PageHero
-        eyebrow="Learn"
+        eyebrow={hero?.eyebrow ?? "Learn"}
         eyebrowTone="green"
-        title="IT courses built from real delivery work"
-        description="Six live, cohort-based programs taught by the same engineers who ship KodeDristi's client projects."
+        title={hero?.title ?? "IT courses built from real delivery work"}
+        description={
+          hero?.description ??
+          "Six live, cohort-based programs taught by the same engineers who ship KodeDristi's client projects."
+        }
       >
         <Button href="#courses" size="lg" variant="secondary">
           Browse courses <ArrowRight className="h-4 w-4" />
@@ -90,7 +79,7 @@ export default function LearnPage() {
         <Container className="flex flex-col gap-10">
           <SectionHeading title="How enrollment works" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PROCESS_STEPS.map((step, i) => (
+            {processSteps.map((step, i) => (
               <div key={step.title} className="card p-6">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-blue-light text-sm font-bold text-brand-blue">
                   {i + 1}
@@ -109,7 +98,7 @@ export default function LearnPage() {
         <Container className="grid gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <SectionHeading eyebrow="FAQ" title="Common questions" />
-            <FaqAccordion items={FAQS} />
+            <FaqAccordion items={faqs} />
           </div>
 
           <div className="flex flex-col justify-between gap-6 rounded-3xl border border-border bg-background-secondary p-8">
