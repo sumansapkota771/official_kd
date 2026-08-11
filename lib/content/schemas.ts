@@ -799,6 +799,44 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Admin ordering — mirrors the order content appears on the site: global
+// chrome, then the homepage section by section, then the other pages in nav
+// order, then the hackathon pages.
+// ---------------------------------------------------------------------------
+
+export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
+  { group: "Site-wide", types: ["nav", "page-hero"] },
+  {
+    group: "Homepage",
+    types: [
+      "home-hero",
+      "home-trust",
+      "stat",
+      "home-flagship",
+      "section-heading",
+      "solution",
+      "course",
+      "tech",
+      "delivery-step",
+      "team-member",
+      "home-final-cta",
+      "testimonial",
+    ],
+  },
+  { group: "Learn", types: ["process-step", "faq"] },
+  { group: "About", types: ["value", "capability"] },
+  { group: "Careers", types: ["perk", "role"] },
+  { group: "Insights", types: ["article"] },
+  { group: "Contact", types: ["contact-detail"] },
+  { group: "Partners", types: ["partner", "partner-benefit"] },
+  { group: "Products", types: ["product"] },
+  {
+    group: "Hackathon",
+    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline"],
+  },
+];
+
 const schemaMap = new Map(CONTENT_SCHEMAS.map((s) => [s.type, s]));
 
 export function getSchema(type: string): ContentSchema {

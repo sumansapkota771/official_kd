@@ -72,7 +72,7 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden bg-brand-green-hover text-white"
+            className="overflow-hidden bg-announcement text-white"
           >
             <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-5 py-2 text-center text-[11px] font-medium sm:gap-3 sm:text-xs">
               <span className="hidden rounded-full bg-white/15 px-2 py-0.5 font-semibold uppercase tracking-wide sm:inline">

@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { ensureSchema } from "@/lib/db/schema";
 import {
+  CONTENT_GROUPS,
   CONTENT_SCHEMAS,
   getSchema,
   type ContentItem,
@@ -318,10 +319,20 @@ export async function getTypeSummary(): Promise<
     label: string;
     singular: string;
     isSingleton: boolean;
+    group: string;
     count: number;
     publishedCount: number;
   }[]
 > {
+  const ordered: { type: string; group: string }[] = [];
+  for (const g of CONTENT_GROUPS) {
+    for (const t of g.types) ordered.push({ type: t, group: g.group });
+  }
+  const known = new Set(ordered.map((o) => o.type));
+  for (const s of CONTENT_SCHEMAS) {
+    if (!known.has(s.type)) ordered.push({ type: s.type, group: "Other" });
+  }
+
   try {
     await ensureSchema();
     await Promise.all(CONTENT_SCHEMAS.filter((s) => s.fallback).map(ensureSeeded));
@@ -330,26 +341,31 @@ export async function getTypeSummary(): Promise<
               count(*) FILTER (WHERE published)::int AS publishedCount
        FROM content_items GROUP BY type`
     );
-    return CONTENT_SCHEMAS.map((s) => {
-      const row = res.rows.find((r) => r.type === s.type);
+    const byType = new Map(res.rows.map((r) => [r.type, r]));
+    return ordered.map(({ type, group }) => {
+      const schema = getSchema(type);
+      const row = byType.get(type);
       return {
-        type: s.type,
-        label: s.label,
-        singular: s.singular,
-        isSingleton: s.isSingleton ?? false,
+        type,
+        label: schema.label,
+        singular: schema.singular,
+        isSingleton: schema.isSingleton ?? false,
+        group,
         count: row?.count ?? 0,
         publishedCount: row?.publishedCount ?? 0,
       };
     });
   } catch (err) {
     logFallback("summary", err);
-    return CONTENT_SCHEMAS.map((s) => {
-      const count = s.fallback?.().length ?? 0;
+    return ordered.map(({ type, group }) => {
+      const schema = getSchema(type);
+      const count = schema.fallback?.().length ?? 0;
       return {
-        type: s.type,
-        label: s.label,
-        singular: s.singular,
-        isSingleton: s.isSingleton ?? false,
+        type,
+        label: schema.label,
+        singular: schema.singular,
+        isSingleton: schema.isSingleton ?? false,
+        group,
         count,
         publishedCount: count,
       };

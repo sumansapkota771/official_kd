@@ -73,7 +73,7 @@ export function NavDropdown({
               onMouseEnter={handleEnter}
               onMouseLeave={handleLeave}
             >
-              <div className="border-b-[0.5px] border-border bg-surface-elevated/98 shadow-menu">
+              <div className="border-b-[0.5px] border-border bg-surface-elevated/90 backdrop-blur-xl shadow-menu">
                 <div className="mx-auto max-w-7xl px-5 py-6">
                   <div className="mb-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">

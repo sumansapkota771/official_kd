@@ -10,10 +10,10 @@
 --------------------------------------------------------- */
 
 :root {
-  /* Brand */
-  --brand-blue: #0071e3;
-  --brand-blue-hover: #0062c4;
-  --brand-blue-light: #eaf3ff;
+  /* Brand — indigo blue + green, per Kodedristi_UI_Color_Theory_and_Design_System.docx */
+  --brand-blue: #2e3192;
+  --brand-blue-hover: #25277a;
+  --brand-blue-light: #eef0ff;
   --brand-green: #2bb673;
   --brand-green-hover: #1f9e61;
   --brand-green-light: #e8f8f0;
@@ -30,13 +30,13 @@
   --text-secondary: #374151;
   --text-muted: #6b7280;
   --text-on-brand: #ffffff;
-  --link: #0071e3;
+  --link: #2e3192;
 
   /* Status */
   --success-bg: #e8f8f0;
   --success-text: #1f9e61;
-  --badge-blue-bg: #eaf3ff;
-  --badge-blue-text: #0071e3;
+  --badge-blue-bg: #eef0ff;
+  --badge-blue-text: #2e3192;
   --badge-green-bg: #e8f8f0;
   --badge-green-text: #1f9e61;
 
@@ -50,6 +50,12 @@
   --footer-text-muted: #9ca3af;
   --footer-divider: rgba(255, 255, 255, 0.1);
 
+  /* Announcement banner — a static promo surface, not an interactive
+     control, so it keeps one accessible green across themes instead of
+     inheriting --brand-green-hover (which is tuned for hover states and
+     goes too light for white text on top of it in dark mode). */
+  --announcement-bg: #1f9e61;
+
   /* Shape / motion */
   --radius-card: 18px;
   --radius-control: 999px;
@@ -59,9 +65,9 @@
 }
 
 .dark {
-  --brand-blue: #2997ff;
-  --brand-blue-hover: #4aa3ff;
-  --brand-blue-light: #10233b;
+  --brand-blue: #3a3db0;
+  --brand-blue-hover: #4a4dc4;
+  --brand-blue-light: #171a3d;
   --brand-green: #2bb673;
   --brand-green-hover: #36c985;
   --brand-green-light: #0d2a20;
@@ -76,12 +82,12 @@
   --text-secondary: #d1d5db;
   --text-muted: #9ca3af;
   --text-on-brand: #ffffff;
-  --link: #7db9ff;
+  --link: #a5a8ff;
 
   --success-bg: #0d2a20;
   --success-text: #36c985;
-  --badge-blue-bg: #10233b;
-  --badge-blue-text: #7db9ff;
+  --badge-blue-bg: #171a3d;
+  --badge-blue-text: #a5a8ff;
   --badge-green-bg: #0d2a20;
   --badge-green-text: #36c985;
 
@@ -123,6 +129,8 @@
   --color-footer-text: var(--footer-text);
   --color-footer-text-muted: var(--footer-text-muted);
   --color-footer-divider: var(--footer-divider);
+
+  --color-announcement: var(--announcement-bg);
 
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);
