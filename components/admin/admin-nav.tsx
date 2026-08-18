@@ -48,7 +48,7 @@ export function AdminNav({ adminName }: { adminName: string }) {
                   : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
               )}
             >
-              <link.icon className="h-4.5 w-4.5" />
+              <link.icon className="h-6.75 w-6.75" />
               {link.label}
             </Link>
           );
@@ -60,7 +60,7 @@ export function AdminNav({ adminName }: { adminName: string }) {
           href="/"
           className="focus-ring flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-background-secondary hover:text-text-primary"
         >
-          <GlobeIcon className="h-4.5 w-4.5" /> View site
+          <GlobeIcon className="h-6.75 w-6.75" /> View site
         </Link>
         <LogoutButton />
       </div>
@@ -70,7 +70,7 @@ export function AdminNav({ adminName }: { adminName: string }) {
           href="/"
           className="focus-ring flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:bg-background-secondary"
         >
-          <GlobeIcon className="h-4 w-4" /> View site
+          <GlobeIcon className="h-6 w-6" /> View site
         </Link>
         <LogoutButton />
       </div>

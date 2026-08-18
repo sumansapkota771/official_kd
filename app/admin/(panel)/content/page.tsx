@@ -42,9 +42,9 @@ export default async function AdminContentOverview() {
               >
                 <div className="flex items-center justify-between">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-blue-light text-brand-blue">
-                    <ContentWritingIcon className="h-5 w-5" />
+                    <ContentWritingIcon className="h-7.5 w-7.5" />
                   </span>
-                  <ArrowRight01Icon className="h-4 w-4 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+                  <ArrowRight01Icon className="h-6 w-6 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand-blue" />
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-text-primary">{s.label}</h3>
                 <p className="mt-1 text-sm text-text-muted">{s.singular}</p>

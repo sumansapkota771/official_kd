@@ -39,7 +39,7 @@ export default async function HackathonPage() {
       >
         <div className="flex flex-wrap items-center gap-3">
           <Button href="/contact" size="lg">
-            Register for Hackathon <ArrowRight className="h-4 w-4" />
+            Register for Hackathon <ArrowRight className="h-6 w-6" />
           </Button>
           <Button href="#tracks" variant="outline" size="lg">
             View Tracks
@@ -47,25 +47,25 @@ export default async function HackathonPage() {
         </div>
       </PageHero>
 
-      <section className="border-y border-border bg-surface py-10">
-        <Container className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+      <section className="section-tight border-y border-border bg-surface">
+        <Container className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {highlights.map((item) => (
-            <div key={item.label} className="flex flex-col items-center gap-2 text-center">
-              <item.icon className="h-5.5 w-5.5 text-brand-blue" />
+            <div key={item.label} className="flex flex-col items-center gap-1.5 text-center">
+              <item.icon className="h-7 w-7 text-brand-blue" />
               <p className="text-sm font-semibold text-text-primary">{item.label}</p>
             </div>
           ))}
         </Container>
       </section>
 
-      <section id="tracks" className="py-16 sm:py-20">
-        <Container className="flex flex-col gap-10">
+      <section id="tracks" className="section">
+        <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Tracks" title="Three ways to compete" />
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             {tracks.map((track) => (
-              <div key={track.title} className="card p-6">
+              <div key={track.title} className="card p-5">
                 <h3 className="font-semibold text-text-primary">{track.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-muted">
+                <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
                   {track.description}
                 </p>
               </div>
@@ -74,13 +74,13 @@ export default async function HackathonPage() {
         </Container>
       </section>
 
-      <section className="bg-background-secondary py-16 sm:py-20">
-        <Container className="flex flex-col gap-10">
+      <section className="section bg-background-secondary">
+        <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Schedule" eyebrowTone="green" title="How the weekend runs" />
-          <ol className="flex flex-col gap-5">
+          <ol className="flex flex-col gap-4">
             {timeline.map((item, i) => (
-              <li key={item.label} className="flex gap-4">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-green-light text-sm font-bold text-brand-green-hover">
+              <li key={item.label} className="flex gap-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-brand-green text-xs font-bold text-white">
                   {i + 1}
                 </span>
                 <div>
@@ -93,18 +93,17 @@ export default async function HackathonPage() {
         </Container>
       </section>
 
-      <section className="py-16 sm:py-20">
+      <section className="section">
         <Container>
-          <div className="flex flex-col items-center gap-6 rounded-3xl border border-border bg-brand-blue px-6 py-14 text-center text-white sm:px-12">
-            <h2 className="max-w-xl text-3xl font-semibold leading-tight tracking-[-0.02em] sm:text-4xl">
-              Ready to compete?
-            </h2>
-            <p className="max-w-lg text-white/85">
+          <div className="on-brand relative overflow-hidden rounded-card border border-brand-blue bg-brand-blue px-8 py-20 text-center text-white sm:px-16">
+            <div className="absolute left-0 top-0 h-full w-1 bg-brand-green" aria-hidden="true" />
+            <h2 className="display-md max-w-xl font-semibold">Ready to compete?</h2>
+            <p className="mt-3 max-w-lg text-white/70">
               Full rulebook, judging criteria and sponsorship proposal are available on
               request — detailed content for this program is being finalised.
             </p>
-            <Button href="/contact" size="lg" className="bg-white text-brand-blue hover:bg-white/90">
-              Register for Hackathon <ArrowRight className="h-4 w-4" />
+            <Button href="/contact" size="lg" className="mt-6 bg-white text-brand-blue hover:bg-white/90">
+              Register for Hackathon <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
         </Container>

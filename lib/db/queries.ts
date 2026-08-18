@@ -1,6 +1,10 @@
 import { db } from "@/lib/db";
 import { ensureSchema } from "@/lib/db/schema";
 
+function logFallback(what: string, err: unknown) {
+  console.warn(`[db] "${what}" not readable from DB, using empty fallback.`, err);
+}
+
 export type DbUser = {
   id: number;
   email: string;
@@ -109,7 +113,26 @@ export type Analytics = {
   }[];
 };
 
+const emptyAnalytics: Analytics = {
+  totalViews: 0,
+  uniqueVisitors: 0,
+  today: 0,
+  last7Days: 0,
+  topPages: [],
+  daily: [],
+  recent: [],
+};
+
 export async function getAnalytics(): Promise<Analytics> {
+  try {
+    return await getAnalyticsFromDb();
+  } catch (err) {
+    logFallback("analytics", err);
+    return emptyAnalytics;
+  }
+}
+
+async function getAnalyticsFromDb(): Promise<Analytics> {
   await ensureSchema();
   const [total, unique, today, last7, topPages, daily, recent] = await Promise.all([
     db.query<{ count: number }>("SELECT count(*)::int AS count FROM visits"),
@@ -156,28 +179,38 @@ export async function getAnalytics(): Promise<Analytics> {
 export async function listSubmissions(): Promise<
   { id: number; section: string; data: Record<string, unknown>; created_at: Date }[]
 > {
-  await ensureSchema();
-  const res = await db.query<{
-    id: number;
-    section: string;
-    data: Record<string, unknown>;
-    created_at: Date;
-  }>("SELECT id, section, data, created_at FROM contact_submissions ORDER BY id DESC LIMIT 300");
-  return res.rows;
+  try {
+    await ensureSchema();
+    const res = await db.query<{
+      id: number;
+      section: string;
+      data: Record<string, unknown>;
+      created_at: Date;
+    }>("SELECT id, section, data, created_at FROM contact_submissions ORDER BY id DESC LIMIT 300");
+    return res.rows;
+  } catch (err) {
+    logFallback("submissions", err);
+    return [];
+  }
 }
 
 export async function listUsersWithCourses(): Promise<
   (DbUser & { courses: DbEnrollment[] })[]
 > {
-  await ensureSchema();
-  const users = await db.query<DbUser>("SELECT * FROM users ORDER BY created_at DESC");
-  const courses = await db.query<DbEnrollment>(
-    "SELECT * FROM user_courses ORDER BY enrolled_at DESC"
-  );
-  return users.rows.map((u) => ({
-    ...u,
-    courses: courses.rows.filter((c) => c.email === u.email),
-  }));
+  try {
+    await ensureSchema();
+    const users = await db.query<DbUser>("SELECT * FROM users ORDER BY created_at DESC");
+    const courses = await db.query<DbEnrollment>(
+      "SELECT * FROM user_courses ORDER BY enrolled_at DESC"
+    );
+    return users.rows.map((u) => ({
+      ...u,
+      courses: courses.rows.filter((c) => c.email === u.email),
+    }));
+  } catch (err) {
+    logFallback("users", err);
+    return [];
+  }
 }
 
 export async function getEnrollmentsByEmail(email: string): Promise<DbEnrollment[]> {

@@ -117,7 +117,7 @@ export function ContentList({
             href={`/admin/content/${type}/new`}
             className="focus-ring inline-flex h-10 items-center gap-2 rounded-full bg-brand-blue px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-blue-hover"
           >
-            <AddSquareIcon className="h-4 w-4" /> New {singular}
+            <AddSquareIcon className="h-6 w-6" /> New {singular}
           </Link>
         )}
       </div>
@@ -160,7 +160,7 @@ export function ContentList({
                   aria-label="Move up"
                   className="focus-ring flex h-7 w-7 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-background-secondary hover:text-text-primary disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  <ArrowUp01Icon className="h-4 w-4" />
+                  <ArrowUp01Icon className="h-6 w-6" />
                 </button>
                 <button
                   type="button"
@@ -169,7 +169,7 @@ export function ContentList({
                   aria-label="Move down"
                   className="focus-ring flex h-7 w-7 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-background-secondary hover:text-text-primary disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  <ArrowDown01Icon className="h-4 w-4" />
+                  <ArrowDown01Icon className="h-6 w-6" />
                 </button>
               </div>
 
@@ -179,7 +179,7 @@ export function ContentList({
               >
                 {Icon && (
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue-light text-brand-blue">
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-7.5 w-7.5" />
                   </span>
                 )}
                 <span className="min-w-0">
@@ -203,9 +203,9 @@ export function ContentList({
                   )}
                 >
                   {busy === `pub-${item.id}` ? (
-                    <Loading01Icon className="h-3.5 w-3.5 animate-spin" />
+                    <Loading01Icon className="h-5.25 w-5.25 animate-spin" />
                   ) : item.published ? (
-                    <CheckmarkCircle02Icon className="h-3.5 w-3.5" />
+                    <CheckmarkCircle02Icon className="h-5.25 w-5.25" />
                   ) : (
                     <span className="h-2 w-2 rounded-full bg-text-muted" />
                   )}
@@ -217,7 +217,7 @@ export function ContentList({
                   aria-label={`Edit ${title}`}
                   className="focus-ring flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand-blue hover:text-brand-blue"
                 >
-                  <Edit02Icon className="h-4 w-4" />
+                  <Edit02Icon className="h-6 w-6" />
                 </Link>
 
                 <button
@@ -228,9 +228,9 @@ export function ContentList({
                   className="focus-ring flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-text-muted transition-colors hover:border-red-500/40 hover:text-red-500 disabled:opacity-60"
                 >
                   {busy === `del-${item.id}` ? (
-                    <Loading01Icon className="h-4 w-4 animate-spin" />
+                    <Loading01Icon className="h-6 w-6 animate-spin" />
                   ) : (
-                    <Delete01Icon className="h-4 w-4" />
+                    <Delete01Icon className="h-6 w-6" />
                   )}
                 </button>
               </div>

@@ -53,7 +53,7 @@ export function MobileMenu({
                 aria-label="Close menu"
                 className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-border text-text-secondary"
               >
-                <Cancel01Icon className="h-4 w-4" />
+                <Cancel01Icon className="h-6 w-6" />
               </button>
             </div>
 
@@ -69,7 +69,7 @@ export function MobileMenu({
                       {group.label}
                       <ArrowDown01Icon
                         className={cn(
-                          "h-4 w-4 text-text-muted transition-transform",
+                          "h-6 w-6 text-text-muted transition-transform",
                           isOpen && "rotate-180"
                         )}
                       />

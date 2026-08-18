@@ -73,9 +73,9 @@ export function SignInButton({ compact = false }: { compact?: boolean }) {
         )}
         <span className="max-w-[120px] truncate">{user.name ?? user.email}</span>
         {user.role === "admin" ? (
-          <DashboardSquare01Icon className="h-3.5 w-3.5 text-brand-blue" />
+          <DashboardSquare01Icon className="h-5.25 w-5.25 text-brand-blue" />
         ) : (
-          <UserIcon className="h-3.5 w-3.5 text-text-muted" />
+          <UserIcon className="h-5.25 w-5.25 text-text-muted" />
         )}
       </Link>
       <LogoutButton />
@@ -98,7 +98,7 @@ function LogoutButton() {
       }}
       className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-border bg-white text-text-secondary shadow-sm transition-colors hover:bg-background-secondary disabled:opacity-60"
     >
-      <Logout02Icon className="h-4 w-4" />
+      <Logout02Icon className="h-6 w-6" />
     </button>
   );
 }

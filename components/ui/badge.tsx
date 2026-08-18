@@ -6,16 +6,18 @@ export function Badge({
   className,
 }: {
   children: React.ReactNode;
-  tone?: "blue" | "green";
+  tone?: "blue" | "green" | "amber";
   className?: string;
 }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide",
+        "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] px-2.5 py-1 text-[11px] font-semibold tracking-wide",
         tone === "blue"
           ? "bg-badge-blue-bg text-badge-blue-text"
-          : "bg-badge-green-bg text-badge-green-text",
+          : tone === "green"
+            ? "bg-badge-green-bg text-badge-green-text"
+            : "bg-badge-amber-bg text-badge-amber-text",
         className
       )}
     >

@@ -38,6 +38,39 @@ export async function POST(request: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  // Support file uploads (multipart/form-data) through the content endpoint
+  const contentType = request.headers.get("content-type") || "";
+  if (contentType.includes("multipart/form-data")) {
+    try {
+      const form = await request.formData();
+      const file = form.get("file") as File | null;
+      if (!file) return NextResponse.json({ error: "file is required" }, { status: 400 });
+      if (typeof file.size !== "number" || file.size === 0) {
+        return NextResponse.json({ error: "Invalid file" }, { status: 400 });
+      }
+      const maxBytes = 6 * 1024 * 1024; // 6 MB
+      if (file.size > maxBytes) {
+        return NextResponse.json({ error: "File too large (max 6MB)" }, { status: 413 });
+      }
+      const mime = file.type || "";
+      if (!mime.startsWith("image/")) {
+        return NextResponse.json({ error: "Only image uploads are allowed" }, { status: 400 });
+      }
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fs = await import("fs");
+      const path = await import("path");
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      await fs.promises.mkdir(uploadsDir, { recursive: true });
+      const safeName = `${Date.now()}-${String(file.name).replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+      const outPath = path.join(uploadsDir, safeName);
+      await fs.promises.writeFile(outPath, buffer);
+      const url = `/uploads/${safeName}`;
+      return NextResponse.json({ url });
+    } catch (err) {
+      return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    }
+  }
+
   try {
     const body = (await request.json()) as {
       id?: number;

@@ -34,7 +34,7 @@ export function CookieConsent() {
       <div className="panel p-5 shadow-elevated">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <InformationSquareIcon className="h-5 w-5 text-brand-blue" />
+            <InformationSquareIcon className="h-7.5 w-7.5 text-brand-blue" />
             <h3 className="text-sm font-semibold text-text-primary">We use cookies</h3>
           </div>
           <button
@@ -42,7 +42,7 @@ export function CookieConsent() {
             aria-label="Dismiss"
             className="focus-ring rounded-full p-1 text-text-muted transition-colors hover:bg-background-secondary"
           >
-            <Cancel01Icon className="h-4 w-4" />
+            <Cancel01Icon className="h-6 w-6" />
           </button>
         </div>
         <p className="mt-2 text-[13px] leading-relaxed text-text-muted">

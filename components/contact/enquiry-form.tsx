@@ -75,7 +75,7 @@ export function EnquiryForm() {
   if (status === "submitted") {
     return (
       <div className="flex flex-col items-center gap-3 card p-10 text-center">
-        <CheckmarkCircle02Icon className="h-8 w-8 text-brand-green-hover" />
+        <CheckmarkCircle02Icon className="h-12 w-12 text-brand-green-hover" />
         <h3 className="text-xl font-semibold text-text-primary">Thanks — we&apos;ve got it.</h3>
         <p className="max-w-sm text-sm leading-relaxed text-text-muted">
           A confirmation email is on its way, along with a calendar link to book a call.
@@ -252,14 +252,14 @@ export function EnquiryForm() {
       <Button type="submit" size="lg" disabled={status === "submitting"} className="w-fit">
         {status === "submitting" ? (
           <>
-            <Loading01Icon className="h-4 w-4 animate-spin" /> Sending
+            <Loading01Icon className="h-6 w-6 animate-spin" /> Sending
           </>
         ) : (
           <>
             {reason === "project" && "Request Proposal"}
             {reason === "course" && "Apply"}
             {reason === "partnership" && "Send Proposal Request"}
-            <SentIcon className="h-4 w-4" />
+            <SentIcon className="h-6 w-6" />
           </>
         )}
       </Button>

@@ -28,12 +28,12 @@ export default async function SolutionsPage() {
     <>
       <PageHero eyebrow={hero.eyebrow} title={hero.title} description={hero.description}>
         <Button href="/contact" size="lg">
-          Book a Consultation <ArrowRight className="h-4 w-4" />
+          Book a Consultation <ArrowRight className="h-6 w-6" />
         </Button>
       </PageHero>
 
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="section">
+        <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {solutions.map((solution) => {
             const Icon = solution.icon;
             const isBlue = solution.accent === "blue";
@@ -41,32 +41,32 @@ export default async function SolutionsPage() {
               <Link
                 key={solution.slug}
                 href={`/solutions/${solution.slug}`}
-                className="focus-ring group flex flex-col gap-4 card card-hover p-7"
+                className="focus-ring group flex flex-col gap-3 card card-hover p-6"
               >
                 <Icon
                   className={cn(
-                    "h-5.5 w-5.5 shrink-0",
+                    "h-7 w-7 shrink-0",
                     isBlue ? "text-brand-blue" : "text-brand-green-hover"
                   )}
                 />
                 <div>
-                  <h2 className="text-xl font-semibold text-text-primary">{solution.name}</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-text-muted">
+                  <h2 className="text-lg font-semibold text-text-primary">{solution.name}</h2>
+                  <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
                     {solution.tagline}
                   </p>
                 </div>
-                <div className="mt-auto flex flex-wrap gap-2 pt-2">
+                <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
                   {solution.tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-border px-2.5 py-1 text-xs font-medium text-text-muted"
+                      className="rounded-[var(--radius-sm)] border border-border px-2 py-0.5 text-[11px] font-medium text-text-muted"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
                 <span className="flex items-center gap-1.5 text-sm font-semibold text-brand-blue opacity-0 transition-opacity group-hover:opacity-100">
-                  View solution <ArrowRight className="h-3.5 w-3.5" />
+                  View solution <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
             );

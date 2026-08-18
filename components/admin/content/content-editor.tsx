@@ -46,8 +46,40 @@ export function ContentEditor({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
+  // Upload state keyed by field key
+  const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
+  const [uploadErrors, setUploadErrors] = useState<Record<string, string | null>>({});
+
   function setField(key: string, value: unknown) {
     setData((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function uploadImageFile(file: File): Promise<string> {
+    const form = new FormData();
+    form.append("file", file, file.name);
+    const res = await fetch("/api/admin/uploads", {
+      method: "POST",
+      body: form,
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body?.error || "Upload failed");
+    }
+    const body = (await res.json()) as { url: string };
+    return body.url;
+  }
+
+  async function uploadFileForKey(key: string, file: File) {
+    try {
+      setUploadingKeys((s) => ({ ...s, [key]: true }));
+      setUploadErrors((s) => ({ ...s, [key]: null }));
+      const url = await uploadImageFile(file);
+      setField(key, url);
+    } catch (err) {
+      setUploadErrors((s) => ({ ...s, [key]: (err as Error).message }));
+    } finally {
+      setUploadingKeys((s) => ({ ...s, [key]: false }));
+    }
   }
 
   function fieldControl(field: ContentField) {
@@ -57,7 +89,13 @@ export function ContentEditor({
       return (
         <input
           id={`field-${key}`}
-          type={field.kind === "url" ? "url" : "text"}
+          // URLs are rendered as text, not type="url": the CMS links are
+          // usually relative route paths (e.g. "/contact", "#about") or
+          // tel:/mailto:, and the browser's native URL validation rejects
+          // anything without an absolute scheme. inputMode="url" still gives
+          // mobile keyboards the URL layout.
+          type="text"
+          inputMode={field.kind === "url" ? "url" : "text"}
           className={fieldClasses}
           value={asString(data[key])}
           onChange={(e) => setField(key, e.target.value)}
@@ -176,6 +214,61 @@ export function ContentEditor({
       );
     }
 
+    if (field.kind === "image") {
+      const currentUrl = asString(data[key]);
+      const uploading = Boolean(uploadingKeys[key]);
+      const error = uploadErrors[key] ?? null;
+      return (
+        <div className="flex flex-col gap-2">
+          {currentUrl ? (
+            <div className="flex items-center gap-3">
+              <img src={currentUrl} alt={field.label} className="h-24 w-40 rounded-md object-cover" />
+              <div className="flex flex-col gap-2">
+                <div className="text-sm text-text-primary">Uploaded</div>
+                <div className="flex gap-2">
+                  <label className="focus-ring inline-flex h-9 items-center rounded-full border border-border bg-background px-3 text-sm font-medium text-text-secondary cursor-pointer">
+                    Replace
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) uploadFileForKey(key, f);
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setField(key, "")}
+                    className="focus-ring inline-flex h-9 items-center rounded-full border border-border bg-background px-3 text-sm font-medium text-text-secondary"
+                  >
+                    Remove
+                  </button>
+                </div>
+                {uploading && <div className="text-xs text-text-muted">Uploading…</div>}
+                {error && <div className="text-xs text-red-500">{error}</div>}
+              </div>
+            </div>
+          ) : (
+            <label className="focus-ring inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary cursor-pointer">
+              Upload image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) uploadFileForKey(key, f);
+                }}
+                className="hidden"
+              />
+            </label>
+          )}
+          {field.helper && <div className="text-xs text-text-muted">{field.helper}</div>}
+        </div>
+      );
+    }
+
     if (field.kind === "icon") {
       const current = asString(data[key]) || "sparkles";
       return (
@@ -196,7 +289,7 @@ export function ContentEditor({
                     : "border-border bg-surface text-text-muted hover:border-brand-blue hover:text-brand-blue"
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-6 w-6" />
               </button>
             );
           })}
@@ -243,7 +336,7 @@ export function ContentEditor({
             className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:bg-background-secondary"
             aria-label="Back to list"
           >
-            <ArrowLeft01Icon className="h-4 w-4" />
+            <ArrowLeft01Icon className="h-6 w-6" />
           </Link>
           <div>
             <h1 className="text-xl font-semibold text-text-primary">
@@ -266,7 +359,7 @@ export function ContentEditor({
           >
             {saving ? (
               <>
-                <Loading01Icon className="h-4 w-4 animate-spin" /> Saving
+                <Loading01Icon className="h-6 w-6 animate-spin" /> Saving
               </>
             ) : (
               "Save"

@@ -1,34 +1,36 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------
-   KodeDristi Design Tokens
-   Source: Kodedristi_UI_Color_Theory_and_Design_System.docx
-   Philosophy: Neutral foundation + Blue authority + Green energy.
-   Blue and green are kept as distinct accents — never blended
-   into a single hue. Neutrals dominate; brand colors are used
-   as accents (~60% neutral / 25% blue / 15% green).
+   KodeDristi Design Tokens — v2
+   Philosophy: Bold tech identity. Indigo depth + green energy
+   + warm amber accent. Typography-driven hierarchy.
 --------------------------------------------------------- */
 
 :root {
-  /* Brand — indigo blue + green, per Kodedristi_UI_Color_Theory_and_Design_System.docx */
+  /* Brand — indigo blue + green + warm accent */
   --brand-blue: #2e3192;
   --brand-blue-hover: #25277a;
   --brand-blue-light: #eef0ff;
   --brand-green: #2bb673;
   --brand-green-hover: #1f9e61;
   --brand-green-light: #e8f8f0;
+  /* Warm accent — used sparingly for emphasis, CTAs, highlights */
+  --brand-amber: #e8930c;
+  --brand-amber-hover: #cf7f0a;
+  --brand-amber-light: #fef3e2;
 
-  /* Surfaces */
-  --background: #ffffff;
-  --background-secondary: #f7faf9;
+  /* Surfaces — warmer neutrals, not pure white/gray */
+  --background: #fafaf8;
+  --background-secondary: #f2f1ed;
   --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --border: #e5e7eb;
+  --surface-ink: #0f1219;
+  --border: #e0ddd6;
 
-  /* Text */
-  --text-primary: #111827;
-  --text-secondary: #374151;
-  --text-muted: #6b7280;
+  /* Text — richer darks, not default gray */
+  --text-primary: #0f1219;
+  --text-secondary: #2d3142;
+  --text-muted: #6b7178;
   --text-on-brand: #ffffff;
   --link: #2e3192;
 
@@ -39,60 +41,83 @@
   --badge-blue-text: #2e3192;
   --badge-green-bg: #e8f8f0;
   --badge-green-text: #1f9e61;
+  --badge-amber-bg: #fef3e2;
+  --badge-amber-text: #9a5c06;
 
   /* On-brand text */
   --text-on-green: #052e1c;
 
   /* Footer (always dark) */
-  --footer-bg: #111827;
+  --footer-bg: #0f1219;
   --footer-heading: #ffffff;
-  --footer-text: #d1d5db;
-  --footer-text-muted: #9ca3af;
-  --footer-divider: rgba(255, 255, 255, 0.1);
+  --footer-text: #c5c8ce;
+  --footer-text-muted: #8a8f99;
+  --footer-divider: rgba(255, 255, 255, 0.08);
 
-  /* Announcement banner — a static promo surface, not an interactive
-     control, so it keeps one accessible green across themes instead of
-     inheriting --brand-green-hover (which is tuned for hover states and
-     goes too light for white text on top of it in dark mode). */
+  /* Announcement banner */
   --announcement-bg: #1f9e61;
 
-  /* Shape / motion */
-  --radius-card: 18px;
-  --radius-control: 999px;
-  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.05), 0 12px 24px -16px rgba(17, 24, 39, 0.12);
-  --shadow-elevated: 0 2px 4px rgba(17, 24, 39, 0.06), 0 24px 48px -24px rgba(17, 24, 39, 0.24);
-  --shadow-menu: 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+  /* Shape — deliberate hierarchy, not uniform */
+  --radius-sm: 6px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+  --radius-control: 8px;
+
+  /* Elevation — distinct levels, not one shadow everywhere */
+  --shadow-card: 0 1px 3px rgba(15, 18, 25, 0.04), 0 0 0 1px rgba(15, 18, 25, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(15, 18, 25, 0.08), 0 0 0 1px rgba(15, 18, 25, 0.08);
+  --shadow-elevated: 0 8px 32px -8px rgba(15, 18, 25, 0.12), 0 0 0 1px rgba(15, 18, 25, 0.06);
+  --shadow-menu: 0 12px 40px -12px rgba(0, 0, 0, 0.15);
+
+  /* Motion language */
+  --duration-micro: 180ms;
+  --duration-ui: 320ms;
+  --duration-section: 720ms;
+  --duration-cinematic: 1100ms;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  --reveal-distance: 18px;
 }
 
 .dark {
-  --brand-blue: #3a3db0;
-  --brand-blue-hover: #4a4dc4;
-  --brand-blue-light: #171a3d;
-  --brand-green: #2bb673;
-  --brand-green-hover: #36c985;
+  --brand-blue: #5b5fd6;
+  --brand-blue-hover: #7b7fe6;
+  --brand-blue-light: #1a1d3a;
+  --brand-green: #34d17e;
+  --brand-green-hover: #4ee096;
   --brand-green-light: #0d2a20;
+  --brand-amber: #f5a623;
+  --brand-amber-hover: #f7b84d;
+  --brand-amber-light: #2a2008;
 
-  --background: #080b14;
-  --background-secondary: #0d1220;
-  --surface: #111827;
-  --surface-elevated: #172033;
-  --border: #273244;
+  --background: #0a0c12;
+  --background-secondary: #0f1219;
+  --surface: #151820;
+  --surface-elevated: #1c2030;
+  --surface-ink: #0f1219;
+  --border: #252830;
 
-  --text-primary: #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted: #9ca3af;
-  --text-on-brand: #ffffff;
-  --link: #a5a8ff;
+  --text-primary: #f0f1f3;
+  --text-secondary: #b8bcc6;
+  --text-muted: #7a7f8c;
+  --text-on-brand: #0a0c12;
+  --link: #8b8ff0;
 
   --success-bg: #0d2a20;
-  --success-text: #36c985;
-  --badge-blue-bg: #171a3d;
-  --badge-blue-text: #a5a8ff;
+  --success-text: #4ee096;
+  --badge-blue-bg: #1a1d3a;
+  --badge-blue-text: #8b8ff0;
   --badge-green-bg: #0d2a20;
-  --badge-green-text: #36c985;
+  --badge-green-text: #4ee096;
+  --badge-amber-bg: #2a2008;
+  --badge-amber-text: #f5a623;
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
-  --shadow-elevated: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 48px -24px rgba(0, 0, 0, 0.65);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-elevated: 0 12px 40px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 @theme inline {
@@ -102,11 +127,15 @@
   --color-brand-green: var(--brand-green);
   --color-brand-green-hover: var(--brand-green-hover);
   --color-brand-green-light: var(--brand-green-light);
+  --color-brand-amber: var(--brand-amber);
+  --color-brand-amber-hover: var(--brand-amber-hover);
+  --color-brand-amber-light: var(--brand-amber-light);
 
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
+  --color-surface-ink: var(--surface-ink);
   --color-border: var(--border);
 
   --color-text-primary: var(--text-primary);
@@ -121,6 +150,8 @@
   --color-badge-blue-text: var(--badge-blue-text);
   --color-badge-green-bg: var(--badge-green-bg);
   --color-badge-green-text: var(--badge-green-text);
+  --color-badge-amber-bg: var(--badge-amber-bg);
+  --color-badge-amber-text: var(--badge-amber-text);
 
   --color-text-on-green: var(--text-on-green);
 
@@ -132,20 +163,78 @@
 
   --color-announcement: var(--announcement-bg);
 
+  --radius-sm: var(--radius-sm);
   --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
   --radius-control: var(--radius-control);
   --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
   --shadow-elevated: var(--shadow-elevated);
   --shadow-menu: var(--shadow-menu);
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Monaco, Consolas,
-    "Liberation Mono", monospace;
+  --duration-micro: var(--duration-micro);
+  --duration-ui: var(--duration-ui);
+  --duration-section: var(--duration-section);
+  --duration-cinematic: var(--duration-cinematic);
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-out-quint: var(--ease-out-quint);
+  --ease-in-out-quint: var(--ease-in-out-quint);
+
+  --text-display-xl: clamp(2.75rem, 1.8rem + 4.2vw, 4.5rem);
+  --text-display-lg: clamp(2.125rem, 1.5rem + 2.8vw, 3.5rem);
+  --text-display-md: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+
+  --font-heading: var(--font-archivo), "Arial Black", Impact, sans-serif;
+  --font-body: var(--font-space-grotesk), "SF Pro Text", "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------
+   Icons render bold by default.
+
+   Both icon libraries in this project (hugeicons-react and
+   lucide-react) draw their glyphs with `stroke` and set the
+   stroke width as an SVG presentation attribute on the root
+   element. Presentation attributes lose to any CSS rule, so a
+   single rule here overrides every icon's weight to 2.5 —
+   "bold" — without touching individual call sites. (Sizes stay
+   per-icon via Tailwind classes; only the weight is global.)
+   Filled glyphs (e.g. the Google logo) ignore stroke-width.
+--------------------------------------------------------- */
+svg {
+  stroke-width: 2.5;
+}
+
+/* Icons must stay clean: no gradient, no halo, no background plate. */
+
+/* ---------------------------------------------------------
+   Lenis. These are the library's required styles, inlined
+   rather than imported so the whole cascade stays in one file.
+   Lenis only adds .lenis when it actually initialises, so the
+   native smooth-scroll fallback above still applies for
+   reduced-motion users and on /admin, where Lenis is off.
+--------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+/* Lenis drives scroll position itself; native smooth scrolling fights it
+   and produces a visible double-easing wobble on anchor jumps. */
+html.lenis {
+  scroll-behavior: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 /* Scrollbar — always visible, green thumb */
@@ -158,38 +247,39 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--brand-green);
+  background: var(--brand-amber);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-green-hover);
+  background: var(--brand-amber-hover);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--brand-green) transparent;
+  scrollbar-color: var(--brand-amber) transparent;
 }
 
-/* 0.5px line for cards/sections */
+/* 1px line for cards/sections */
 .hairline-border {
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--text-secondary);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
-  font-family: var(--font-sans);
-  letter-spacing: -0.02em;
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
 
 ::selection {
-  background: var(--brand-green-light);
+  background: var(--brand-amber-light);
   color: var(--text-primary);
 }
 
@@ -198,7 +288,7 @@ h1, h2, h3, h4, h5, h6 {
   outline: none;
 }
 .focus-ring:focus-visible {
-  outline: 2px solid var(--brand-blue);
+  outline: 2px solid var(--brand-amber);
   outline-offset: 2px;
 }
 
@@ -208,23 +298,30 @@ h1, h2, h3, h4, h5, h6 {
    compose these classes instead of inlining raw values.
 --------------------------------------------------------- */
 @layer components {
-  /* Elevated surface card */
+  /* Elevated surface card — crisp, not soft */
   .card {
     border-radius: var(--radius-card);
-    border: 0.5px solid color-mix(in srgb, var(--border) 70%, transparent);
+    border: 1px solid var(--border);
     background: var(--surface);
     box-shadow: var(--shadow-card);
   }
-  /* Interactive card: lift + deepen on hover */
-  .card-hover {
-    transition: transform 300ms, box-shadow 300ms, border-color 300ms;
-  }
-  .card-hover:hover {
-    transform: translateY(-4px);
-    border-color: var(--border);
+  /* Floating element card — heavier elevation */
+  .card-elevated {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    background: var(--surface-elevated);
     box-shadow: var(--shadow-elevated);
   }
-  /* Secondary panel (sidebars, callouts) */
+  /* Interactive card — border-intensifies on hover, not a generic lift */
+  .card-hover {
+    transition: border-color var(--duration-ui) var(--ease-out-quint),
+      box-shadow var(--duration-ui) var(--ease-out-quint);
+  }
+  .card-hover:hover {
+    border-color: color-mix(in srgb, var(--brand-blue) 25%, var(--border));
+    box-shadow: var(--shadow-card-hover);
+  }
+  /* Secondary panel */
   .panel {
     border-radius: var(--radius-card);
     border: 1px solid var(--border);
@@ -232,10 +329,219 @@ h1, h2, h3, h4, h5, h6 {
   }
   /* Small feature tile */
   .tile {
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     background: var(--surface);
   }
+
+  /* Section rhythm — deliberate density variation */
+  .section {
+    padding-block: clamp(5rem, 3rem + 7vw, 8rem);
+  }
+  .section-tight {
+    padding-block: clamp(3rem, 2rem + 4vw, 4.5rem);
+  }
+  .section-loose {
+    padding-block: clamp(6.5rem, 4rem + 10vw, 10rem);
+  }
+
+  /* Headings: fluid sizes with the heading font */
+  .display-xl {
+    font-family: var(--font-heading);
+    font-size: var(--text-display-xl);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    font-weight: 800;
+  }
+  .display-lg {
+    font-family: var(--font-heading);
+    font-size: var(--text-display-lg);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+  .display-md {
+    font-family: var(--font-heading);
+    font-size: var(--text-display-md);
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+  /* Long-form paragraphs: avoid orphans without balancing every line. */
+  .prose-measure {
+    max-width: 62ch;
+    text-wrap: pretty;
+  }
+
+  /* Uppercase micro-label — uses body font at small size for contrast with heading font */
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* Panels painted with a brand colour.
+     The global `h1–h6 { color: var(--text-primary) }` rule is a direct match
+     and therefore beats any inherited colour from a coloured parent — which
+     silently put near-black headings on indigo panels. Opting those headings
+     back into inheritance is the systemic fix; the alternative is remembering
+     to add `text-white` at every call site forever. */
+  .on-brand :is(h1, h2, h3, h4, h5, h6) {
+    color: inherit;
+  }
+
+  /* Underline that draws in from the left on hover — a micro-interaction
+     with a direction, rather than a color swap. */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-micro) var(--ease-out-quint);
+  }
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* Indeterminate route loader: a short dash sweeping the page
+     width. Green here, not blue, because it is a system signal
+     (like the scrollbar thumb), not a primary action. */
+  .loader-bar {
+    animation: loader-sweep 1.4s var(--ease-in-out-quint) infinite;
+  }
+
+  .loader-pulse {
+    animation: loader-breathe 2.4s ease-in-out infinite;
+  }
+}
+
+/* Route loader sweep: the dash travels its own width plus the
+   track, easing in and out so it reads as a beam, not a tick. */
+@keyframes loader-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+/* Route loader breathing: a slow, low-key presence that never
+   tries to become a spinner. */
+@keyframes loader-breathe {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+/* ---------------------------------------------------------
+   First-load splash. Sits behind the animated KodeDristi logo:
+   a soft blue-green glass glow that breathes, and a sonar ring
+   that pings outward — echoing the hero's AI scene, so the
+   site's loading state and its hero share a look.
+--------------------------------------------------------- */
+.splash-halo {
+  box-shadow: 0 0 60px rgba(46, 49, 146, 0.28), 0 0 130px rgba(43, 182, 115, 0.14);
+  animation: splash-breathe 2.6s ease-in-out infinite;
+}
+
+.splash-ring {
+  border: 1px solid rgba(43, 182, 115, 0.35);
+  animation: splash-ping 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes splash-breathe {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes splash-ping {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  70%, 100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   Hero AI scene. The robot/computing illustration floats
+   gently, and a bright pulse glides along the robot's orbital
+   ring — a living "compute orbit" with no WebGL. Reduced-motion
+   users get the static image via the media query below.
+--------------------------------------------------------- */
+.hero-ai-float {
+  animation: hero-ai-float 7s ease-in-out infinite;
+}
+
+@keyframes hero-ai-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+/* A short bright dash travelling the ring's front arc. The dash
+   length (~260 units) is much smaller than the arc (~1005 units),
+   so it reads as a glint sweeping around the robot. */
+.robot-ring-pulse {
+  stroke-dasharray: 260 745;
+  animation: robot-ring-pulse 4s linear infinite;
+}
+
+@keyframes robot-ring-pulse {
+  to { stroke-dashoffset: -1005; }
+}
+
+/* ---------------------------------------------------------
+   Homepage cinematic section system.
+
+   The page is a stack of visual layers managed by
+   CinematicBackground2. Sections alternate between:
+   - "cinematic-surface": solid background (masks the image beneath)
+   - "cinematic-image": transparent background (content sits over the revealed image)
+
+   The hero is special — it has its own backdrop and sticky content.
+--------------------------------------------------------- */
+
+/* Solid surface section — opaque background, masks the image layer below */
+.cinematic-surface {
+  position: relative;
+  z-index: 1;
+  background: var(--background);
+}
+
+/* Image section — transparent background so the cinematic layer shows through */
+.cinematic-image {
+  position: relative;
+  z-index: 1;
+}
+
+/* Text overlay for sections that need it over images */
+.cinematic-overlay {
+  position: relative;
+  z-index: 2;
+}
+
+/* Ensure content in cinematic-image sections stacks above the background layer */
+.cinematic-image > * {
+  position: relative;
+  z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -45,7 +45,7 @@ export function NavDropdown({
                 animate={{ opacity: 1, transition: { duration: 0.25, ease: "easeOut" } }}
                 exit={{ opacity: 0, transition: { duration: 0.3, ease: "easeOut" } }}
                 aria-hidden
-                className="pointer-events-none fixed inset-0 z-40 bg-black/20"
+                className="pointer-events-none fixed inset-0 z-40 bg-black/20 backdrop-blur-md"
               />
             )}
           </AnimatePresence>,

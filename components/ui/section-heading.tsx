@@ -9,7 +9,7 @@ export function SectionHeading({
   className,
 }: {
   eyebrow?: string;
-  eyebrowTone?: "blue" | "green";
+  eyebrowTone?: "blue" | "green" | "amber";
   title: React.ReactNode;
   description?: React.ReactNode;
   align?: "left" | "center";
@@ -26,18 +26,20 @@ export function SectionHeading({
       {eyebrow && (
         <span
           className={cn(
-            "text-[13px] font-semibold uppercase tracking-[0.12em]",
-            eyebrowTone === "blue" ? "text-brand-blue" : "text-brand-green-hover"
+            "eyebrow",
+            eyebrowTone === "blue"
+              ? "text-brand-blue"
+              : eyebrowTone === "green"
+                ? "text-brand-green-hover"
+                : "text-brand-amber"
           )}
         >
           {eyebrow}
         </span>
       )}
-      <h2 className="max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-text-primary sm:text-4xl">
-        {title}
-      </h2>
+      <h2 className="display-md font-semibold text-text-primary">{title}</h2>
       {description && (
-        <p className="max-w-2xl text-base leading-relaxed text-text-secondary sm:text-[17px] sm:leading-relaxed">
+        <p className="max-w-2xl text-[15px] leading-relaxed text-text-muted sm:text-base">
           {description}
         </p>
       )}

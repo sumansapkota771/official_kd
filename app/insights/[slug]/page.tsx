@@ -55,7 +55,7 @@ export default async function ArticleDetailPage({
         </div>
       </PageHero>
 
-      <section className="py-16 sm:py-20">
+      <section className="py-20 sm:py-24">
         <Container className="grid gap-12 lg:grid-cols-[1fr_280px]">
           <article className="flex flex-col gap-5">
             <Link

@@ -20,11 +20,11 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               type="button"
               onClick={() => setOpenIndex(open ? null : i)}
               aria-expanded={open}
-              className="focus-ring flex w-full cursor-pointer items-center justify-between gap-4 py-4 text-left"
+              className="focus-ring flex w-full cursor-pointer items-center justify-between gap-4 py-3.5 text-left"
             >
               <span
                 className={cn(
-                  "text-[17px] font-semibold tracking-tight text-text-primary transition-colors",
+                  "text-[15px] font-semibold tracking-tight text-text-primary transition-colors",
                   open && "text-brand-blue"
                 )}
               >
@@ -35,7 +35,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 transition={{ duration: 0.2, ease: "easeOut" }}
                 className="shrink-0 text-text-muted"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-5 w-5" />
               </motion.span>
             </button>
             <AnimatePresence initial={false}>
@@ -47,7 +47,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                   transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-5 pr-8 text-[15px] leading-relaxed text-text-muted">
+                  <p className="pb-4 pr-8 text-[14px] leading-relaxed text-text-muted">
                     {item.a}
                   </p>
                 </motion.div>

@@ -20,7 +20,7 @@ export function LogoutButton() {
       }}
       className="focus-ring inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary transition-colors hover:bg-background-secondary disabled:opacity-60"
     >
-      <Logout02Icon className="h-4 w-4" /> Sign out
+      <Logout02Icon className="h-6 w-6" /> Sign out
     </button>
   );
 }

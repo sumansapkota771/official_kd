@@ -30,16 +30,16 @@ export default async function ContactPage() {
         }
       />
 
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-10 lg:grid-cols-[1fr_320px]">
+      <section className="section">
+        <Container className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <EnquiryForm />
 
-          <aside className="flex flex-col gap-4">
+          <aside className="flex flex-col gap-3">
             {contactDetails.map((detail) => (
-              <div key={detail.label} className="flex items-start gap-3 card p-5">
-                <detail.icon className="h-4.5 w-4.5 shrink-0 text-brand-blue" />
+              <div key={detail.label} className="flex items-start gap-2.5 card p-4">
+                <detail.icon className="h-5 w-5 shrink-0 text-brand-blue" />
                 <div>
-                  <p className="text-xs font-medium text-text-muted">{detail.label}</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-text-muted">{detail.label}</p>
                   {detail.href ? (
                     <a href={detail.href} className="text-sm font-semibold text-text-primary hover:text-brand-blue">
                       {detail.value}

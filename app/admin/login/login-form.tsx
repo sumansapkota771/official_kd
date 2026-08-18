@@ -51,7 +51,7 @@ export function LoginForm({
     <div className="card w-full max-w-md p-8">
       <div className="flex items-center gap-3">
         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
-          <Shield01Icon className="h-5 w-5" />
+          <Shield01Icon className="h-7.5 w-7.5" />
         </span>
         <div>
           <h1 className="text-lg font-semibold text-text-primary">Admin Panel</h1>
@@ -117,7 +117,7 @@ export function LoginForm({
         >
           {loading ? (
             <>
-              <Loading01Icon className="h-4 w-4 animate-spin" /> Signing in
+              <Loading01Icon className="h-6 w-6 animate-spin" /> Signing in
             </>
           ) : (
             "Sign in to Dashboard"

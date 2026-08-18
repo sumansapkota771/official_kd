@@ -51,6 +51,27 @@ function logFallback(type: string, err: unknown) {
   console.warn(`[content] "${type}" not readable from DB, using fallback data.`, err);
 }
 
+// Serverless Postgres occasionally refuses the first connection of a session
+// (paused project waking up, cold TLS handshake). Admin writes are idempotent
+// (UPDATE by id / ON CONFLICT upsert), so retrying once after a connection
+// timeout is safe and turns a hard "connection timeout" failure into a no-op.
+function isConnectionTimeout(err: unknown): boolean {
+  const message = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  return message.includes("timeout") || message.includes("etimedout") || message.includes("econnreset");
+}
+
+async function retryOnTimeout<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    if (isConnectionTimeout(err)) {
+      await new Promise((resolve) => setTimeout(resolve, 1_500));
+      return fn();
+    }
+    throw err;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Seeding
 // ---------------------------------------------------------------------------
@@ -259,58 +280,68 @@ export async function saveContent(input: {
   if (!slug) throw new Error("Slug is required");
   const published = input.published ?? true;
 
-  if (input.id) {
-    const res = await db.query<Row>(
-      `UPDATE content_items
-       SET slug = $1, data = $2, published = $3, updated_at = now()
-       WHERE id = $4
-       RETURNING *`,
-      [slug, JSON.stringify(input.data), published, input.id]
-    );
-    if (!res.rows[0]) throw new Error("Content item not found");
-    return mapRow(res.rows[0]);
-  }
+  return retryOnTimeout(async () => {
+    if (input.id) {
+      const res = await db.query<Row>(
+        `UPDATE content_items
+         SET slug = $1, data = $2, published = $3, updated_at = now()
+         WHERE id = $4
+         RETURNING *`,
+        [slug, JSON.stringify(input.data), published, input.id]
+      );
+      if (!res.rows[0]) throw new Error("Content item not found");
+      return mapRow(res.rows[0]);
+    }
 
-  const positionRes = await db.query<{ pos: number }>(
-    "SELECT COALESCE(MAX(position), -1) + 1 AS pos FROM content_items WHERE type = $1",
-    [input.type]
-  );
-  const position = input.position ?? positionRes.rows[0].pos;
-  const res = await db.query<Row>(
-    `INSERT INTO content_items (type, slug, data, position, published)
-     VALUES ($1, $2, $3, $4, $5)
-     ON CONFLICT (type, slug) DO UPDATE SET
-       data = EXCLUDED.data,
-       published = EXCLUDED.published,
-       position = EXCLUDED.position,
-       updated_at = now()
-     RETURNING *`,
-    [input.type, slug, JSON.stringify(input.data), position, published]
-  );
-  return mapRow(res.rows[0]);
+    const positionRes = await db.query<{ pos: number }>(
+      "SELECT COALESCE(MAX(position), -1) + 1 AS pos FROM content_items WHERE type = $1",
+      [input.type]
+    );
+    const position = input.position ?? positionRes.rows[0].pos;
+    const res = await db.query<Row>(
+      `INSERT INTO content_items (type, slug, data, position, published)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (type, slug) DO UPDATE SET
+         data = EXCLUDED.data,
+         published = EXCLUDED.published,
+         position = EXCLUDED.position,
+         updated_at = now()
+       RETURNING *`,
+      [input.type, slug, JSON.stringify(input.data), position, published]
+    );
+    return mapRow(res.rows[0]);
+  });
 }
 
 export async function deleteContentItem(id: number): Promise<void> {
   await ensureSchema();
-  await db.query("DELETE FROM content_items WHERE id = $1", [id]);
+  await retryOnTimeout(() =>
+    db.query("DELETE FROM content_items WHERE id = $1", [id]).then(() => undefined)
+  );
 }
 
 export async function setContentPublished(id: number, published: boolean): Promise<void> {
   await ensureSchema();
-  await db.query(
-    "UPDATE content_items SET published = $1, updated_at = now() WHERE id = $2",
-    [published, id]
+  await retryOnTimeout(() =>
+    db
+      .query("UPDATE content_items SET published = $1, updated_at = now() WHERE id = $2", [
+        published,
+        id,
+      ])
+      .then(() => undefined)
   );
 }
 
 export async function reorderContent(type: string, orderedIds: number[]): Promise<void> {
   await ensureSchema();
-  for (let i = 0; i < orderedIds.length; i += 1) {
-    await db.query(
-      "UPDATE content_items SET position = $1, updated_at = now() WHERE id = $2 AND type = $3",
-      [i, orderedIds[i], type]
-    );
-  }
+  await retryOnTimeout(async () => {
+    for (let i = 0; i < orderedIds.length; i += 1) {
+      await db.query(
+        "UPDATE content_items SET position = $1, updated_at = now() WHERE id = $2 AND type = $3",
+        [i, orderedIds[i], type]
+      );
+    }
+  });
 }
 
 export async function getTypeSummary(): Promise<

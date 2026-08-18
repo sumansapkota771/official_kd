@@ -55,9 +55,9 @@ export function Navbar() {
     <button
       onClick={() => setMobileOpen(true)}
       aria-label="Open menu"
-      className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full border-[0.5px] border-border text-text-secondary lg:hidden"
+      className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-sm)] border border-border text-text-secondary lg:hidden"
     >
-      <Menu01Icon className="h-4.5 w-4.5" />
+      <Menu01Icon className="h-6.75 w-6.75" />
     </button>
   );
 
@@ -83,14 +83,14 @@ export function Navbar() {
                 href="/learn/ai-machine-learning"
                 className="inline-flex shrink-0 items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline"
               >
-                See the course <ArrowRight01Icon className="h-3 w-3" />
+                See the course <ArrowRight01Icon className="h-4.5 w-4.5" />
               </Link>
               <button
                 onClick={() => setAnnouncementOpen(false)}
                 aria-label="Dismiss announcement"
                 className="focus-ring ml-1 shrink-0 rounded-full p-0.5 hover:bg-white/15"
               >
-                <Cancel01Icon className="h-3.5 w-3.5" />
+                <Cancel01Icon className="h-5.25 w-5.25" />
               </button>
             </div>
           </motion.div>
@@ -114,11 +114,11 @@ export function Navbar() {
               </span>
               <div className="flex items-center gap-3 text-text-secondary sm:gap-4">
                 <a href="tel:+9779851362001" className="flex items-center gap-1.5 font-medium hover:text-brand-blue">
-                  <Call02Icon className="h-3.5 w-3.5" />
+                  <Call02Icon className="h-5.25 w-5.25" />
                   <span className="hidden sm:inline">+977 9851362001</span>
                 </a>
                 <span className="hidden items-center gap-1.5 md:flex">
-                  <Time02Icon className="h-3.5 w-3.5" /> 9:00 AM – 7:00 PM
+                  <Time02Icon className="h-5.25 w-5.25" /> 9:00 AM – 7:00 PM
                 </span>
                 <ThemeToggle />
               </div>

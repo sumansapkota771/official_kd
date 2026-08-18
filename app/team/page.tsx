@@ -26,19 +26,19 @@ export default async function TeamPage() {
         }
       >
         <Button href="/careers" size="lg">
-          View Open Roles <ArrowRight className="h-4 w-4" />
+          View Open Roles <ArrowRight className="h-6 w-6" />
         </Button>
       </PageHero>
 
-      <section className="py-16 sm:py-20">
-        <Container className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="section">
+        <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {team.map((person) => (
-            <div key={person.name} className="card p-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-lg font-bold text-white">
+            <div key={person.name} className="card p-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] bg-brand-blue text-sm font-bold text-white">
                 {person.name.split(" ").map((n) => n[0]).join("")}
               </div>
-              <h3 className="mt-4 font-semibold text-text-primary">{person.name}</h3>
-              <p className="text-sm font-medium text-brand-blue">{person.role}</p>
+              <h3 className="mt-3 font-semibold text-text-primary">{person.name}</h3>
+              <p className="mt-0.5 text-sm font-medium text-brand-green-hover">{person.role}</p>
               <p className="mt-2 text-sm leading-relaxed text-text-muted">{person.bio}</p>
             </div>
           ))}

@@ -20,7 +20,11 @@ export async function POST(req: Request) {
       visitorId: typeof body.visitorId === "string" ? body.visitorId : null,
     });
   } catch {
-    return NextResponse.json({ ok: false }, { status: 500 });
+    // Analytics is fire-and-forget. A 500 here surfaces in every visitor's
+    // console and in error monitoring for something the client can neither
+    // retry nor act on — and a page view is not "failed" because we couldn't
+    // record it. 202 says "received, not persisted", which is the truth.
+    return NextResponse.json({ ok: false }, { status: 202 });
   }
   return NextResponse.json({ ok: true });
 }

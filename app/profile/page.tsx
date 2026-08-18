@@ -18,7 +18,7 @@ export default async function ProfilePage() {
     return (
       <main className="flex min-h-[60vh] items-center justify-center px-5 py-16">
         <div className="card flex max-w-md flex-col items-center gap-4 p-10 text-center">
-          <GraduationScrollIcon className="h-10 w-10 text-brand-blue" />
+          <GraduationScrollIcon className="h-15 w-15 text-brand-blue" />
           <h1 className="text-xl font-semibold text-text-primary">You&apos;re not signed in</h1>
           <p className="text-sm leading-relaxed text-text-muted">
             Sign in with Google to see your profile and the courses you&apos;ve applied for.
@@ -60,7 +60,7 @@ export default async function ProfilePage() {
                 {session.name ?? "KodeDristi member"}
               </h1>
               <p className="mt-0.5 flex items-center gap-1.5 text-sm text-text-muted">
-                <Mail01Icon className="h-3.5 w-3.5" /> {session.email}
+                <Mail01Icon className="h-5.25 w-5.25" /> {session.email}
               </p>
               <p className="mt-1 text-xs text-text-muted">
                 Member since {user ? user.created_at.toLocaleDateString() : "—"}
@@ -73,7 +73,7 @@ export default async function ProfilePage() {
                 href="/admin"
                 className="focus-ring inline-flex h-10 items-center gap-2 rounded-full bg-brand-blue px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-blue-hover"
               >
-                <DashboardSquare01Icon className="h-4 w-4" /> Admin dashboard
+                <DashboardSquare01Icon className="h-6 w-6" /> Admin dashboard
               </Link>
             )}
             <LogoutButton />
@@ -82,7 +82,7 @@ export default async function ProfilePage() {
 
         <section className="card mt-8 p-6 sm:p-8">
           <div className="flex items-center gap-2">
-            <GraduationScrollIcon className="h-5 w-5 text-brand-green" />
+            <GraduationScrollIcon className="h-7.5 w-7.5 text-brand-green" />
             <h2 className="text-lg font-semibold text-text-primary">My courses</h2>
           </div>
           {courses.length === 0 ? (
@@ -108,7 +108,7 @@ export default async function ProfilePage() {
                     </span>
                   </div>
                   <p className="mt-2 flex items-center gap-1.5 text-xs text-text-muted">
-                    <Calendar02Icon className="h-3.5 w-3.5" /> Applied {c.enrolled_at.toLocaleDateString()}
+                    <Calendar02Icon className="h-5.25 w-5.25" /> Applied {c.enrolled_at.toLocaleDateString()}
                   </p>
                   {c.course_slug && (
                     <Link

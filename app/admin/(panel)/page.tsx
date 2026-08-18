@@ -65,7 +65,7 @@ export default async function AdminDashboard() {
         {stats.map((s) => (
           <div key={s.label} className="card flex items-center gap-4 p-5">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
-              <s.icon className="h-5 w-5" />
+              <s.icon className="h-7.5 w-7.5" />
             </span>
             <div>
               <p className="text-2xl font-semibold text-text-primary">{s.value}</p>
@@ -84,14 +84,14 @@ export default async function AdminDashboard() {
           >
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-green/10 text-brand-green-hover">
-                <sc.icon className="h-5 w-5" />
+                <sc.icon className="h-7.5 w-7.5" />
               </span>
               <div>
                 <p className="text-sm font-semibold text-text-primary">{sc.label}</p>
                 <p className="text-xs text-text-muted">{sc.description}</p>
               </div>
             </div>
-            <ArrowRight01Icon className="h-4 w-4 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+            <ArrowRight01Icon className="h-6 w-6 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand-blue" />
           </Link>
         ))}
       </div>
@@ -139,7 +139,7 @@ export default async function AdminDashboard() {
 
       <section className="card p-6">
         <div className="flex items-center gap-2">
-          <ChartBarLineIcon className="h-4 w-4 text-brand-blue" />
+          <ChartBarLineIcon className="h-6 w-6 text-brand-blue" />
           <h2 className="text-sm font-semibold text-text-primary">Recent visits</h2>
         </div>
         <div className="mt-4 overflow-x-auto">

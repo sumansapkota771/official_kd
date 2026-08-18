@@ -1,59 +1,115 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight01Icon, Rocket01Icon, SparklesIcon, Mortarboard01Icon } from "hugeicons-react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { ArrowRight01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
+import { Magnetic } from "@/components/motion/magnetic";
+import { HeroBackdrop } from "@/components/home/hero-backdrop";
+import { DURATION, EASE } from "@/lib/motion";
 import type { HomeHeroData } from "@/lib/content/schemas";
 
+/**
+ * Entrance choreography.
+ *
+ * The order is deliberate and matches how the page is read: context (eyebrow)
+ * → claim (headline) → detail (paragraph) → action (CTAs) → evidence (card).
+ * Each step overlaps the previous one, so it reads as a single settling
+ * movement rather than five separate animations queued up.
+ */
+const container: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.075, delayChildren: 0.05 } },
+};
+
+const rise: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: DURATION.section, ease: EASE.outExpo },
+  },
+};
+
 export function Hero({ content }: { content: HomeHeroData }) {
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section className="relative overflow-hidden bg-background-secondary">
-      <Container className="relative grid gap-14 py-20 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
+    <section
+      data-section-key="hero"
+      className="cinematic-image relative isolate overflow-hidden"
+    >
+      <HeroBackdrop />
+
+      <Container className="relative z-10 grid gap-16 py-24 sm:py-32 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-40">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          variants={container}
+          initial="hidden"
+          animate="visible"
           className="flex flex-col gap-6"
         >
-          <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-brand-blue">
+          <motion.span
+            variants={rise}
+            className="eyebrow text-brand-green"
+          >
             {content.eyebrow}
-          </span>
-          <h1 className="max-w-xl text-4xl font-semibold leading-[1.05] tracking-[-0.03em] text-text-primary sm:text-5xl lg:text-[3.4rem]">
-            {content.title}
-          </h1>
-          <p className="max-w-lg text-[17px] leading-relaxed text-text-secondary">
-            {content.paragraph}
-          </p>
+          </motion.span>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button href={content.primaryHref} size="lg">
-              {content.primaryLabel} <ArrowRight01Icon className="h-4 w-4" />
-            </Button>
+          <motion.h1
+            variants={rise}
+            className="display-xl max-w-2xl font-semibold text-white"
+          >
+            {content.title}
+          </motion.h1>
+
+          <motion.p
+            variants={rise}
+            className="prose-measure text-[17px] leading-relaxed text-white/70"
+          >
+            {content.paragraph}
+          </motion.p>
+
+          <motion.div variants={rise} className="flex flex-wrap items-center gap-3 pt-2">
+            {/* Magnetic is applied to exactly one control on the page — the
+                primary conversion. Its pull only means something while it is
+                the only thing that pulls. */}
+            <Magnetic>
+              <Button href={content.primaryHref} size="lg">
+                {content.primaryLabel}
+                <ArrowRight01Icon className="h-6 w-6 transition-transform duration-micro ease-out-quint group-hover/btn:translate-x-0.5" />
+              </Button>
+            </Magnetic>
             <Button href={content.secondaryHref} variant="secondary" size="lg">
               {content.secondaryLabel}
             </Button>
-          </div>
-          <Button href={content.tertiaryHref} variant="ghost" size="sm" className="w-fit">
-            {content.tertiaryLabel} <ArrowRight01Icon className="h-3.5 w-3.5" />
-          </Button>
+          </motion.div>
+
+          <motion.div variants={rise}>
+            <Button href={content.tertiaryHref} variant="ghost" size="sm" className="w-fit">
+              {content.tertiaryLabel} <ArrowRight01Icon className="h-5.25 w-5.25" />
+            </Button>
+          </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            duration: DURATION.cinematic,
+            ease: EASE.outExpo,
+            delay: 0.28,
+          }}
           className="relative mx-auto w-full max-w-md"
         >
-          <div className="relative rounded-3xl border-[0.5px] border-border bg-surface p-6 shadow-elevated">
-            <div className="flex items-center gap-3 border-b border-border pb-4">
+          {/* <div className="card-elevated relative p-7">
+            <div className="flex items-center gap-3 border-b border-border pb-5">
               <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />
               <span className="h-2.5 w-2.5 rounded-full bg-brand-green" />
-              <span className="ml-auto text-xs font-semibold text-text-muted">
+              <span className="ml-auto font-mono text-xs font-semibold text-text-muted">
                 delivery.status
               </span>
             </div>
-            <div className="flex flex-col gap-4 pt-5">
+            <div className="flex flex-col gap-5 pt-6">
               <StatusRow
                 icon={Rocket01Icon}
                 tone="blue"
@@ -73,46 +129,18 @@ export function Hero({ content }: { content: HomeHeroData }) {
                 meta="Starts 1 Sept"
               />
             </div>
-          </div>
+          </div> */}
 
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-6 -left-6 card-elevated px-4 py-3 shadow-elevated"
+          {/* <motion.div
+            animate={reduceMotion ? undefined : { y: [0, -7, 0] }}
+            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+            className="card-elevated absolute -bottom-6 -left-6 px-4 py-3"
           >
-            <p className="text-2xl font-bold text-brand-green">10+</p>
+            <p className="text-2xl font-bold text-brand-green-hover">10+</p>
             <p className="text-xs font-medium text-text-muted">Projects delivered</p>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </Container>
     </section>
-  );
-}
-
-function StatusRow({
-  icon: Icon,
-  tone,
-  title,
-  meta,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  tone: "blue" | "green";
-  title: string;
-  meta: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <Icon
-        className={
-          tone === "blue"
-            ? "h-4.5 w-4.5 shrink-0 text-brand-blue"
-            : "h-4.5 w-4.5 shrink-0 text-brand-green-hover"
-        }
-      />
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-text-primary">{title}</p>
-        <p className="text-xs text-text-muted">{meta}</p>
-      </div>
-    </div>
   );
 }
