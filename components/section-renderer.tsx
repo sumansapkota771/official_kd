@@ -54,7 +54,7 @@ export async function SectionRenderer() {
         .map((section) => {
           switch (section.type) {
             case "hero":
-              return <Hero key="hero" content={hero} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <Hero key="hero" content={hero} className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
             case "trust":
               return <TrustStrip key="trust" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
             case "flagship":

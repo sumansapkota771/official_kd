@@ -519,18 +519,13 @@ h1, h2, h3, h4, h5, h6 {
    The hero is special — it has its own backdrop and sticky content.
 --------------------------------------------------------- */
 
-/* Solid surface section — subtle background tint, NOT fully opaque.
-   The cinematic layer beneath must remain partially visible for the
-   stacked-panel reveal effect to work. */
+/* Solid surface section — opaque background that masks the cinematic image beneath.
+   This creates the "stacked panel" reveal effect: as you scroll past a surface
+   section, the next image section is revealed via clip-path seam. */
 .cinematic-surface {
   position: relative;
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--background) 92%, transparent) 0%,
-    color-mix(in srgb, var(--background) 85%, transparent) 100%
-  );
-  backdrop-filter: blur(1px);
+  background: var(--background);
 }
 
 /* Image section — transparent background so the cinematic layer shows through */

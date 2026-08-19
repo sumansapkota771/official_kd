@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/motion/magnetic";
 import { HeroBackdrop } from "@/components/home/hero-backdrop";
 import { DURATION, EASE } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 import type { HomeHeroData } from "@/lib/content/schemas";
 
 /**
@@ -31,7 +32,7 @@ const rise: Variants = {
   },
 };
 
-export function Hero({ content, imageUrl, mobileImageUrl }: { content: HomeHeroData; imageUrl?: string; mobileImageUrl?: string }) {
+export function Hero({ content, imageUrl, mobileImageUrl, className }: { content: HomeHeroData; imageUrl?: string; mobileImageUrl?: string; className?: string }) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -39,7 +40,7 @@ export function Hero({ content, imageUrl, mobileImageUrl }: { content: HomeHeroD
       data-section-key="hero"
       data-image-url={imageUrl || undefined}
       data-mobile-image-url={mobileImageUrl || undefined}
-      className="relative isolate overflow-hidden"
+      className={cn("relative isolate overflow-hidden", className)}
     >
       <HeroBackdrop />
 

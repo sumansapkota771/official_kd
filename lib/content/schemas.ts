@@ -895,116 +895,10 @@ CONTENT_SCHEMAS.push({
     { key: "focal", label: "Focal position", kind: "text", placeholder: "center center" },
     { key: "overlayOpacity", label: "Overlay opacity (0–40)", kind: "select", options: ["0", "10", "20", "30", "40"] },
   ],
-  fallback: () => [
-    {
-      slug: "hero",
-      data: {
-        name: "Hero — Abstract tech",
-        sectionKey: "hero",
-        imageUrl:
-          "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "trust",
-      data: {
-        name: "Trust — Abstract lines",
-        sectionKey: "home-trust",
-        imageUrl:
-          "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "35",
-      },
-    },
-    {
-      slug: "flagship",
-      data: {
-        name: "Flagship — Data center",
-        sectionKey: "home-flagship",
-        imageUrl:
-          "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "services",
-      data: {
-        name: "Services — Circuit",
-        sectionKey: "solutions-overview",
-        imageUrl:
-          "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "courses",
-      data: {
-        name: "Courses — Code screen",
-        sectionKey: "courses-overview",
-        imageUrl:
-          "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "work",
-      data: {
-        name: "Work — City skyline",
-        sectionKey: "tech-delivery",
-        imageUrl:
-          "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center 40%",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "about",
-      data: {
-        name: "About — Team collaboration",
-        sectionKey: "team-overview",
-        imageUrl:
-          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-    {
-      slug: "cta",
-      data: {
-        name: "CTA — Gradient mesh",
-        sectionKey: "home-final-cta",
-        imageUrl:
-          "https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "25",
-      },
-    },
-    {
-      slug: "testimonials",
-      data: {
-        name: "Testimonials — Night workspace",
-        sectionKey: "testimonials",
-        imageUrl:
-          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1920&q=80",
-        mobileImageUrl: "",
-        focal: "center center",
-        overlayOpacity: "30",
-      },
-    },
-  ],
+  // No seeded imagery: backgrounds come from images uploaded in the admin
+  // panel. The old seed pointed at Unsplash placeholders, which shipped as
+  // real content whenever this table was empty.
+  fallback: () => [],
 });
 
 // Homepage section ordering and visibility (admin-manageable)
@@ -1020,12 +914,12 @@ CONTENT_SCHEMAS.push({
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
-    { key: "bgMode", label: "Background mode", kind: "select", options: ["surface", "image"], helper: "surface = solid background, image = transparent (shows background image)" },
+    { key: "bgMode", label: "Background mode", kind: "select", options: ["surface", "image"], helper: "image = transparent, this section reveals its background image. surface = solid panel that hides the image below it — an image set here will NOT be visible." },
     { key: "sectionKey", label: "Cinematic section key", kind: "select", options: [
       "hero", "home-trust", "home-flagship", "solutions-overview", "courses-overview",
       "tech-delivery", "team-overview", "home-final-cta", "testimonials"
     ], helper: "Section key — used to match a visual-chapter fallback if no image is set below" },
-    { key: "imageUrl", label: "Background image (desktop)", kind: "image", helper: "Shown when background mode is 'image'. Overrides the visual-chapter fallback for this section." },
+    { key: "imageUrl", label: "Background image (desktop)", kind: "image", helper: "Only shown when background mode is 'image'. Overrides the Cinematic-backgrounds entry for this section key. Leave empty to use that entry, or the image from the section above it." },
     { key: "mobileImageUrl", label: "Background image (mobile)", kind: "image", helper: "Optional separate image for mobile screens" },
   ],
   fallback: () => [

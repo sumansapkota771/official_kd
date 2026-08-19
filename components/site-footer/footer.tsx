@@ -8,14 +8,25 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-footer-bg text-footer-text">
-      <Container className="grid gap-8 py-12 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
-        <div className="flex flex-col gap-3">
+    <footer
+      // Column count is derived from navGroups so it can never desync from the
+      // data again — a hardcoded repeat(4) dropped the fifth group onto a
+      // second row. Set here because custom properties inherit into Container.
+      style={
+        {
+          "--footer-cols": `1.4fr repeat(${navGroups.length}, minmax(0, 1fr))`,
+        } as React.CSSProperties
+      }
+      className="relative z-10 border-t border-border bg-footer-bg text-footer-text"
+    >
+      <Container className="grid gap-8 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-(--footer-cols)">
+        <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-3 lg:col-span-1">
           <div className="relative h-10 w-40">
             <Image
               src="/images/logo.png"
               alt="KodeDristi Software Pvt. Ltd."
               fill
+              sizes="160px"
               className="object-contain object-left"
             />
           </div>
