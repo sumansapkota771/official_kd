@@ -8,6 +8,7 @@ import {
   type ContentSchema,
   type SeedRow,
 } from "@/lib/content/schemas";
+import { cached, invalidateCache, TTL } from "@/lib/cache";
 
 type Row = {
   id: number;
@@ -147,21 +148,25 @@ export async function listContent<T = Record<string, unknown>>(
 ): Promise<ContentItem<T>[]> {
   const schema = getSchema(type);
   const publishedOnly = opts.publishedOnly !== false;
-  try {
-    await ensureSeeded(schema);
-    const res = await db.query<Row>(
-      "SELECT * FROM content_items WHERE type = $1 ORDER BY position ASC, id ASC",
-      [type]
-    );
-    let items = res.rows.map((r) => mapRow<T>(r));
-    if (publishedOnly) items = items.filter((i) => i.published);
-    return items;
-  } catch (err) {
-    logFallback(type, err);
-    let items = fallbackItems<T>(schema);
-    if (publishedOnly) items = items.filter((i) => i.published);
-    return items;
-  }
+  const cacheKey = `list:${type}:${publishedOnly ? "pub" : "all"}`;
+
+  return cached<ContentItem<T>[]>(cacheKey, TTL.SHORT, async () => {
+    try {
+      await ensureSeeded(schema);
+      const res = await db.query<Row>(
+        "SELECT * FROM content_items WHERE type = $1 AND deleted_at IS NULL ORDER BY position ASC, id ASC",
+        [type]
+      );
+      let items = res.rows.map((r) => mapRow<T>(r));
+      if (publishedOnly) items = items.filter((i) => i.published);
+      return items;
+    } catch (err) {
+      logFallback(type, err);
+      let items = fallbackItems<T>(schema);
+      if (publishedOnly) items = items.filter((i) => i.published);
+      return items;
+    }
+  });
 }
 
 export async function getContentBySlug<T = Record<string, unknown>>(
@@ -172,7 +177,7 @@ export async function getContentBySlug<T = Record<string, unknown>>(
   try {
     await ensureSeeded(schema);
     const res = await db.query<Row>(
-      "SELECT * FROM content_items WHERE type = $1 AND slug = $2 AND published = true LIMIT 1",
+      "SELECT * FROM content_items WHERE type = $1 AND slug = $2 AND published = true AND deleted_at IS NULL LIMIT 1",
       [type, slug]
     );
     if (res.rows[0]) return mapRow<T>(res.rows[0]);
@@ -214,7 +219,7 @@ export async function getSingleton<T = Record<string, unknown>>(
   try {
     await ensureSeeded(schema);
     const res = await db.query<Row>(
-      "SELECT * FROM content_items WHERE type = $1 ORDER BY position ASC, id ASC LIMIT 1",
+      "SELECT * FROM content_items WHERE type = $1 AND deleted_at IS NULL ORDER BY position ASC, id ASC LIMIT 1",
       [type]
     );
     if (res.rows[0]) return mapRow<T>(res.rows[0]);
@@ -257,7 +262,7 @@ export async function listContentRaw<T = Record<string, unknown>>(
   try {
     await ensureSeeded(schema);
     const res = await db.query<Row>(
-      "SELECT * FROM content_items WHERE type = $1 ORDER BY position ASC, id ASC",
+      "SELECT * FROM content_items WHERE type = $1 AND deleted_at IS NULL ORDER BY position ASC, id ASC",
       [type]
     );
     return res.rows.map((r) => mapRow<T>(r));
@@ -290,6 +295,7 @@ export async function saveContent(input: {
         [slug, JSON.stringify(input.data), published, input.id]
       );
       if (!res.rows[0]) throw new Error("Content item not found");
+      invalidateCache("list:");
       return mapRow(res.rows[0]);
     }
 
@@ -309,6 +315,7 @@ export async function saveContent(input: {
        RETURNING *`,
       [input.type, slug, JSON.stringify(input.data), position, published]
     );
+    invalidateCache(`list:${input.type}`);
     return mapRow(res.rows[0]);
   });
 }
@@ -316,8 +323,27 @@ export async function saveContent(input: {
 export async function deleteContentItem(id: number): Promise<void> {
   await ensureSchema();
   await retryOnTimeout(() =>
-    db.query("DELETE FROM content_items WHERE id = $1", [id]).then(() => undefined)
+    db
+      .query(
+        "UPDATE content_items SET deleted_at = now(), updated_at = now() WHERE id = $1 AND deleted_at IS NULL",
+        [id]
+      )
+      .then(() => undefined)
   );
+  invalidateCache("list:");
+}
+
+export async function restoreContentItem(id: number): Promise<void> {
+  await ensureSchema();
+  await retryOnTimeout(() =>
+    db
+      .query(
+        "UPDATE content_items SET deleted_at = NULL, updated_at = now() WHERE id = $1",
+        [id]
+      )
+      .then(() => undefined)
+  );
+  invalidateCache("list:");
 }
 
 export async function setContentPublished(id: number, published: boolean): Promise<void> {
@@ -330,6 +356,7 @@ export async function setContentPublished(id: number, published: boolean): Promi
       ])
       .then(() => undefined)
   );
+  invalidateCache("list:");
 }
 
 export async function reorderContent(type: string, orderedIds: number[]): Promise<void> {
@@ -342,6 +369,7 @@ export async function reorderContent(type: string, orderedIds: number[]): Promis
       );
     }
   });
+  invalidateCache(`list:${type}`);
 }
 
 export async function getTypeSummary(): Promise<

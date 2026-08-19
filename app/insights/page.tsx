@@ -5,8 +5,9 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Badge } from "@/components/ui/badge";
 import { getArticles, getPageHero } from "@/lib/content/resolvers";
+import { ArticleJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "News & Insights",
@@ -24,6 +25,17 @@ export default async function InsightsPage() {
 
   return (
     <>
+      <OrganizationJsonLd />
+      {articles.map((article) => (
+        <ArticleJsonLd
+          key={article.slug}
+          title={article.title}
+          description={article.excerpt}
+          author="KodeDristi Team"
+          datePublished={article.date}
+          url={`https://official-kd.vercel.app/insights/${article.slug}`}
+        />
+      ))}
       <PageHero eyebrow={hero.eyebrow} title={hero.title} description={hero.description} />
 
       <section className="section">

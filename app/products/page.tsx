@@ -13,7 +13,7 @@ import { getPartners } from "@/lib/content/resolvers";
 import { getProducts } from "@/lib/content/resolvers";
 import { getTestimonials } from "@/lib/content/resolvers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Products",

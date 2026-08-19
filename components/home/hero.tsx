@@ -31,13 +31,15 @@ const rise: Variants = {
   },
 };
 
-export function Hero({ content }: { content: HomeHeroData }) {
+export function Hero({ content, imageUrl, mobileImageUrl }: { content: HomeHeroData; imageUrl?: string; mobileImageUrl?: string }) {
   const reduceMotion = useReducedMotion();
 
   return (
     <section
       data-section-key="hero"
-      className="cinematic-image relative isolate overflow-hidden"
+      data-image-url={imageUrl || undefined}
+      data-mobile-image-url={mobileImageUrl || undefined}
+      className="relative isolate overflow-hidden"
     >
       <HeroBackdrop />
 

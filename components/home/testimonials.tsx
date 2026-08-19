@@ -5,7 +5,7 @@ import { TestimonialRail } from "@/components/home/testimonial-rail";
 import { getSectionHeading, getTestimonials } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function Testimonials({ className }: { className?: string }) {
+export async function Testimonials({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const [testimonials, heading] = await Promise.all([
     getTestimonials(),
     getSectionHeading("testimonials"),
@@ -14,7 +14,7 @@ export async function Testimonials({ className }: { className?: string }) {
   if (testimonials.length === 0) return null;
 
   return (
-    <section data-section-key="testimonials" className={cn("section", className)}>
+    <section data-section-key="testimonials" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
       <Container className="flex flex-col gap-10">
         <Reveal>
           <SectionHeading

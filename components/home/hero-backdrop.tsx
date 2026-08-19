@@ -17,7 +17,7 @@ export function HeroBackdrop() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 z-[2] overflow-hidden"
+      className="pointer-events-none absolute inset-0 -z-[1] overflow-hidden"
     >
       {/* Subtle dot grid — tech identity, not decoration */}
       <div

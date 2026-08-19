@@ -6,11 +6,11 @@ import { Reveal } from "@/components/motion/reveal";
 import { getHomeFlagshipData } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function FlagshipProgram({ className }: { className?: string }) {
+export async function FlagshipProgram({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const content = await getHomeFlagshipData();
 
   return (
-    <section data-section-key="home-flagship" className={cn("section", className)}>
+    <section data-section-key="home-flagship" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
       <Container>
         {/* A product highlight with its own primary CTA: the flagship panel
             takes the strong-brand-blue moment, and the final CTA below owns

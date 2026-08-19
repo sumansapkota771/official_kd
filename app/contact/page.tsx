@@ -5,7 +5,7 @@ import { EnquiryForm } from "@/components/contact/enquiry-form";
 import { getContactDetails } from "@/lib/content/resolvers";
 import { getPageHero } from "@/lib/content/resolvers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Contact",

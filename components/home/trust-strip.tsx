@@ -4,11 +4,11 @@ import { Reveal } from "@/components/motion/reveal";
 import { getHomeTrustData, getStats } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function TrustStrip({ className }: { className?: string }) {
+export async function TrustStrip({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const [trust, stats] = await Promise.all([getHomeTrustData(), getStats()]);
 
   return (
-    <section data-section-key="home-trust" className={cn("border-y border-border bg-surface", className)}>
+    <section data-section-key="home-trust" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("border-y border-border", className)}>
       <Container className="flex flex-wrap items-center justify-center gap-x-16 gap-y-6 py-8 sm:justify-between sm:py-10">
         <Reveal from="none">
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">{trust.label}</p>

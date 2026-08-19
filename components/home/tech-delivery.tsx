@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const SDLC_STEPS = ["Plan", "Design", "Build", "Test", "Deploy", "Support"];
 
-export async function TechDelivery({ className }: { className?: string }) {
+export async function TechDelivery({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const [techStack, deliveryApproach, heading] = await Promise.all([
     getTechStack(),
     getDeliveryApproach(),
@@ -18,7 +18,7 @@ export async function TechDelivery({ className }: { className?: string }) {
   ]);
 
   return (
-    <section data-section-key="tech-delivery" className={cn("section", className)}>
+    <section data-section-key="tech-delivery" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
       <Container className="flex flex-col gap-20">
         <Reveal className="flex flex-col gap-8">
           <SectionHeading

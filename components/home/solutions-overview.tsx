@@ -7,14 +7,14 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getSectionHeading, getSolutions } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function SolutionsOverview({ className }: { className?: string }) {
+export async function SolutionsOverview({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const [solutions, heading] = await Promise.all([
     getSolutions(),
     getSectionHeading("solutions-overview"),
   ]);
 
   return (
-    <section data-section-key="solutions-overview" className={cn("section", className)}>
+    <section data-section-key="solutions-overview" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
       <Container className="flex flex-col gap-14">
         <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading

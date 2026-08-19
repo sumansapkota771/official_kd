@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { getArticle, getArticles } from "@/lib/content/resolvers";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const articles = await getArticles();

@@ -113,9 +113,9 @@ export function Navbar() {
                 ONE PARTNER. EVERY SOLUTION. EVERY STEP OF THE WAY.
               </span>
               <div className="flex items-center gap-3 text-text-secondary sm:gap-4">
-                <a href="tel:+9779851362001" className="flex items-center gap-1.5 font-medium hover:text-brand-blue">
+                <a href="tel:+9779842863398" className="flex items-center gap-1.5 font-medium hover:text-brand-blue">
                   <Call02Icon className="h-5.25 w-5.25" />
-                  <span className="hidden sm:inline">+977 9851362001</span>
+                  <span className="hidden sm:inline">+977 9842863398</span>
                 </a>
                 <span className="hidden items-center gap-1.5 md:flex">
                   <Time02Icon className="h-5.25 w-5.25" /> 9:00 AM – 7:00 PM

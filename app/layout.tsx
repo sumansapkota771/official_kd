@@ -25,7 +25,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.kodedristi.com"),
+  metadataBase: new URL("https://official-kd.vercel.app"),
   title: {
     default: "KodeDristi Software — Software Delivery, AI & Courses",
     template: "%s — KodeDristi Software",

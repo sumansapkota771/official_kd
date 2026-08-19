@@ -51,10 +51,30 @@ CREATE TABLE IF NOT EXISTS content_items (
   data jsonb NOT NULL DEFAULT '{}',
   position integer NOT NULL DEFAULT 0,
   published boolean NOT NULL DEFAULT true,
+  deleted_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (type, slug)
 );
+
+CREATE TABLE IF NOT EXISTS media_assets (
+  id bigserial PRIMARY KEY,
+  filename text NOT NULL,
+  original_name text NOT NULL,
+  url text NOT NULL,
+  mime_type text NOT NULL,
+  size_bytes integer NOT NULL,
+  width integer,
+  height integer,
+  alt text DEFAULT '',
+  caption text DEFAULT '',
+  focal_x real DEFAULT 0.5,
+  focal_y real DEFAULT 0.5,
+  uploaded_by text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_media_mime ON media_assets (mime_type);
+CREATE INDEX IF NOT EXISTS idx_media_created ON media_assets (created_at);
 `;
 
 let schemaReady: Promise<void> | null = null;

@@ -8,6 +8,7 @@ import {
   InboxUnreadIcon,
   UserMultipleIcon,
   GlobeIcon,
+  Image01Icon,
 } from "hugeicons-react";
 import { LogoutButton } from "@/components/admin/logout-button";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 const LINKS = [
   { href: "/admin", label: "Dashboard", icon: DashboardSquare01Icon, exact: true },
   { href: "/admin/content", label: "Content", icon: ContentWritingIcon },
+  { href: "/admin/media", label: "Media", icon: Image01Icon },
   { href: "/admin/submissions", label: "Submissions", icon: InboxUnreadIcon },
   { href: "/admin/users", label: "Users", icon: UserMultipleIcon },
 ];

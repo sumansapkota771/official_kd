@@ -6,13 +6,13 @@ import { Reveal } from "@/components/motion/reveal";
 import { getHomeFinalCtaData } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function FinalCta({ className }: { className?: string }) {
+export async function FinalCta({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
   const content = await getHomeFinalCtaData();
 
   return (
     /* Loose rhythm: the closing ask gets more air than the sections above it,
        so the page resolves rather than simply stopping. */
-    <section data-section-key="home-final-cta" className={cn("section-loose", className)}>
+    <section data-section-key="home-final-cta" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section-loose", className)}>
       <Container>
         <Reveal className="on-brand relative overflow-hidden rounded-card border border-brand-blue bg-brand-blue px-8 py-20 text-center text-white sm:px-16">
           {/* Decorative corner accents */}

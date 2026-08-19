@@ -836,6 +836,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   {
     group: "Homepage",
     types: [
+      "home-section",
       "home-hero",
       "home-trust",
       "stat",
@@ -848,6 +849,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
       "team-member",
       "home-final-cta",
       "testimonial",
+      "visual-chapter",
     ],
   },
   { group: "Learn", types: ["process-step", "faq"] },
@@ -892,7 +894,6 @@ CONTENT_SCHEMAS.push({
     { key: "mobileImageUrl", label: "Mobile image (optional)", kind: "image" },
     { key: "focal", label: "Focal position", kind: "text", placeholder: "center center" },
     { key: "overlayOpacity", label: "Overlay opacity (0–40)", kind: "select", options: ["0", "10", "20", "30", "40"] },
-    { key: "sourceUrl", label: "Source / photographer (link)", kind: "url" },
   ],
   fallback: () => [
     {
@@ -905,7 +906,18 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
+      },
+    },
+    {
+      slug: "trust",
+      data: {
+        name: "Trust — Abstract lines",
+        sectionKey: "home-trust",
+        imageUrl:
+          "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1920&q=80",
+        mobileImageUrl: "",
+        focal: "center center",
+        overlayOpacity: "35",
       },
     },
     {
@@ -918,7 +930,6 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
       },
     },
     {
@@ -931,7 +942,6 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
       },
     },
     {
@@ -944,7 +954,6 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
       },
     },
     {
@@ -957,7 +966,6 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center 40%",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
       },
     },
     {
@@ -970,7 +978,18 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
+      },
+    },
+    {
+      slug: "cta",
+      data: {
+        name: "CTA — Gradient mesh",
+        sectionKey: "home-final-cta",
+        imageUrl:
+          "https://images.unsplash.com/photo-1557682250-33bd709cbe85?auto=format&fit=crop&w=1920&q=80",
+        mobileImageUrl: "",
+        focal: "center center",
+        overlayOpacity: "25",
       },
     },
     {
@@ -983,9 +1002,42 @@ CONTENT_SCHEMAS.push({
         mobileImageUrl: "",
         focal: "center center",
         overlayOpacity: "30",
-        sourceUrl: "https://unsplash.com",
       },
     },
+  ],
+});
+
+// Homepage section ordering and visibility (admin-manageable)
+CONTENT_SCHEMAS.push({
+  type: "home-section",
+  label: "Homepage sections",
+  singular: "Section",
+  titleField: "label",
+  isSingleton: false,
+  fields: [
+    { key: "type", label: "Section type", kind: "select", required: true, options: [
+      "hero", "trust", "flagship", "solutions", "courses", "tech", "team", "cta", "testimonials"
+    ]},
+    { key: "label", label: "Display name", kind: "text", required: true },
+    { key: "enabled", label: "Visible on page", kind: "check" },
+    { key: "bgMode", label: "Background mode", kind: "select", options: ["surface", "image"], helper: "surface = solid background, image = transparent (shows background image)" },
+    { key: "sectionKey", label: "Cinematic section key", kind: "select", options: [
+      "hero", "home-trust", "home-flagship", "solutions-overview", "courses-overview",
+      "tech-delivery", "team-overview", "home-final-cta", "testimonials"
+    ], helper: "Section key — used to match a visual-chapter fallback if no image is set below" },
+    { key: "imageUrl", label: "Background image (desktop)", kind: "image", helper: "Shown when background mode is 'image'. Overrides the visual-chapter fallback for this section." },
+    { key: "mobileImageUrl", label: "Background image (mobile)", kind: "image", helper: "Optional separate image for mobile screens" },
+  ],
+  fallback: () => [
+    { slug: "hero", data: { type: "hero", label: "Hero", enabled: true, bgMode: "image", sectionKey: "hero", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true, bgMode: "surface", sectionKey: "home-trust", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true, bgMode: "image", sectionKey: "home-flagship", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true, bgMode: "surface", sectionKey: "solutions-overview", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true, bgMode: "image", sectionKey: "courses-overview", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true, bgMode: "surface", sectionKey: "tech-delivery", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "team", data: { type: "team", label: "Team overview", enabled: true, bgMode: "image", sectionKey: "team-overview", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "cta", data: { type: "cta", label: "Final CTA", enabled: true, bgMode: "surface", sectionKey: "home-final-cta", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "testimonials", data: { type: "testimonials", label: "Testimonials", enabled: true, bgMode: "image", sectionKey: "testimonials", imageUrl: "", mobileImageUrl: "" } },
   ],
 });
 

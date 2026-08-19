@@ -11,8 +11,9 @@ import { getCourses } from "@/lib/content/resolvers";
 import { getFaqs } from "@/lib/content/resolvers";
 import { getPageHero } from "@/lib/content/resolvers";
 import { getProcessSteps } from "@/lib/content/resolvers";
+import { CourseJsonLd, FAQJsonLd } from "@/components/seo/json-ld";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Learn — IT Courses",
@@ -30,6 +31,20 @@ export default async function LearnPage() {
 
   return (
     <>
+      {courses.map((course) => (
+        <CourseJsonLd
+          key={course.slug}
+          name={course.name}
+          description={course.summary}
+          url={`https://official-kd.vercel.app/learn/${course.slug}`}
+          level={course.level}
+        />
+      ))}
+      {faqs.length > 0 && (
+        <FAQJsonLd
+          items={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+        />
+      )}
       <PageHero
         eyebrow={hero?.eyebrow ?? "Learn"}
         eyebrowTone="green"
