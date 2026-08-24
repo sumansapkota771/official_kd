@@ -43,7 +43,7 @@ export default async function PartnersPage() {
       <section id="institutional" className="section">
         <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Institutional Partners" title="Who we work with" />
-          <div className="flex flex-wrap items-center gap-x-10 gap-y-4 rounded-card border border-border bg-surface p-6">
+          <div className="card flex flex-wrap items-center gap-x-10 gap-y-4 p-6">
             {partners.map((p) => (
               <span key={p.name} className="text-sm font-semibold text-text-secondary">
                 {p.name}
@@ -56,9 +56,9 @@ export default async function PartnersPage() {
       <section id="become-a-partner" className="section bg-background-secondary">
         <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Become a Partner" eyebrowTone="green" title="What partnership looks like" />
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
             {partnerBenefits.map((b) => (
-              <div key={b.title} className="card p-5">
+              <div key={b.title} className="card card-on-panel p-5">
                 <h3 className="font-semibold text-text-primary">{b.title}</h3>
                 <p className="mt-1 text-sm leading-relaxed text-text-muted">
                   {b.description}
@@ -66,7 +66,7 @@ export default async function PartnersPage() {
               </div>
             ))}
           </div>
-          <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-surface p-8 text-center">
+          <div className="card card-on-panel flex flex-col items-center gap-3 p-8 text-center">
             <h3 className="text-lg font-semibold text-text-primary">
               Ready to explore a partnership?
             </h3>

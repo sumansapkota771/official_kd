@@ -119,7 +119,7 @@ export default async function CourseDetailPage({
                 const Icon = FIELD_ICONS[label];
                 return (
                   <div key={label} className="flex items-start gap-3">
-                    <Icon className="h-4.5 w-4.5 shrink-0 text-brand-blue" />
+                    <Icon className="h-4.5 w-4.5 shrink-0 text-link" />
                     <div>
                       <p className="text-xs font-medium text-text-muted">{label}</p>
                       <p className="text-sm font-semibold text-text-primary">{value}</p>
@@ -136,7 +136,7 @@ export default async function CourseDetailPage({
                   <li key={c.slug}>
                     <Link
                       href={`/learn/${c.slug}`}
-                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-brand-blue"
+                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-link"
                     >
                       {c.name}
                       <ArrowRight className="h-3.5 w-3.5" />

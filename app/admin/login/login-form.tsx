@@ -50,7 +50,7 @@ export function LoginForm({
   return (
     <div className="card w-full max-w-md p-8">
       <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
+        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/10 text-link">
           <Shield01Icon className="h-7.5 w-7.5" />
         </span>
         <div>

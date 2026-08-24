@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicRoutes } from "@/lib/content/revalidate";
 import { getSession } from "@/lib/auth";
 import { reorderContent } from "@/lib/content/store";
 
@@ -16,6 +17,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "type and ids are required" }, { status: 400 });
     }
     await reorderContent(body.type, body.ids);
+    revalidatePublicRoutes();
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });

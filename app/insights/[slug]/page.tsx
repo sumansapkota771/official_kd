@@ -60,7 +60,7 @@ export default async function ArticleDetailPage({
           <article className="flex flex-col gap-5">
             <Link
               href="/insights"
-              className="focus-ring flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-blue"
+              className="focus-ring flex w-fit items-center gap-1.5 text-sm font-semibold text-link"
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to Insights
             </Link>
@@ -79,7 +79,7 @@ export default async function ArticleDetailPage({
                   <li key={a.slug}>
                     <Link
                       href={`/insights/${a.slug}`}
-                      className="focus-ring flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-brand-blue"
+                      className="focus-ring flex items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-link"
                     >
                       <span className="line-clamp-2">{a.title}</span>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0" />

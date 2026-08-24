@@ -113,7 +113,7 @@ export function Navbar() {
                 ONE PARTNER. EVERY SOLUTION. EVERY STEP OF THE WAY.
               </span>
               <div className="flex items-center gap-3 text-text-secondary sm:gap-4">
-                <a href="tel:+9779842863398" className="flex items-center gap-1.5 font-medium hover:text-brand-blue">
+                <a href="tel:+9779842863398" className="flex items-center gap-1.5 font-medium hover:text-link">
                   <Call02Icon className="h-5.25 w-5.25" />
                   <span className="hidden sm:inline">+977 9842863398</span>
                 </a>
@@ -131,7 +131,7 @@ export function Navbar() {
       <div
         className={cn(
           "mx-auto max-w-7xl relative transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          isHome ? (scrolled ? "h-[64px]" : "h-[172px] sm:h-[188px]") : "h-[64px]"
+          isHome ? (scrolled ? "h-[54px]" : "h-[156px] sm:h-[168px]") : "h-[54px]"
         )}
       >
         <Link
@@ -141,9 +141,9 @@ export function Navbar() {
             "absolute z-10 block shrink-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
             isHome
               ? scrolled
-                ? "left-5 top-1/2 -translate-y-1/2 h-10 w-[130px]"
-                : "left-1/2 -translate-x-1/2 top-4 h-20 w-[220px] sm:h-24 sm:w-[260px]"
-              : "left-5 top-1/2 -translate-y-1/2 h-10 w-[130px]"
+                ? "left-5 top-1/2 -translate-y-1/2 h-12 w-[150px]"
+                : "left-1/2 -translate-x-1/2 top-1 h-[84px] w-[240px] sm:h-24 sm:w-[300px]"
+              : "left-5 top-1/2 -translate-y-1/2 h-12 w-[150px]"
           )}
         >
           <Image
@@ -152,7 +152,7 @@ export function Navbar() {
             fill
             priority
             className="object-contain object-center"
-            sizes="260px"
+            sizes="300px"
           />
         </Link>
 
@@ -161,9 +161,9 @@ export function Navbar() {
             "absolute left-5 right-5 flex items-center justify-between transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
             isHome
               ? scrolled
-                ? "top-1/2 -translate-y-1/2 pl-[140px] sm:pl-[160px]"
-                : "bottom-4 pt-3"
-              : "top-1/2 -translate-y-1/2 pl-[140px] sm:pl-[160px]"
+                ? "top-1/2 -translate-y-1/2 pl-[160px] sm:pl-[180px]"
+                : "bottom-3 pt-2"
+              : "top-1/2 -translate-y-1/2 pl-[160px] sm:pl-[180px]"
           )}
         >
           {navLinks}

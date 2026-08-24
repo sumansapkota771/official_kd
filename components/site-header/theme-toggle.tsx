@@ -22,7 +22,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label="Toggle color theme"
       className={cn(
-        "focus-ring inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-border text-text-secondary transition-colors hover:border-brand-blue hover:text-brand-blue",
+        "focus-ring inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-border text-text-secondary transition-colors hover:border-brand-blue hover:text-link",
         className
       )}
     >

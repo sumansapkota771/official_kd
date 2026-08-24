@@ -41,7 +41,7 @@ export function SignInButton({ compact = false }: { compact?: boolean }) {
       <Link
         href="/api/auth/google"
         className={cn(
-          "focus-ring inline-flex items-center justify-center gap-2 rounded-full border-[0.5px] border-border bg-white font-semibold text-brand-blue shadow-sm transition-colors hover:bg-background-secondary",
+          "focus-ring inline-flex items-center justify-center gap-2 rounded-full border-[0.5px] border-border bg-white font-semibold text-link shadow-sm transition-colors hover:bg-background-secondary",
           compact ? "h-9 px-4 text-xs" : "h-10 px-5 text-sm"
         )}
       >
@@ -73,7 +73,7 @@ export function SignInButton({ compact = false }: { compact?: boolean }) {
         )}
         <span className="max-w-[120px] truncate">{user.name ?? user.email}</span>
         {user.role === "admin" ? (
-          <DashboardSquare01Icon className="h-5.25 w-5.25 text-brand-blue" />
+          <DashboardSquare01Icon className="h-5.25 w-5.25 text-link" />
         ) : (
           <UserIcon className="h-5.25 w-5.25 text-text-muted" />
         )}

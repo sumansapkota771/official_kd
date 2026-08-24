@@ -68,6 +68,9 @@ export type SeedRow = { slug: string; data: Record<string, unknown> };
 export type SolutionData = {
   name: string;
   tagline: string;
+  /** Showcase-card artwork. Empty until an image is uploaded; the card
+      reserves the space either way so adding one shifts nothing. */
+  image?: string;
   icon: string;
   accent: "blue" | "green";
   problem: string;
@@ -81,6 +84,8 @@ export type SolutionData = {
 export type CourseData = {
   name: string;
   summary: string;
+  /** Showcase-card artwork — see SolutionData.image. */
+  image?: string;
   level: "Beginner" | "Intermediate" | "Advanced";
   duration: string;
   format: string;
@@ -95,6 +100,8 @@ export type CourseData = {
 export type ProductData = {
   name: string;
   tagline: string;
+  /** Showcase-card artwork — see SolutionData.image. */
+  image?: string;
   icon: string;
   accent: "blue" | "green";
   description: string;
@@ -105,6 +112,8 @@ export type ProductData = {
 export type ArticleData = {
   title: string;
   excerpt: string;
+  /** Showcase-card artwork — see SolutionData.image. */
+  image?: string;
   category: string;
   date: string;
   readTime: string;
@@ -123,7 +132,14 @@ export type TestimonialData = {
   posterUrl?: string;
 };
 export type PartnerData = { name: string };
-export type TeamMemberData = { name: string; role: string; bio: string; leadership?: boolean };
+export type TeamMemberData = {
+  name: string;
+  role: string;
+  bio: string;
+  /** Headshot for the team showcase card — see SolutionData.image. */
+  image?: string;
+  leadership?: boolean;
+};
 export type StatData = { value: string; label: string };
 export type TechData = { name: string };
 export type DeliveryStepData = { title: string; description: string };
@@ -145,6 +161,17 @@ export type SectionHeadingData = {
   title: string;
   description: string;
   eyebrowTone?: "blue" | "green";
+};
+export type HackathonSlideshowData = {
+  imageUrl: string;
+  mobileImageUrl?: string;
+  displayOrder: number;
+  /** Which way the copy reads over this particular picture. Chosen per image
+   *  because a bright shot and a dark one cannot share one text colour. */
+  textTone?: "light" | "dark";
+  /** Optional wash, tinted to match textTone, for images the copy struggles
+   *  on. "0" leaves the photograph untouched. */
+  overlayOpacity?: string;
 };
 export type HomeHeroData = {
   eyebrow: string;
@@ -440,6 +467,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fields: [
       { key: "name", label: "Name", kind: "text", required: true },
       { key: "tagline", label: "Tagline", kind: "text", required: true },
+      { key: "image", label: "Card image", kind: "image", helper: "Shown in the Solutions showcase grid on the home page. Leave empty and the card keeps the space reserved." },
       { key: "icon", label: "Icon", kind: "icon" },
       { key: "accent", label: "Accent color", kind: "tone" },
       { key: "problem", label: "Problem statement", kind: "textarea" },
@@ -460,6 +488,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fields: [
       { key: "name", label: "Name", kind: "text", required: true },
       { key: "summary", label: "Summary", kind: "textarea" },
+      { key: "image", label: "Card image", kind: "image", helper: "Shown in the Learn showcase grid on the home page. Leave empty and the card keeps the space reserved." },
       { key: "level", label: "Level", kind: "select", options: ["Beginner", "Intermediate", "Advanced"] },
       { key: "duration", label: "Duration", kind: "text" },
       { key: "format", label: "Format", kind: "text" },
@@ -482,6 +511,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fields: [
       { key: "name", label: "Name", kind: "text", required: true },
       { key: "tagline", label: "Tagline", kind: "text", required: true },
+      { key: "image", label: "Card image", kind: "image", helper: "Shown on the showcase card. Leave empty and the card keeps the space reserved." },
       { key: "icon", label: "Icon", kind: "icon" },
       { key: "accent", label: "Accent color", kind: "tone" },
       { key: "description", label: "Description", kind: "textarea" },
@@ -499,6 +529,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fields: [
       { key: "title", label: "Title", kind: "text", required: true },
       { key: "excerpt", label: "Excerpt", kind: "textarea" },
+      { key: "image", label: "Card image", kind: "image", helper: "Shown on the showcase card. Leave empty and the card keeps the space reserved." },
       { key: "category", label: "Category", kind: "text" },
       { key: "date", label: "Date (YYYY-MM-DD)", kind: "text" },
       { key: "readTime", label: "Read time", kind: "text" },
@@ -552,6 +583,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       { key: "name", label: "Name", kind: "text", required: true },
       { key: "role", label: "Role", kind: "text" },
       { key: "bio", label: "Bio", kind: "textarea" },
+      { key: "image", label: "Card image", kind: "image", helper: "Headshot shown on the team card. Leave empty and the card keeps the space reserved." },
       { key: "leadership", label: "Show in leadership sections", kind: "check" },
     ],
     fallback: serializeTeam,
@@ -849,7 +881,6 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
       "team-member",
       "home-final-cta",
       "testimonial",
-      "visual-chapter",
     ],
   },
   { group: "Learn", types: ["process-step", "faq"] },
@@ -861,43 +892,39 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   { group: "Products", types: ["product"] },
   {
     group: "Hackathon",
-    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline"],
+    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image"],
   },
 ];
 
-// Cinematic visual chapters (admin-manageable backgrounds)
+// Hackathon slideshow settings (admin-manageable)
 CONTENT_SCHEMAS.push({
-  type: "visual-chapter",
-  label: "Cinematic backgrounds",
-  singular: "Visual chapter",
-  titleField: "name",
+  type: "hackathon-slideshow-settings",
+  label: "Hackathon background",
+  singular: "Background settings",
+  isSingleton: true,
+  singletonSlug: "main",
+  titleField: "intervalSeconds",
   fields: [
-    { key: "name", label: "Name", kind: "text", required: true },
-    {
-      key: "sectionKey",
-      label: "Section key",
-      kind: "select",
-      options: [
-        "hero",
-        "home-trust",
-        "home-flagship",
-        "solutions-overview",
-        "courses-overview",
-        "tech-delivery",
-        "team-overview",
-        "home-final-cta",
-        "testimonials",
-      ],
-      helper: "Assigns this visual chapter to a homepage section (used by the cinematic background controller)",
-    },
-    { key: "imageUrl", label: "Desktop image", kind: "image", required: true },
-    { key: "mobileImageUrl", label: "Mobile image (optional)", kind: "image" },
-    { key: "focal", label: "Focal position", kind: "text", placeholder: "center center" },
-    { key: "overlayOpacity", label: "Overlay opacity (0–40)", kind: "select", options: ["0", "10", "20", "30", "40"] },
+    { key: "intervalSeconds", label: "Slide interval (seconds)", kind: "text", required: true, placeholder: "6", helper: "Seconds each background image stays before it fades to the next" },
+    { key: "autoPlay", label: "Rotate automatically", kind: "check", helper: "Off shows only the first image. Rotation is also skipped for visitors who ask for reduced motion." },
   ],
-  // No seeded imagery: backgrounds come from images uploaded in the admin
-  // panel. The old seed pointed at Unsplash placeholders, which shipped as
-  // real content whenever this table was empty.
+  fallback: () => [{ slug: "main", data: { intervalSeconds: 5, autoPlay: true } }],
+});
+
+// Hackathon slideshow images (admin-manageable)
+CONTENT_SCHEMAS.push({
+  type: "hackathon-slideshow-image",
+  label: "Hackathon background images",
+  singular: "Background image",
+  titleField: "imageUrl",
+  subtitleField: "displayOrder",
+  fields: [
+    { key: "imageUrl", label: "Desktop image", kind: "image", required: true, helper: "Background image for the National AI Hackathon section. Add several and they fade between each other." },
+    { key: "mobileImageUrl", label: "Mobile image (optional)", kind: "image" },
+    { key: "displayOrder", label: "Display order", kind: "text", required: true, placeholder: "1", helper: "Order in which images appear (1, 2, 3...)" },
+    { key: "textTone", label: "Text colour on this image", kind: "select", options: ["light", "dark"], helper: "Look at the image and pick: 'light' for white text (dark photos), 'dark' for black text (bright photos)." },
+    { key: "overlayOpacity", label: "Darken/lighten for legibility", kind: "select", options: ["0", "10", "20", "30", "40"], helper: "Leave at 0 to show the photo untouched. Raise it only if the text is hard to read — the wash follows the text colour you picked." },
+  ],
   fallback: () => [],
 });
 
@@ -914,24 +941,17 @@ CONTENT_SCHEMAS.push({
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
-    { key: "bgMode", label: "Background mode", kind: "select", options: ["surface", "image"], helper: "image = transparent, this section reveals its background image. surface = solid panel that hides the image below it — an image set here will NOT be visible." },
-    { key: "sectionKey", label: "Cinematic section key", kind: "select", options: [
-      "hero", "home-trust", "home-flagship", "solutions-overview", "courses-overview",
-      "tech-delivery", "team-overview", "home-final-cta", "testimonials"
-    ], helper: "Section key — used to match a visual-chapter fallback if no image is set below" },
-    { key: "imageUrl", label: "Background image (desktop)", kind: "image", helper: "Only shown when background mode is 'image'. Overrides the Cinematic-backgrounds entry for this section key. Leave empty to use that entry, or the image from the section above it." },
-    { key: "mobileImageUrl", label: "Background image (mobile)", kind: "image", helper: "Optional separate image for mobile screens" },
   ],
   fallback: () => [
-    { slug: "hero", data: { type: "hero", label: "Hero", enabled: true, bgMode: "image", sectionKey: "hero", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true, bgMode: "surface", sectionKey: "home-trust", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true, bgMode: "image", sectionKey: "home-flagship", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true, bgMode: "surface", sectionKey: "solutions-overview", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true, bgMode: "image", sectionKey: "courses-overview", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true, bgMode: "surface", sectionKey: "tech-delivery", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "team", data: { type: "team", label: "Team overview", enabled: true, bgMode: "image", sectionKey: "team-overview", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "cta", data: { type: "cta", label: "Final CTA", enabled: true, bgMode: "surface", sectionKey: "home-final-cta", imageUrl: "", mobileImageUrl: "" } },
-    { slug: "testimonials", data: { type: "testimonials", label: "Testimonials", enabled: true, bgMode: "image", sectionKey: "testimonials", imageUrl: "", mobileImageUrl: "" } },
+    { slug: "hero", data: { type: "hero", label: "Hero", enabled: true } },
+    { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true } },
+    { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true } },
+    { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true } },
+    { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true } },
+    { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true } },
+    { slug: "team", data: { type: "team", label: "Team overview", enabled: true } },
+    { slug: "cta", data: { type: "cta", label: "Final CTA", enabled: true } },
+    { slug: "testimonials", data: { type: "testimonials", label: "Testimonials", enabled: true } },
   ],
 });
 

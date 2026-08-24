@@ -34,7 +34,7 @@ export function CookieConsent() {
       <div className="panel p-5 shadow-elevated">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <InformationSquareIcon className="h-7.5 w-7.5 text-brand-blue" />
+            <InformationSquareIcon className="h-7.5 w-7.5 text-link" />
             <h3 className="text-sm font-semibold text-text-primary">We use cookies</h3>
           </div>
           <button

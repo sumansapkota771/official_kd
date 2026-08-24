@@ -54,7 +54,9 @@ export default function AdminMediaPage() {
     const res = await fetch("/api/admin/media", { method: "POST", body: form });
     if (res.ok) {
       const asset = await res.json();
-      setItems((prev) => [asset, ...prev]);
+      if (!filter || (asset.mime_type && asset.mime_type.startsWith(filter))) {
+        setItems((prev) => [asset, ...prev]);
+      }
       setTotal((prev) => prev + 1);
     }
     setUploading(false);
@@ -109,7 +111,7 @@ export default function AdminMediaPage() {
             <option value="image/png">PNG</option>
             <option value="image/webp">WebP</option>
             <option value="image/gif">GIF</option>
-            <option value="image/svg">SVG</option>
+            <option value="image/svg+xml">SVG</option>
           </select>
           <label className="focus-ring cursor-pointer rounded-xl bg-brand-blue px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-blue-hover">
             {uploading ? "Uploading…" : "Upload image"}

@@ -21,10 +21,10 @@ export function HeroBackdrop() {
     >
       {/* Subtle dot grid — tech identity, not decoration */}
       <div
-        className="absolute inset-0 opacity-[0.035]"
+        className="absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage:
-            "radial-gradient(circle, var(--text-primary) 1px, transparent 1px)",
+            "radial-gradient(circle, #ffffff 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       />

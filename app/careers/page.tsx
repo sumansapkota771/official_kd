@@ -51,7 +51,7 @@ export default async function CareersPage() {
       <section className="section bg-background-secondary">
         <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Open Roles" eyebrowTone="green" title="Current openings" />
-          <div className="flex flex-col divide-y divide-border overflow-hidden rounded-card border border-border bg-surface">
+          <div className="card card-on-panel flex flex-col divide-y divide-border overflow-hidden">
             {roles.map((role) => (
               <div
                 key={role.title}
@@ -69,7 +69,7 @@ export default async function CareersPage() {
           </div>
           <p className="text-sm text-text-muted">
             Don&apos;t see a fit?{" "}
-            <a href="/contact" className="font-semibold text-brand-blue hover:underline">
+            <a href="/contact" className="font-semibold text-link hover:underline">
               Reach out anyway
             </a>{" "}
             — we keep a shortlist for future openings.

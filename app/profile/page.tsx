@@ -18,7 +18,7 @@ export default async function ProfilePage() {
     return (
       <main className="flex min-h-[60vh] items-center justify-center px-5 py-16">
         <div className="card flex max-w-md flex-col items-center gap-4 p-10 text-center">
-          <GraduationScrollIcon className="h-15 w-15 text-brand-blue" />
+          <GraduationScrollIcon className="h-15 w-15 text-link" />
           <h1 className="text-xl font-semibold text-text-primary">You&apos;re not signed in</h1>
           <p className="text-sm leading-relaxed text-text-muted">
             Sign in with Google to see your profile and the courses you&apos;ve applied for.
@@ -113,7 +113,7 @@ export default async function ProfilePage() {
                   {c.course_slug && (
                     <Link
                       href={`/learn/${c.course_slug}`}
-                      className="focus-ring mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+                      className="focus-ring mt-3 inline-block text-xs font-semibold text-link hover:underline"
                     >
                       View course →
                     </Link>

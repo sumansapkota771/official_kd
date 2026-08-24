@@ -48,9 +48,9 @@ export default async function AboutPage() {
       </PageHero>
 
       <section className="section-tight">
-        <Container className="grid gap-4 sm:grid-cols-2">
+        <Container className="grid gap-3 sm:gap-4 sm:grid-cols-2">
           <div className="card p-6">
-            <Target className="h-7 w-7 text-brand-blue" />
+            <Target className="h-7 w-7 text-link" />
             <h2 className="mt-3 text-lg font-semibold text-text-primary">Mission</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
               To make quality software and quality technical education equally accessible —
@@ -122,16 +122,16 @@ export default async function AboutPage() {
       </section>
 
       <section className="section bg-background-secondary">
-        <Container className="grid gap-4 sm:grid-cols-2">
-          <div className="card p-6">
-            <MapPin className="h-7 w-7 text-brand-blue" />
+        <Container className="grid gap-3 sm:gap-4 sm:grid-cols-2">
+          <div className="card card-on-panel p-6">
+            <MapPin className="h-7 w-7 text-link" />
             <h2 className="mt-3 text-lg font-semibold text-text-primary">Location</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
               Kathmandu, Nepal — working with clients locally and internationally, remote-first
               across engagements.
             </p>
           </div>
-          <div className="card p-6">
+          <div className="card card-on-panel p-6">
             <Users className="h-7 w-7 text-brand-green-hover" />
             <h2 className="mt-3 text-lg font-semibold text-text-primary">Work culture</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
@@ -143,7 +143,7 @@ export default async function AboutPage() {
       </section>
 
       <section className="section">
-        <Container className="flex flex-col items-center gap-5 rounded-card border border-border bg-surface p-8 text-center sm:p-12">
+        <Container className="card flex flex-col items-center gap-5 p-8 text-center sm:p-12">
           <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
             Careers &amp; media kit
           </h2>

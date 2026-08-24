@@ -10,7 +10,10 @@ export function AnalyticsTracker() {
     if (pathname.startsWith("/admin")) return;
     let visitorId = localStorage.getItem("kd_vid");
     if (!visitorId) {
-      visitorId = crypto.randomUUID();
+      visitorId =
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
       localStorage.setItem("kd_vid", visitorId);
       document.cookie = `kd_vid=${visitorId}; path=/; max-age=31536000; samesite=lax`;
     }

@@ -37,7 +37,7 @@ export function SeedButton({ type, label }: { type?: string; label: string }) {
         type="button"
         onClick={handleSeed}
         disabled={loading}
-        className="focus-ring inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary transition-colors hover:border-brand-blue hover:text-brand-blue disabled:opacity-60"
+        className="focus-ring inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary transition-colors hover:border-brand-blue hover:text-link disabled:opacity-60"
       >
         {loading ? <Loading01Icon className="h-6 w-6 animate-spin" /> : <RefreshIcon className="h-6 w-6" />}
         Seed default content

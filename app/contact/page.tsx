@@ -37,11 +37,11 @@ export default async function ContactPage() {
           <aside className="flex flex-col gap-3">
             {contactDetails.map((detail) => (
               <div key={detail.label} className="flex items-start gap-2.5 card p-4">
-                <detail.icon className="h-5 w-5 shrink-0 text-brand-blue" />
+                <detail.icon className="h-5 w-5 shrink-0 text-link" />
                 <div>
                   <p className="text-[11px] font-medium uppercase tracking-wider text-text-muted">{detail.label}</p>
                   {detail.href ? (
-                    <a href={detail.href} className="text-sm font-semibold text-text-primary hover:text-brand-blue">
+                    <a href={detail.href} className="text-sm font-semibold text-text-primary hover:text-link">
                       {detail.value}
                     </a>
                   ) : (

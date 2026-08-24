@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Space_Grotesk } from "next/font/google";
+import { Albert_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FirstLoadSplash } from "@/components/motion/first-load-splash";
@@ -10,18 +10,10 @@ import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { AnalyticsTracker } from "@/components/auth/analytics-tracker";
 import { CookieConsent } from "@/components/auth/cookie-consent";
 
-const archivo = Archivo({
+const albertSans = Albert_Sans({
   subsets: ["latin"],
-  variable: "--font-archivo",
+  variable: "--font-albert-sans",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -48,16 +40,12 @@ export const metadata: Metadata = {
   },
 };
 
-import { listContent } from "@/lib/content/store";
-
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const visualChapters = await listContent("visual-chapter");
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={`h-full antialiased ${archivo.variable} ${spaceGrotesk.variable}`}
+      className={`h-full antialiased ${albertSans.variable}`}
     >
       <body className="min-h-full flex flex-col bg-background text-text-secondary">
         <ThemeProvider>
@@ -69,7 +57,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           >
             Skip to content
           </a>
-          <GlobalChrome navbar={<Navbar />} footer={<Footer />} visualChapters={visualChapters}>
+          <GlobalChrome navbar={<Navbar />} footer={<Footer />}>
             {children}
           </GlobalChrome>
           <AnalyticsTracker />

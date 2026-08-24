@@ -1,21 +1,25 @@
-import { ArrowRight01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { SpotlightCard, CardCue } from "@/components/ui/spotlight-card";
+import {
+  ShowcaseCard,
+  showcaseGridInner,
+  showcaseGridOuter,
+  showcaseTone,
+} from "@/components/ui/showcase-card";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getSectionHeading, getSolutions } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function SolutionsOverview({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
+export async function SolutionsOverview({ className }: { className?: string }) {
   const [solutions, heading] = await Promise.all([
     getSolutions(),
     getSectionHeading("solutions-overview"),
   ]);
 
   return (
-    <section data-section-key="solutions-overview" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
-      <Container className="flex flex-col gap-14">
+    <section className={cn("section", className)}>
+      <Container>
         <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
             eyebrow={heading?.eyebrow ?? "Solutions"}
@@ -26,46 +30,38 @@ export async function SolutionsOverview({ className, imageUrl, mobileImageUrl }:
               "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix."
             }
           />
-          <Button href="/solutions" variant="outline" className="shrink-0">
+          {/* Pill, and no arrow: the shape already reads as a control, so the
+              label can stand on its own. */}
+          <Button href="/solutions" variant="pill-outline" size="lg" className="shrink-0">
             View all solutions
-            <ArrowRight01Icon className="h-6 w-6 transition-transform duration-micro ease-out-quint group-hover/btn:translate-x-0.5" />
           </Button>
         </Reveal>
 
-        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {solutions.map((solution, i) => {
-            const Icon = solution.icon;
-            const isBlue = solution.accent === "blue";
-            /* First card spans 2 cols on large screens — breaks the uniform grid */
-            const spanning = i === 0;
-            return (
-              <RevealItem
-                key={solution.slug}
-                className={cn("flex", spanning && "sm:col-span-2 lg:col-span-1")}
-              >
-                <SpotlightCard
-                  href={`/solutions/${solution.slug}`}
-                  className="flex w-full flex-col gap-4"
-                >
-                  <Icon
-                    className={cn(
-                      "h-7.5 w-7.5 shrink-0 transition-transform duration-ui ease-out-quint group-hover/card:-translate-y-0.5",
-                      isBlue ? "text-brand-blue" : "text-brand-green-hover"
-                    )}
-                  />
-                  <div>
-                    <h3 className="text-lg font-semibold text-text-primary">{solution.name}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
-                      {solution.tagline}
-                    </p>
-                  </div>
-                  <CardCue label="Learn more" tone={isBlue ? "blue" : "green"} />
-                </SpotlightCard>
-              </RevealItem>
-            );
-          })}
-        </RevealGroup>
       </Container>
+
+      {/* The grid breaks out of the Container: a pair of tiles is meant to
+          fill the viewport edge to edge, with only a gutter to the screen
+          edge. Inside max-w-7xl they read as boxes on a page instead. */}
+      <div className={cn("mt-14", showcaseGridOuter, "pb-0")}>
+        {/* Two up. The tiles are large enough that a third column would shrink
+            the image wells below the size that makes them worth having. */}
+        <RevealGroup className={showcaseGridInner}>
+          {solutions.map((solution, i) => (
+            <RevealItem key={solution.slug} className="flex">
+              <ShowcaseCard
+                tone={showcaseTone(i)}
+                title={solution.name}
+                description={solution.tagline}
+                href={`/solutions/${solution.slug}`}
+                secondary={{ label: "Get a quote", href: "/contact" }}
+                image={solution.image}
+                imageAlt=""
+                className="min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] [&_[data-image-slot]]:min-h-[220px] sm:[&_[data-image-slot]]:min-h-[280px]"
+              />
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
     </section>
   );
 }

@@ -54,7 +54,7 @@ export default async function ProductDetailPage({
               <Icon
                 className={
                   isBlue
-                    ? "h-5.5 w-5.5 text-brand-blue"
+                    ? "h-5.5 w-5.5 text-link"
                     : "h-5.5 w-5.5 text-brand-green-hover"
                 }
               />
@@ -79,7 +79,7 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="flex items-start gap-3 panel p-6">
-              <Users className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
+              <Users className="mt-0.5 h-5 w-5 shrink-0 text-link" />
               <div>
                 <p className="font-semibold text-text-primary">Built for</p>
                 <p className="mt-1 text-sm leading-relaxed text-text-muted">{product.audience}</p>
@@ -89,7 +89,7 @@ export default async function ProductDetailPage({
 
           <aside className="flex flex-col gap-6">
             <div className="flex flex-col gap-4 card p-6">
-              <MessageSquare className="h-6 w-6 text-brand-blue" />
+              <MessageSquare className="h-6 w-6 text-link" />
               <p className="font-semibold text-text-primary">Discuss a similar product</p>
               <p className="text-sm leading-relaxed text-text-muted">
                 Want something like {product.name} for your own business or a fully custom
@@ -107,7 +107,7 @@ export default async function ProductDetailPage({
                   <li key={p.slug}>
                     <Link
                       href={`/products/${p.slug}`}
-                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-brand-blue"
+                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-link"
                     >
                       {p.name}
                       <ArrowRight className="h-3.5 w-3.5" />

@@ -52,7 +52,7 @@ export function CardCue({
     <span
       className={cn(
         "mt-auto flex items-center gap-1.5 pt-3 text-sm font-semibold",
-        tone === "blue" ? "text-brand-blue" : "text-brand-green-hover",
+        tone === "blue" ? "text-link" : "text-brand-green-hover",
         className
       )}
     >

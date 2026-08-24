@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowRight, Clock, Signal } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
+import {
+  ShowcaseCard,
+  showcaseGridInner,
+  showcaseGridOuter,
+  showcaseTone,
+} from "@/components/ui/showcase-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
+import { cn } from "@/lib/utils";
 import { getCourses } from "@/lib/content/resolvers";
 import { getFaqs } from "@/lib/content/resolvers";
 import { getPageHero } from "@/lib/content/resolvers";
@@ -60,33 +65,36 @@ export default async function LearnPage() {
       </PageHero>
 
       <section id="courses" className="section">
-        <Container className="flex flex-col gap-8">
+        <Container>
           <SectionHeading eyebrow="Catalogue" eyebrowTone="green" title="Choose your track" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
-              <Link
+        </Container>
+        <div className={cn("mt-8", showcaseGridOuter)}>
+          <div className={showcaseGridInner}>
+            {courses.map((course, i) => (
+              <ShowcaseCard
                 key={course.slug}
+                tone={showcaseTone(i)}
+                eyebrow={course.level}
+                title={course.name}
+                description={course.summary}
                 href={`/learn/${course.slug}`}
-                className="focus-ring group flex flex-col gap-2.5 card card-hover p-6"
-              >
-                <Badge tone="green">{course.level}</Badge>
-                <h3 className="text-lg font-semibold text-text-primary">{course.name}</h3>
-                <p className="text-sm leading-relaxed text-text-muted">{course.summary}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-3 text-xs font-medium text-text-muted">
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="h-4 w-4" /> {course.duration}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Signal className="h-4 w-4" /> {course.fee}
-                  </span>
-                </div>
-                <span className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-brand-green-hover opacity-0 transition-opacity group-hover:opacity-100">
-                  View details <ArrowRight className="h-4 w-4" />
-                </span>
-              </Link>
+                actionLabel="View details"
+                secondary={{ label: "Enroll", href: "/contact" }}
+                image={course.image}
+                meta={
+                  <>
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="h-4 w-4" /> {course.duration}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Signal className="h-4 w-4" /> {course.fee}
+                    </span>
+                  </>
+                }
+              />
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
       <section className="section bg-background-secondary">
@@ -115,7 +123,7 @@ export default async function LearnPage() {
             <FaqAccordion items={faqs} />
           </div>
 
-          <div className="flex flex-col justify-between gap-5 rounded-card border border-border bg-background-secondary p-7">
+          <div className="card flex flex-col justify-between gap-5 p-7">
             <div>
               <h3 className="text-xl font-semibold text-text-primary">Still deciding?</h3>
               <p className="mt-2 text-sm leading-relaxed text-text-muted">

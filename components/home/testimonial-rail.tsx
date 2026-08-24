@@ -176,7 +176,7 @@ export function TestimonialRail({ items }: { items: TestimonialItem[] }) {
           className="focus-ring inline-flex items-center gap-2 rounded-full border-[0.5px] border-border bg-surface px-4 py-2 text-sm font-semibold text-text-secondary transition-colors duration-micro hover:border-brand-blue/40 hover:text-text-primary"
         >
           {soundOn ? (
-            <VolumeHighIcon className="h-6 w-6 text-brand-blue" />
+            <VolumeHighIcon className="h-6 w-6 text-link" />
           ) : (
             <VolumeOffIcon className="h-6 w-6" />
           )}
@@ -255,7 +255,7 @@ function RailButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-border bg-surface text-text-secondary transition-colors duration-micro hover:border-brand-blue/40 hover:text-brand-blue disabled:pointer-events-none disabled:opacity-35"
+      className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-border bg-surface text-text-secondary transition-colors duration-micro hover:border-brand-blue/40 hover:text-link disabled:pointer-events-none disabled:opacity-35"
     >
       {children}
     </button>

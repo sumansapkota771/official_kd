@@ -135,7 +135,7 @@ export function ContentList({
             {!isSingleton && (
               <>
                 {" "}
-                <Link href={`/admin/content/${type}/new`} className="font-semibold text-brand-blue hover:underline">
+                <Link href={`/admin/content/${type}/new`} className="font-semibold text-link hover:underline">
                   Create one
                 </Link>
                 .
@@ -178,7 +178,7 @@ export function ContentList({
                 className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-xl"
               >
                 {Icon && (
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue-light text-brand-blue">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue-light text-link">
                     <Icon className="h-7.5 w-7.5" />
                   </span>
                 )}
@@ -215,7 +215,7 @@ export function ContentList({
                 <Link
                   href={`/admin/content/${type}/${item.id}`}
                   aria-label={`Edit ${title}`}
-                  className="focus-ring flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand-blue hover:text-brand-blue"
+                  className="focus-ring flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand-blue hover:text-link"
                 >
                   <Edit02Icon className="h-6 w-6" />
                 </Link>

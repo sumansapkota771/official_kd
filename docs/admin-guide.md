@@ -84,17 +84,13 @@ Controls the hero banner at the top of each page. Each page hero is identified b
 ### Homepage
 
 #### Homepage Sections (`home-section`)
-Controls which sections appear on the homepage, their order, their background mode, and their background image.
+Controls which sections appear on the homepage and their order.
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | Section type | Yes | Which section component to render |
 | Display name | Yes | Label shown in admin |
 | Visible on page | No | Toggle to show or hide this section |
-| Background mode | No | `surface` = solid background, `image` = transparent (shows background image) |
-| Cinematic section key | No | Section key — used to match a visual-chapter fallback if no image is set below |
-| Background image (desktop) | No | Direct image URL for this section. Shown when background mode is "image". Overrides the visual-chapter fallback. |
-| Background image (mobile) | No | Optional separate image for mobile screens |
 
 **Section types:** hero, trust, flagship, solutions, courses, tech, team, cta, testimonials
 
@@ -104,24 +100,9 @@ Controls which sections appear on the homepage, their order, their background mo
 3. Uncheck "Visible on page"
 4. Save
 
-**To set a background image directly on a section:**
-1. Go to Content then Homepage sections
-2. Find the section (e.g., "Courses overview")
-3. Set "Background mode" to `image`
-4. Upload or paste a URL into "Background image (desktop)"
-5. Optionally upload a mobile image
-6. Save
-
-This overrides any image from the Cinematic backgrounds (visual-chapter) fallback for that section. You can manage backgrounds in two ways:
-- **Directly on the section** (recommended) — set the image in Homepage sections
-- **Via visual-chapter fallback** — set the image in Cinematic backgrounds (used when the section's image field is empty)
-
-**To change a section's background mode:**
-1. Go to Content then Homepage sections
-2. Find the section
-3. Change "Background mode" to `image` (transparent, shows background image) or `surface` (solid, masks background)
-4. If set to `image`, upload or paste an image URL in "Background image (desktop)"
-5. Save
+> Homepage sections no longer carry background images. The scroll-driven
+> background system ("Cinematic backgrounds" / visual chapters) has been
+> removed; each section now paints its own background from the theme.
 
 #### Home Hero (`home-hero`)
 **Singleton** — controls the main hero section on the homepage.
@@ -415,52 +396,6 @@ Event timeline steps.
 
 ---
 
-### Visual Chapters (`visual-chapter`)
-Background images for the homepage cinematic scroll system. Each visual chapter maps to a homepage section via its `sectionKey`.
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| Name | Yes | Descriptive name (e.g., "Hero — Abstract tech") |
-| Section key | No | Which section this image belongs to |
-| Desktop image | Yes | Background image URL |
-| Mobile image | No | Separate image for mobile screens |
-| Focal position | No | e.g., "center center", "center 40%" |
-| Overlay opacity | No | Dark overlay: 0, 10, 20, 30, or 40 |
-
-**Section key options:**
-- `hero` — Hero section
-- `home-trust` — Trust strip
-- `home-flagship` — Flagship program banner
-- `solutions-overview` — Solutions overview
-- `courses-overview` — Courses overview
-- `tech-delivery` — Tech delivery
-- `team-overview` — Team overview
-- `home-final-cta` — Final CTA
-- `testimonials` — Testimonials
-
-**To change a section's background image:**
-1. Go to Content then Cinematic backgrounds
-2. Find the entry matching your section key (e.g., "hero")
-3. Upload a new desktop image (or paste a URL)
-4. Adjust overlay opacity if needed
-5. Save
-
-**To add a background image to a section that does not have one:**
-1. Go to Content then Homepage sections
-2. Find the section
-3. Set "Background mode" to `image`
-4. Upload or paste an image URL in "Background image (desktop)"
-5. Save
-
-Alternatively, you can use the Cinematic backgrounds fallback:
-1. Go to Content then Cinematic backgrounds
-2. Click **New**
-3. Set the section key to the target section
-4. Upload an image
-5. Save
-6. Then go to Content then Homepage sections
-7. Set that section's "Background mode" to `image` (leave the direct image field empty)
-8. Save
 
 ---
 
@@ -545,5 +480,3 @@ Lists all user accounts with avatar, name, email, join date, last sign-in, and c
 - Changes take effect immediately on the live site (force-dynamic rendering, 30-second cache TTL).
 - If the database is down, the site automatically falls back to hardcoded default data.
 - The "Seed all content" button populates the database with defaults. It does not overwrite existing items (uses ON CONFLICT DO NOTHING).
-- Background images for the cinematic scroll are managed in two ways: directly on each homepage section (recommended), or via Cinematic backgrounds as a fallback. A section's direct image always overrides the fallback.
-- A section needs its "Background mode" set to `image` for any background to show, regardless of where the image is configured.

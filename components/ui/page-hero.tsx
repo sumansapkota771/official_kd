@@ -32,10 +32,10 @@ export function PageHero({
             className={cn(
               "eyebrow",
               eyebrowTone === "blue"
-                ? "text-brand-blue"
+                ? "text-link"
                 : eyebrowTone === "green"
                   ? "text-brand-green-hover"
-                  : "text-brand-amber"
+                  : "text-brand-amber-text"
             )}
           >
             {eyebrow}

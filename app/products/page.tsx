@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
+import {
+  ShowcaseCard,
+  showcaseGridInner,
+  showcaseGridOuter,
+  showcaseTone,
+} from "@/components/ui/showcase-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { ProductTalkForm } from "@/components/contact/product-talk-form";
-import { cn } from "@/lib/utils";
 import { getFaqs } from "@/lib/content/resolvers";
 import { getPageHero } from "@/lib/content/resolvers";
 import { getPartners } from "@/lib/content/resolvers";
@@ -42,35 +46,22 @@ export default async function ProductsPage() {
       />
 
       <section className="section">
-        <Container className="grid gap-4 sm:grid-cols-2">
-          {products.map((product) => {
-            const Icon = product.icon;
-            const isBlue = product.accent === "blue";
-            return (
-              <Link
+        <div className={showcaseGridOuter}>
+          <div className={showcaseGridInner}>
+            {products.map((product, i) => (
+              <ShowcaseCard
                 key={product.slug}
+                tone={showcaseTone(i)}
+                title={product.name}
+                description={product.tagline}
                 href={`/products/${product.slug}`}
-                className="focus-ring group flex flex-col gap-3 card card-hover p-6"
-              >
-                <Icon
-                  className={cn(
-                    "h-7 w-7",
-                    isBlue ? "text-brand-blue" : "text-brand-green-hover"
-                  )}
-                />
-                <div>
-                  <h2 className="text-lg font-semibold text-text-primary">{product.name}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
-                    {product.tagline}
-                  </p>
-                </div>
-                <span className="mt-auto flex items-center gap-1.5 text-sm font-semibold text-brand-blue opacity-0 transition-opacity group-hover:opacity-100">
-                  View product <ArrowRight className="h-4 w-4" />
-                </span>
-              </Link>
-            );
-          })}
-        </Container>
+                actionLabel="View product"
+                secondary={{ label: "Talk to us", href: "/contact" }}
+                image={product.image}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="section-tight border-y border-border bg-background-secondary">

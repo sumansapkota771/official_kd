@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
-import { Container } from "@/components/ui/container";
+import {
+  ShowcaseCard,
+  showcaseGridInner,
+  showcaseGridOuter,
+  showcaseTone,
+} from "@/components/ui/showcase-card";
 import { Button } from "@/components/ui/button";
 import { getPageHero, getTeamMembers } from "@/lib/content/resolvers";
 
@@ -31,18 +36,25 @@ export default async function TeamPage() {
       </PageHero>
 
       <section className="section">
-        <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {team.map((person) => (
-            <div key={person.name} className="card p-5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] bg-brand-blue text-sm font-bold text-white">
-                {person.name.split(" ").map((n) => n[0]).join("")}
-              </div>
-              <h3 className="mt-3 font-semibold text-text-primary">{person.name}</h3>
-              <p className="mt-0.5 text-sm font-medium text-brand-green-hover">{person.role}</p>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">{person.bio}</p>
-            </div>
-          ))}
-        </Container>
+        <div className={showcaseGridOuter}>
+          <div className={showcaseGridInner}>
+            {team.map((person, i) => (
+              <ShowcaseCard
+                key={person.name}
+                tone={showcaseTone(i)}
+                eyebrow={person.role}
+                title={person.name}
+                description={person.bio}
+                href="/careers"
+                actionLabel="Work with us"
+                image={person.image}
+                /* Headshots are portraits, not scenery: cropping one to fill
+                   the well is how you behead people. */
+                imageFit="contain"
+              />
+            ))}
+          </div>
+        </div>
       </section>
     </>
   );

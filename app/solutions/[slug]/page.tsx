@@ -86,7 +86,7 @@ export default async function SolutionDetailPage({
           <aside className="flex flex-col gap-6">
             <div className="card p-6">
               <p className="flex items-center gap-2 text-sm font-semibold text-text-primary">
-                <Clock className="h-4 w-4 text-brand-blue" /> Timeline range
+                <Clock className="h-4 w-4 text-link" /> Timeline range
               </p>
               <p className="mt-1 text-2xl font-bold text-text-primary">{solution.timeline}</p>
             </div>
@@ -110,7 +110,7 @@ export default async function SolutionDetailPage({
                   <li key={s.slug}>
                     <Link
                       href={`/solutions/${s.slug}`}
-                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-brand-blue"
+                      className="focus-ring flex items-center justify-between rounded-lg px-2 py-2 text-sm text-text-secondary hover:bg-surface hover:text-link"
                     >
                       {s.name}
                       <ArrowRight className="h-3.5 w-3.5" />
@@ -143,7 +143,7 @@ function Block({
         <Icon
           className={
             tone === "blue"
-              ? "h-4.5 w-4.5 text-brand-blue"
+              ? "h-4.5 w-4.5 text-link"
               : "h-4.5 w-4.5 text-brand-green-hover"
           }
         />

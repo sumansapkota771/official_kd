@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
-import { Container } from "@/components/ui/container";
+import {
+  ShowcaseCard,
+  showcaseGridInner,
+  showcaseGridOuter,
+  showcaseTone,
+} from "@/components/ui/showcase-card";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { getPageHero, getSolutions } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
@@ -33,45 +36,23 @@ export default async function SolutionsPage() {
       </PageHero>
 
       <section className="section">
-        <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {solutions.map((solution) => {
-            const Icon = solution.icon;
-            const isBlue = solution.accent === "blue";
-            return (
-              <Link
+        <div className={showcaseGridOuter}>
+          <div className={showcaseGridInner}>
+            {solutions.map((solution, i) => (
+              <ShowcaseCard
                 key={solution.slug}
+                tone={showcaseTone(i)}
+                title={solution.name}
+                description={solution.tagline}
                 href={`/solutions/${solution.slug}`}
-                className="focus-ring group flex flex-col gap-3 card card-hover p-6"
-              >
-                <Icon
-                  className={cn(
-                    "h-7 w-7 shrink-0",
-                    isBlue ? "text-brand-blue" : "text-brand-green-hover"
-                  )}
-                />
-                <div>
-                  <h2 className="text-lg font-semibold text-text-primary">{solution.name}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-text-muted">
-                    {solution.tagline}
-                  </p>
-                </div>
-                <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
-                  {solution.tags.slice(0, 3).map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-[var(--radius-sm)] border border-border px-2 py-0.5 text-[11px] font-medium text-text-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-brand-blue opacity-0 transition-opacity group-hover:opacity-100">
-                  View solution <ArrowRight className="h-4 w-4" />
-                </span>
-              </Link>
-            );
-          })}
-        </Container>
+                actionLabel="View solution"
+                secondary={{ label: "Get a quote", href: "/contact" }}
+                image={solution.image}
+                className="min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] [&_[data-image-slot]]:min-h-[220px] sm:[&_[data-image-slot]]:min-h-[280px]"
+              />
+            ))}
+          </div>
+        </div>
       </section>
     </>
   );

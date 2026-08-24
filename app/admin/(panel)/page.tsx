@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="card flex items-center gap-4 p-5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-blue/10 text-link">
               <s.icon className="h-7.5 w-7.5" />
             </span>
             <div>
@@ -91,7 +91,7 @@ export default async function AdminDashboard() {
                 <p className="text-xs text-text-muted">{sc.description}</p>
               </div>
             </div>
-            <ArrowRight01Icon className="h-6 w-6 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-brand-blue" />
+            <ArrowRight01Icon className="h-6 w-6 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-link" />
           </Link>
         ))}
       </div>
@@ -139,7 +139,7 @@ export default async function AdminDashboard() {
 
       <section className="card p-6">
         <div className="flex items-center gap-2">
-          <ChartBarLineIcon className="h-6 w-6 text-brand-blue" />
+          <ChartBarLineIcon className="h-6 w-6 text-link" />
           <h2 className="text-sm font-semibold text-text-primary">Recent visits</h2>
         </div>
         <div className="mt-4 overflow-x-auto">

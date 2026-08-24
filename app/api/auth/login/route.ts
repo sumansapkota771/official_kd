@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { encodeSession, SESSION_COOKIE, SESSION_MAX_AGE, isSuperAdminEmail } from "@/lib/auth";
+import { encodeSession, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -14,8 +14,7 @@ export async function POST(req: Request) {
     !adminEmail ||
     !adminPassword ||
     email.toLowerCase() !== adminEmail.toLowerCase() ||
-    password !== adminPassword ||
-    !isSuperAdminEmail(email)
+    password !== adminPassword
   ) {
     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }

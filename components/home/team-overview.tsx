@@ -6,14 +6,14 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getLeadership, getSectionHeading } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
-export async function TeamOverview({ className, imageUrl, mobileImageUrl }: { className?: string; imageUrl?: string; mobileImageUrl?: string }) {
+export async function TeamOverview({ className }: { className?: string }) {
   const [leadership, heading] = await Promise.all([
     getLeadership(),
     getSectionHeading("team-overview"),
   ]);
 
   return (
-    <section data-section-key="team-overview" data-image-url={imageUrl || undefined} data-mobile-image-url={mobileImageUrl || undefined} className={cn("section", className)}>
+    <section className={cn("section", className)}>
       <Container className="flex flex-col gap-14">
         <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
@@ -31,7 +31,7 @@ export async function TeamOverview({ className, imageUrl, mobileImageUrl }: { cl
           </Button>
         </Reveal>
 
-        <RevealGroup className="grid gap-4 sm:grid-cols-3">
+        <RevealGroup className="grid gap-3 sm:gap-4 sm:grid-cols-3">
           {leadership.map((person) => (
             <RevealItem key={person.slug} className="flex">
               <div className="card group/person w-full p-6">

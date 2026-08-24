@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSubmission, getUserByEmail, upsertEnrollment } from "@/lib/db/queries";
+import { createSubmission, getUserByEmail, upsertUser, upsertEnrollment } from "@/lib/db/queries";
 
 export const runtime = "nodejs";
 
@@ -28,16 +28,17 @@ export async function POST(req: Request) {
       const email =
         (typeof data.email === "string" ? data.email : "") ||
         (rawContact.includes("@") ? rawContact : "");
-      if (email) {
-        const user = await getUserByEmail(email);
-        if (user) {
-          await upsertEnrollment({
-            email,
-            courseSlug: typeof data.courseSlug === "string" ? data.courseSlug : undefined,
-            courseName:
-              String(data.course ?? data.selectedCourse ?? "Course").slice(0, 200) || "Course",
-          });
+      if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        let user = await getUserByEmail(email);
+        if (!user) {
+          user = await upsertUser({ email });
         }
+        await upsertEnrollment({
+          email,
+          courseSlug: typeof data.courseSlug === "string" ? data.courseSlug : undefined,
+          courseName:
+            String(data.course ?? data.selectedCourse ?? "Course").slice(0, 200) || "Course",
+        });
       }
     }
   } catch {

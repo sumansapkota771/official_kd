@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft01Icon, Loading01Icon } from "hugeicons-react";
@@ -26,6 +26,7 @@ export function ContentEditor({
   fields,
   isSingleton,
   singletonSlug,
+  suggestedSlug,
   initial,
 }: {
   type: string;
@@ -33,16 +34,20 @@ export function ContentEditor({
   fields: ContentField[];
   isSingleton?: boolean;
   singletonSlug?: string;
+  /** Prefilled slug for a brand-new item, so list-style content (background
+      images and the like) does not make the editor invent a URL fragment for
+      something that has no URL. Free to overwrite. */
+  suggestedSlug?: string;
   initial?: ContentItem | null;
 }) {
   const router = useRouter();
   const [slug, setSlug] = useState(
-    initial?.slug ?? (isSingleton ? singletonSlug ?? "main" : "")
+    initial?.slug ?? (isSingleton ? singletonSlug ?? "main" : suggestedSlug ?? "")
   );
   const [published, setPublished] = useState(initial?.published ?? true);
   const [data, setData] = useState<Record<string, unknown>>(initial?.data ?? {});
   const [jsonDrafts, setJsonDrafts] = useState<Record<string, string>>({});
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [jsonErrors, setJsonErrors] = useState<Record<string, string | null>>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -50,11 +55,64 @@ export function ContentEditor({
   const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
   const [uploadErrors, setUploadErrors] = useState<Record<string, string | null>>({});
 
+  // Clear jsonDrafts when initial data changes (e.g. navigating to a different item)
+  useEffect(() => {
+    setJsonDrafts({});
+    setJsonErrors({});
+  }, [initial?.id]);
+
   function setField(key: string, value: unknown) {
     setData((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function uploadImageFile(file: File): Promise<string> {
+  /**
+   * Shrink the picture in the browser before it is sent.
+   *
+   * Two reasons, and the second is the one that actually bites: a camera
+   * frame is often 15-25 MB, and a serverless host caps the whole request
+   * body far below that (4.5 MB on Vercel) — the platform rejects the upload
+   * before any of our code runs, so no server-side limit can rescue it.
+   * Re-encoding here turns that frame into a few hundred KB.
+   *
+   * Anything it cannot decode is passed through untouched — HEIC off an
+   * iPhone fails `createImageBitmap` on most non-Safari browsers — and the
+   * server transcodes those instead.
+   */
+  async function shrinkBeforeUpload(file: File): Promise<File> {
+    // Vectors have no pixels to resample; GIFs would lose their animation.
+    if (file.type === "image/svg+xml" || file.type === "image/gif") return file;
+    if (file.size <= 1_500_000) return file;
+
+    try {
+      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+      const scale = Math.min(1, 2400 / Math.max(bitmap.width, bitmap.height));
+      const w = Math.round(bitmap.width * scale);
+      const h = Math.round(bitmap.height * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return file;
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      bitmap.close?.();
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/webp", 0.85)
+      );
+      // If re-encoding did not actually help, keep the original.
+      if (!blob || blob.size >= file.size) return file;
+
+      return new File([blob], `${file.name.replace(/\.[^.]+$/, "")}.webp`, {
+        type: "image/webp",
+      });
+    } catch {
+      return file;
+    }
+  }
+
+  async function uploadImageFile(original: File): Promise<string> {
+    const file = await shrinkBeforeUpload(original);
     const form = new FormData();
     form.append("file", file, file.name);
     const res = await fetch("/api/admin/uploads", {
@@ -188,14 +246,14 @@ export function ContentEditor({
               try {
                 const parsed = JSON.parse(next) as unknown;
                 setField(key, parsed);
-                setJsonError(null);
+                setJsonErrors((prev) => ({ ...prev, [key]: null }));
               } catch {
-                setJsonError("Invalid JSON — changes not saved.");
+                setJsonErrors((prev) => ({ ...prev, [key]: "Invalid JSON — changes not saved." }));
               }
             }}
           />
-          {jsonError && <p className="text-xs font-medium text-red-500">{jsonError}</p>}
-          {field.helper && !jsonError && <p className="text-xs text-text-muted">{field.helper}</p>}
+          {jsonErrors[key] && <p className="text-xs font-medium text-red-500">{jsonErrors[key]}</p>}
+          {field.helper && !jsonErrors[key] && <p className="text-xs text-text-muted">{field.helper}</p>}
         </div>
       );
     }
@@ -285,8 +343,8 @@ export function ContentEditor({
                 className={cn(
                   "focus-ring flex h-9 w-9 items-center justify-center rounded-lg border-[0.5px] transition-colors",
                   active
-                    ? "border-brand-blue bg-brand-blue-light text-brand-blue"
-                    : "border-border bg-surface text-text-muted hover:border-brand-blue hover:text-brand-blue"
+                    ? "border-brand-blue bg-brand-blue-light text-link"
+                    : "border-border bg-surface text-text-muted hover:border-brand-blue hover:text-link"
                 )}
               >
                 <Icon className="h-6 w-6" />
@@ -302,18 +360,22 @@ export function ContentEditor({
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (jsonError) {
-      setMessage("Fix the invalid JSON field before saving.");
+    if (Object.values(jsonErrors).some((e) => e)) {
+      setMessage("Fix the invalid JSON field(s) before saving.");
+      return;
+    }
+    const finalSlug = isSingleton && singletonSlug ? singletonSlug : slug.trim();
+    if (!finalSlug && !isSingleton) {
+      setMessage("Slug is required.");
       return;
     }
     setSaving(true);
     setMessage(null);
     try {
-      const finalSlug = isSingleton && singletonSlug ? singletonSlug : slugify(slug || "item");
       const res = await fetch("/api/admin/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: initial?.id, type, slug: finalSlug, data, published }),
+        body: JSON.stringify({ id: initial?.id, type, slug: slugify(finalSlug), data, published }),
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };

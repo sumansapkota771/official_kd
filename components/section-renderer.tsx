@@ -14,22 +14,18 @@ type SectionConfig = {
   type: string;
   label: string;
   enabled: boolean;
-  bgMode: "surface" | "image";
-  sectionKey: string;
-  imageUrl?: string;
-  mobileImageUrl?: string;
 };
 
 const DEFAULT_SECTIONS: SectionConfig[] = [
-  { type: "hero", label: "Hero", enabled: true, bgMode: "image", sectionKey: "hero", imageUrl: "", mobileImageUrl: "" },
-  { type: "trust", label: "Trust strip", enabled: true, bgMode: "surface", sectionKey: "home-trust", imageUrl: "", mobileImageUrl: "" },
-  { type: "flagship", label: "Flagship program", enabled: true, bgMode: "image", sectionKey: "home-flagship", imageUrl: "", mobileImageUrl: "" },
-  { type: "solutions", label: "Solutions overview", enabled: true, bgMode: "surface", sectionKey: "solutions-overview", imageUrl: "", mobileImageUrl: "" },
-  { type: "courses", label: "Courses overview", enabled: true, bgMode: "image", sectionKey: "courses-overview", imageUrl: "", mobileImageUrl: "" },
-  { type: "tech", label: "Tech delivery", enabled: true, bgMode: "surface", sectionKey: "tech-delivery", imageUrl: "", mobileImageUrl: "" },
-  { type: "team", label: "Team overview", enabled: true, bgMode: "image", sectionKey: "team-overview", imageUrl: "", mobileImageUrl: "" },
-  { type: "cta", label: "Final CTA", enabled: true, bgMode: "surface", sectionKey: "home-final-cta", imageUrl: "", mobileImageUrl: "" },
-  { type: "testimonials", label: "Testimonials", enabled: true, bgMode: "image", sectionKey: "testimonials", imageUrl: "", mobileImageUrl: "" },
+  { type: "hero", label: "Hero", enabled: true },
+  { type: "trust", label: "Trust strip", enabled: true },
+  { type: "flagship", label: "Flagship program", enabled: true },
+  { type: "solutions", label: "Solutions overview", enabled: true },
+  { type: "courses", label: "Courses overview", enabled: true },
+  { type: "tech", label: "Tech delivery", enabled: true },
+  { type: "team", label: "Team overview", enabled: true },
+  { type: "cta", label: "Final CTA", enabled: true },
+  { type: "testimonials", label: "Testimonials", enabled: true },
 ];
 
 export async function SectionRenderer() {
@@ -45,7 +41,6 @@ export async function SectionRenderer() {
   }
 
   const hero = await getHomeHeroData();
-  const bgClass = (mode: string) => mode === "image" ? "cinematic-image" : "cinematic-surface";
 
   return (
     <>
@@ -54,23 +49,23 @@ export async function SectionRenderer() {
         .map((section) => {
           switch (section.type) {
             case "hero":
-              return <Hero key="hero" content={hero} className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <Hero key="hero" content={hero} />;
             case "trust":
-              return <TrustStrip key="trust" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <TrustStrip key="trust" />;
             case "flagship":
-              return <FlagshipProgram key="flagship" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <FlagshipProgram key="flagship" />;
             case "solutions":
-              return <SolutionsOverview key="solutions" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <SolutionsOverview key="solutions" />;
             case "courses":
-              return <CoursesOverview key="courses" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <CoursesOverview key="courses" />;
             case "tech":
-              return <TechDelivery key="tech" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <TechDelivery key="tech" />;
             case "team":
-              return <TeamOverview key="team" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <TeamOverview key="team" />;
             case "cta":
-              return <FinalCta key="cta" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <FinalCta key="cta" />;
             case "testimonials":
-              return <Testimonials key="testimonials" className={bgClass(section.bgMode)} imageUrl={section.imageUrl} mobileImageUrl={section.mobileImageUrl} />;
+              return <Testimonials key="testimonials" />;
             default:
               return null;
           }

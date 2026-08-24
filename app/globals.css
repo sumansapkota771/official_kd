@@ -12,12 +12,15 @@
   --brand-blue-hover: #25277a;
   --brand-blue-light: #eef0ff;
   --brand-green: #2bb673;
-  --brand-green-hover: #1f9e61;
+  --brand-green-hover: #177849;
   --brand-green-light: #e8f8f0;
   /* Warm accent — used sparingly for emphasis, CTAs, highlights */
   --brand-amber: #e8930c;
   --brand-amber-hover: #cf7f0a;
   --brand-amber-light: #fef3e2;
+  /* Amber is a fill colour first. At 2.2:1 on a tile it cannot carry text,
+     so text usages get their own darkened ramp of the same hue. */
+  --brand-amber-text: #935d08;
 
   /* Surfaces — warmer neutrals, not pure white/gray */
   --background: #fafaf8;
@@ -26,21 +29,36 @@
   --surface-elevated: #ffffff;
   --surface-ink: #0f1219;
   --border: #e0ddd6;
+  /* Tile — the borderless "Apple grid" surface. Reads as a panel through
+     contrast with the page background rather than through a border, so it
+     needs its own token: `--surface` is white and would vanish on #fafaf8. */
+  --tile-bg: #f2f1ed;
+  --tile-bg-hover: #ebe9e2;
+  /* Ink tile — the dark showcase card. Fixed in both themes: an ink card is
+     ink on a light page and on a dark one, so its palette cannot ride on
+     --brand-blue, which is near-black indigo in light mode and would be
+     invisible here. */
+  --tile-ink-bg: #0f1219;
+  --tile-ink-bg-hover: #171b24;
+  --tile-ink-text: #c5c8ce;
+  --tile-ink-accent: #8b8ff0;
+  --tile-ink-pill: #5b5fd6;
+  --tile-ink-pill-hover: #666ad9;
 
   /* Text — richer darks, not default gray */
   --text-primary: #0f1219;
   --text-secondary: #2d3142;
-  --text-muted: #6b7178;
+  --text-muted: #646970;
   --text-on-brand: #ffffff;
   --link: #2e3192;
 
   /* Status */
   --success-bg: #e8f8f0;
-  --success-text: #1f9e61;
+  --success-text: #19804f;
   --badge-blue-bg: #eef0ff;
   --badge-blue-text: #2e3192;
   --badge-green-bg: #e8f8f0;
-  --badge-green-text: #1f9e61;
+  --badge-green-text: #19804f;
   --badge-amber-bg: #fef3e2;
   --badge-amber-text: #9a5c06;
 
@@ -55,13 +73,16 @@
   --footer-divider: rgba(255, 255, 255, 0.08);
 
   /* Announcement banner */
-  --announcement-bg: #1f9e61;
+  --announcement-bg: #1a8753;
 
   /* Shape — deliberate hierarchy, not uniform */
   --radius-sm: 6px;
   --radius-card: 12px;
   --radius-pill: 999px;
   --radius-control: 8px;
+  /* Grid tile radius. Zeroed: cards read as crisp rectangles — the fill
+      alone separates a tile from the page. */
+  --radius-tile: 0px;
 
   /* Elevation — distinct levels, not one shadow everywhere */
   --shadow-card: 0 1px 3px rgba(15, 18, 25, 0.04), 0 0 0 1px rgba(15, 18, 25, 0.06);
@@ -84,7 +105,7 @@
 
 .dark {
   --brand-blue: #5b5fd6;
-  --brand-blue-hover: #7b7fe6;
+  --brand-blue-hover: #6368e2;
   --brand-blue-light: #1a1d3a;
   --brand-green: #34d17e;
   --brand-green-hover: #4ee096;
@@ -92,6 +113,8 @@
   --brand-amber: #f5a623;
   --brand-amber-hover: #f7b84d;
   --brand-amber-light: #2a2008;
+  /* On dark grounds the vivid amber already clears AA as text. */
+  --brand-amber-text: #f5a623;
 
   --background: #0a0c12;
   --background-secondary: #0f1219;
@@ -99,10 +122,20 @@
   --surface-elevated: #1c2030;
   --surface-ink: #0f1219;
   --border: #252830;
+  /* Inverted for dark: the tile lifts *above* the page instead of settling
+     into it, which is how Apple's dark grids separate without borders. */
+  --tile-bg: #171a23;
+  --tile-bg-hover: #1e2231;
+  --tile-ink-bg: #0f1219;
+  --tile-ink-bg-hover: #171b24;
+  --tile-ink-text: #c5c8ce;
+  --tile-ink-accent: #8b8ff0;
+  --tile-ink-pill: #5b5fd6;
+  --tile-ink-pill-hover: #666ad9;
 
   --text-primary: #f0f1f3;
   --text-secondary: #b8bcc6;
-  --text-muted: #7a7f8c;
+  --text-muted: #858a95;
   --text-on-brand: #0a0c12;
   --link: #8b8ff0;
 
@@ -130,6 +163,7 @@
   --color-brand-amber: var(--brand-amber);
   --color-brand-amber-hover: var(--brand-amber-hover);
   --color-brand-amber-light: var(--brand-amber-light);
+  --color-brand-amber-text: var(--brand-amber-text);
 
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
@@ -137,6 +171,13 @@
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-ink: var(--surface-ink);
   --color-border: var(--border);
+  --color-tile-bg: var(--tile-bg);
+  --color-tile-bg-hover: var(--tile-bg-hover);
+  --color-tile-ink-bg: var(--tile-ink-bg);
+  --color-tile-ink-text: var(--tile-ink-text);
+  --color-tile-ink-accent: var(--tile-ink-accent);
+  --color-tile-ink-pill: var(--tile-ink-pill);
+  --color-tile-ink-pill-hover: var(--tile-ink-pill-hover);
 
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -167,6 +208,7 @@
   --radius-card: var(--radius-card);
   --radius-pill: var(--radius-pill);
   --radius-control: var(--radius-control);
+  --radius-tile: var(--radius-tile);
   --shadow-card: var(--shadow-card);
   --shadow-card-hover: var(--shadow-card-hover);
   --shadow-elevated: var(--shadow-elevated);
@@ -184,8 +226,9 @@
   --text-display-lg: clamp(2.125rem, 1.5rem + 2.8vw, 3.5rem);
   --text-display-md: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
 
-  --font-heading: var(--font-archivo), "Arial Black", Impact, sans-serif;
-  --font-body: var(--font-space-grotesk), "SF Pro Text", "Segoe UI", sans-serif;
+  --font-sans: var(--font-albert-sans), "SF Pro Text", "Segoe UI", sans-serif;
+  --font-heading: var(--font-albert-sans), "SF Pro Display", "Segoe UI", sans-serif;
+  --font-body: var(--font-albert-sans), "SF Pro Text", "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
 }
 
@@ -271,11 +314,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary);
-  font-family: var(--font-heading);
-  letter-spacing: -0.03em;
-  font-weight: 700;
+/* Heading defaults belong in `base`, not unlayered.
+   Cascade layers outrank specificity: an unlayered rule beats every Tailwind
+   utility no matter how specific the utility is. Sitting outside a layer,
+   this block was silently winning against `text-white`, `font-semibold` and
+   `tracking-*` wherever a heading carried one — which is why headings on the
+   ink cards rendered near-black on near-black. In `base` it still supplies
+   the default for any heading that asks for nothing, and any utility on the
+   element now takes precedence, which is what the markup already assumed. */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
 }
 
 ::selection {
@@ -299,11 +352,27 @@ h1, h2, h3, h4, h5, h6 {
 --------------------------------------------------------- */
 @layer components {
   /* Elevated surface card — crisp, not soft */
+  /* The card, Apple-style: no border, no shadow, large radius, and a fill
+     that separates it from the page. Everything that reads as a "card"
+     anywhere on the site goes through this, so the whole surface stays one
+     material rather than a mix of bordered boxes and filled tiles. */
   .card {
-    border-radius: var(--radius-card);
-    border: 1px solid var(--border);
+    border-radius: var(--radius-tile);
+    border: 1px solid transparent;
+    background: var(--tile-bg);
+  }
+  /* Same card on a panel-coloured section. Separation is by fill, so a grey
+     tile on a grey section is invisible — these flip to the light surface,
+     which is Apple's own arrangement read the other way round. */
+  .card-on-panel {
     background: var(--surface);
-    box-shadow: var(--shadow-card);
+  }
+  /* A fill cannot survive a high-contrast request; give the edge back. */
+  @media (prefers-contrast: more) {
+    .card,
+    .card-on-panel {
+      border-color: var(--border);
+    }
   }
   /* Floating element card — heavier elevation */
   .card-elevated {
@@ -312,15 +381,28 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--surface-elevated);
     box-shadow: var(--shadow-elevated);
   }
-  /* Interactive card — border-intensifies on hover, not a generic lift */
+  /* Interactive card — the fill warms, the box never moves. */
   .card-hover {
-    transition: border-color var(--duration-ui) var(--ease-out-quint),
-      box-shadow var(--duration-ui) var(--ease-out-quint);
+    transition: background-color var(--duration-ui) var(--ease-out-quint);
   }
   .card-hover:hover {
-    border-color: color-mix(in srgb, var(--brand-blue) 25%, var(--border));
-    box-shadow: var(--shadow-card-hover);
+    background: var(--tile-bg-hover);
   }
+  .card-on-panel.card-hover:hover {
+    background: color-mix(in srgb, var(--text-primary) 4%, var(--surface));
+  }
+  /* Ink variant of the card — Apple alternates light and dark tiles to give
+     a long 2-up grid a rhythm instead of a wall of identical boxes. */
+  .card-ink {
+    border-radius: var(--radius-tile);
+    border: 1px solid transparent;
+    background: var(--tile-ink-bg);
+    transition: background-color var(--duration-ui) var(--ease-out-quint);
+  }
+  .card-ink:hover {
+    background: var(--tile-ink-bg-hover);
+  }
+
   /* Secondary panel */
   .panel {
     border-radius: var(--radius-card);
@@ -508,43 +590,6 @@ h1, h2, h3, h4, h5, h6 {
   to { stroke-dashoffset: -1005; }
 }
 
-/* ---------------------------------------------------------
-   Homepage cinematic section system.
-
-   The page is a stack of visual layers managed by
-   CinematicBackground2. Sections alternate between:
-   - "cinematic-surface": solid background (masks the image beneath)
-   - "cinematic-image": transparent background (content sits over the revealed image)
-
-   The hero is special — it has its own backdrop and sticky content.
---------------------------------------------------------- */
-
-/* Solid surface section — opaque background that masks the cinematic image beneath.
-   This creates the "stacked panel" reveal effect: as you scroll past a surface
-   section, the next image section is revealed via clip-path seam. */
-.cinematic-surface {
-  position: relative;
-  z-index: 1;
-  background: var(--background);
-}
-
-/* Image section — transparent background so the cinematic layer shows through */
-.cinematic-image {
-  position: relative;
-  z-index: 1;
-}
-
-/* Text overlay for sections that need it over images */
-.cinematic-overlay {
-  position: relative;
-  z-index: 2;
-}
-
-/* Ensure content in cinematic-image sections stacks above the background layer */
-.cinematic-image > * {
-  position: relative;
-  z-index: 1;
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

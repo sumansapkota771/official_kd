@@ -25,7 +25,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               <span
                 className={cn(
                   "text-[15px] font-semibold tracking-tight text-text-primary transition-colors",
-                  open && "text-brand-blue"
+                  open && "text-link"
                 )}
               >
                 {item.q}

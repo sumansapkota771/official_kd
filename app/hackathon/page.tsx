@@ -51,7 +51,7 @@ export default async function HackathonPage() {
         <Container className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {highlights.map((item) => (
             <div key={item.label} className="flex flex-col items-center gap-1.5 text-center">
-              <item.icon className="h-7 w-7 text-brand-blue" />
+              <item.icon className="h-7 w-7 text-link" />
               <p className="text-sm font-semibold text-text-primary">{item.label}</p>
             </div>
           ))}
@@ -61,7 +61,7 @@ export default async function HackathonPage() {
       <section id="tracks" className="section">
         <Container className="flex flex-col gap-8">
           <SectionHeading eyebrow="Tracks" title="Three ways to compete" />
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
             {tracks.map((track) => (
               <div key={track.title} className="card p-5">
                 <h3 className="font-semibold text-text-primary">{track.title}</h3>
@@ -102,7 +102,7 @@ export default async function HackathonPage() {
               Full rulebook, judging criteria and sponsorship proposal are available on
               request — detailed content for this program is being finalised.
             </p>
-            <Button href="/contact" size="lg" className="mt-6 bg-white text-brand-blue hover:bg-white/90">
+            <Button href="/contact" size="lg" className="mt-6 bg-white text-link hover:bg-white/90">
               Register for Hackathon <ArrowRight className="h-5 w-5" />
             </Button>
           </div>

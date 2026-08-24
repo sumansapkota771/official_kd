@@ -25,7 +25,7 @@ export function LangToggle({ className }: { className?: string }) {
             "px-2.5 py-1 transition-colors",
             lang === code
               ? "bg-brand-blue text-white"
-              : "bg-transparent text-text-muted hover:text-brand-blue"
+              : "bg-transparent text-text-muted hover:text-link"
           )}
         >
           {code}
