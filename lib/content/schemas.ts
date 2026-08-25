@@ -996,4 +996,52 @@ export function getSchema(type: string): ContentSchema {
   return schema;
 }
 
+export type AdminNavItem = {
+  type: string;
+  label: string;
+  singular: string;
+  isSingleton: boolean;
+};
+export type AdminNavGroup = { group: string; items: AdminNavItem[] };
+
+/**
+ * The content tree the admin sidebar is built from, grouped the way the site
+ * is: chrome first, then the homepage section by section, then the rest.
+ *
+ * Deliberately free of database access. `getTypeSummary` covers the same
+ * ground but needs a query for its counts, and this renders on *every* admin
+ * page — paying for a round trip to draw navigation, and losing the whole
+ * sidebar whenever Postgres is cold, is a bad trade. Counts belong on the
+ * content overview, where they are the point rather than decoration.
+ */
+export function getAdminContentNav(): AdminNavGroup[] {
+  const toItem = (schema: ContentSchema): AdminNavItem => ({
+    type: schema.type,
+    label: schema.label,
+    singular: schema.singular,
+    isSingleton: Boolean(schema.isSingleton),
+  });
+
+  const groups: AdminNavGroup[] = [];
+  const placed = new Set<string>();
+
+  for (const g of CONTENT_GROUPS) {
+    const items: AdminNavItem[] = [];
+    for (const type of g.types) {
+      const schema = schemaMap.get(type);
+      if (!schema) continue;
+      placed.add(type);
+      items.push(toItem(schema));
+    }
+    if (items.length > 0) groups.push({ group: g.group, items });
+  }
+
+  // A type registered after CONTENT_GROUPS was last edited still needs a home;
+  // without this it would exist, be editable by URL, and be unreachable.
+  const orphans = CONTENT_SCHEMAS.filter((s) => !placed.has(s.type)).map(toItem);
+  if (orphans.length > 0) groups.push({ group: "Other", items: orphans });
+
+  return groups;
+}
+
 

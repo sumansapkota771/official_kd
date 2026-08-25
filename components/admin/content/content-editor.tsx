@@ -27,6 +27,7 @@ export function ContentEditor({
   isSingleton,
   singletonSlug,
   suggestedSlug,
+  backHref,
   initial,
 }: {
   type: string;
@@ -38,9 +39,13 @@ export function ContentEditor({
       images and the like) does not make the editor invent a URL fragment for
       something that has no URL. Free to overwrite. */
   suggestedSlug?: string;
+  /** Where Cancel and the back arrow lead. Defaults to this type's list;
+      singletons have no list, so they point at the content overview. */
+  backHref?: string;
   initial?: ContentItem | null;
 }) {
   const router = useRouter();
+  const listHref = backHref ?? `/admin/content/${type}`;
   const [slug, setSlug] = useState(
     initial?.slug ?? (isSingleton ? singletonSlug ?? "main" : suggestedSlug ?? "")
   );
@@ -50,6 +55,7 @@ export function ContentEditor({
   const [jsonErrors, setJsonErrors] = useState<Record<string, string | null>>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   // Upload state keyed by field key
   const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
@@ -371,6 +377,7 @@ export function ContentEditor({
     }
     setSaving(true);
     setMessage(null);
+    setSaved(false);
     try {
       const res = await fetch("/api/admin/content", {
         method: "POST",
@@ -381,7 +388,17 @@ export function ContentEditor({
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error ?? "Save failed");
       }
-      router.push(`/admin/content/${type}`);
+      /* A singleton editor *is* its landing page, so navigating "back" after
+         a save would just reload the same form and lose the scroll position.
+         It confirms in place instead; a collection still returns to its list,
+         where the saved row is the thing worth seeing. */
+      if (isSingleton) {
+        setSaved(true);
+        setSaving(false);
+        router.refresh();
+        return;
+      }
+      router.push(listHref);
       router.refresh();
     } catch (err) {
       setMessage((err as Error).message);
@@ -394,9 +411,9 @@ export function ContentEditor({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
-            href={`/admin/content/${type}`}
+            href={listHref}
             className="focus-ring flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:bg-background-secondary"
-            aria-label="Back to list"
+            aria-label={isSingleton ? "Back to all content" : "Back to list"}
           >
             <ArrowLeft01Icon className="h-6 w-6" />
           </Link>
@@ -409,7 +426,7 @@ export function ContentEditor({
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href={`/admin/content/${type}`}
+            href={listHref}
             className="focus-ring inline-flex h-10 items-center rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary transition-colors hover:bg-background-secondary"
           >
             Cancel
@@ -433,6 +450,12 @@ export function ContentEditor({
       {message && (
         <p className="rounded-xl border-[0.5px] border-red-500/30 bg-red-500/5 px-4 py-3 text-sm text-text-primary">
           {message}
+        </p>
+      )}
+
+      {saved && (
+        <p className="rounded-xl border-[0.5px] border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm font-medium text-brand-green-hover">
+          Saved. The live site updates on its next request.
         </p>
       )}
 

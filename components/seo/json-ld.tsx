@@ -199,25 +199,6 @@ export function FAQJsonLd({
   );
 }
 
-export function BreadcrumbJsonLd({
-  items,
-}: {
-  items: { name: string; url: string }[];
-}) {
-  return (
-    <JsonLd
-      schema={{
-        type: "BreadcrumbList",
-        itemListElement: items.map((item, i) => ({
-          position: i + 1,
-          name: item.name,
-          item: item.url,
-        })),
-      }}
-    />
-  );
-}
-
 export function WebSiteJsonLd() {
   return (
     <JsonLd

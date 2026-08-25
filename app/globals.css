@@ -301,11 +301,6 @@ html.lenis {
   scrollbar-color: var(--brand-amber) transparent;
 }
 
-/* 1px line for cards/sections */
-.hairline-border {
-  border: 1px solid var(--border);
-}
-
 body {
   background: var(--background);
   color: var(--text-secondary);
@@ -373,13 +368,6 @@ body {
     .card-on-panel {
       border-color: var(--border);
     }
-  }
-  /* Floating element card — heavier elevation */
-  .card-elevated {
-    border-radius: var(--radius-card);
-    border: 1px solid var(--border);
-    background: var(--surface-elevated);
-    box-shadow: var(--shadow-elevated);
   }
   /* Interactive card — the fill warms, the box never moves. */
   .card-hover {
@@ -476,27 +464,6 @@ body {
      to add `text-white` at every call site forever. */
   .on-brand :is(h1, h2, h3, h4, h5, h6) {
     color: inherit;
-  }
-
-  /* Underline that draws in from the left on hover — a micro-interaction
-     with a direction, rather than a color swap. */
-  .link-underline {
-    position: relative;
-  }
-  .link-underline::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 1px;
-    background-color: currentColor;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--duration-micro) var(--ease-out-quint);
-  }
-  .link-underline:hover::after,
-  .link-underline:focus-visible::after {
-    transform: scaleX(1);
   }
 
   /* Indeterminate route loader: a short dash sweeping the page

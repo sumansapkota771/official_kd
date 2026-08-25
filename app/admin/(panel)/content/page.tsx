@@ -22,7 +22,8 @@ export default async function AdminContentOverview() {
         <div>
           <h1 className="text-2xl font-semibold text-text-primary">Content</h1>
           <p className="mt-1 text-sm text-text-muted">
-            Everything on the site lives here — edit it and the public pages update immediately.
+            Every section of the site, grouped by where it appears. The sidebar
+            lists the same things — use it to reach any of them in one click.
           </p>
         </div>
         <SeedButton label="all content" />
@@ -47,7 +48,11 @@ export default async function AdminContentOverview() {
                   <ArrowRight01Icon className="h-6 w-6 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-link" />
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-text-primary">{s.label}</h3>
-                <p className="mt-1 text-sm text-text-muted">{s.singular}</p>
+                <p className="mt-1 text-sm text-text-muted">
+                  {s.isSingleton
+                    ? "One block — opens straight into its editor"
+                    : `${s.singular} — reorderable list`}
+                </p>
                 <div className="mt-4 flex items-center gap-2">
                   <span className="rounded-full bg-background-secondary px-2.5 py-1 text-xs font-semibold text-text-secondary">
                     {s.count} total

@@ -361,19 +361,6 @@ export async function deleteContentItem(id: number): Promise<void> {
   invalidateCache("list:");
 }
 
-export async function restoreContentItem(id: number): Promise<void> {
-  await ensureSchema();
-  await retryOnTimeout(() =>
-    db
-      .query(
-        "UPDATE content_items SET deleted_at = NULL, updated_at = now() WHERE id = $1",
-        [id]
-      )
-      .then(() => undefined)
-  );
-  invalidateCache("list:");
-}
-
 export async function setContentPublished(id: number, published: boolean): Promise<void> {
   await ensureSchema();
   await retryOnTimeout(() =>
