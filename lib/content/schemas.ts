@@ -154,6 +154,18 @@ export type ContactDetailData = { icon: string; label: string; value: string; hr
 export type HackathonHighlightData = { icon: string; label: string };
 export type HackathonTrackData = { title: string; description: string };
 export type HackathonTimelineData = { label: string; detail: string };
+export type HackathonPartnerData = {
+  name: string;
+  /** The partner's own mark. Optional: without one the tile sets the name as
+   *  a wordmark instead, so a partner can be listed the day the agreement is
+   *  signed rather than the day their logo file turns up. */
+  logo?: string;
+  /** Sponsorship level, printed under the mark. Free text — every hackathon
+   *  invents its own ladder. Empty prints nothing. */
+  tier?: string;
+  /** The partner's site. Given one, the whole tile becomes the link. */
+  url?: string;
+};
 export type NavData = { groups: typeof navGroups };
 export type PageHeroData = { eyebrow: string; title: string; description: string; eyebrowTone?: "blue" | "green" };
 export type SectionHeadingData = {
@@ -397,6 +409,7 @@ const pageHeroes: { slug: string; data: PageHeroData }[] = [
 ];
 
 const sectionHeadings: { slug: string; data: SectionHeadingData }[] = [
+  { slug: "hackathon-partners", data: { eyebrow: "Hackathon Partners", title: "The organisations behind the hackathon", description: "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms.", eyebrowTone: "green" } },
   { slug: "solutions-overview", data: { eyebrow: "Solutions", title: `${solutions.length} ways we help you ship`, description: "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix." } },
   { slug: "courses-overview", data: { eyebrow: "Learn", title: "Applied IT courses, taught by practitioners", description: "Six live cohort-based programs — built from the same work our engineering team ships for clients.", eyebrowTone: "green" } },
   { slug: "tech-delivery", data: { eyebrow: "Technology", title: "A stack chosen for reliability, not resume-padding", description: "" } },
@@ -746,6 +759,24 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       hackathonTimeline.map((t) => ({ slug: slugify(t.label), data: { ...t } })),
   },
   {
+    type: "hackathon-partner",
+    label: "Hackathon partners",
+    singular: "Hackathon partner",
+    titleField: "name",
+    subtitleField: "tier",
+    fields: [
+      { key: "name", label: "Name", kind: "text", required: true },
+      { key: "logo", label: "Logo", kind: "image", helper: "Ideally a wordmark on a transparent background. Leave it empty and the tile sets the name as a wordmark instead — a partner listed without a logo still looks finished." },
+      { key: "tier", label: "Tier", kind: "text", placeholder: "Title Partner", helper: "Printed under the mark — e.g. Title Partner, Gold, Academic Host. Leave empty to show none." },
+      { key: "url", label: "Website", kind: "url", placeholder: "https://…", helper: "Optional. With a link the whole tile becomes clickable." },
+    ],
+    /* Seeded from the institutional partner list so the section is populated
+       the moment it ships. It stays a separate list from `partner` on
+       purpose: who sponsors the hackathon and who partners with the company
+       are two rosters, and this one is curated down from day one. */
+    fallback: () => partners.map((p) => ({ slug: slugify(p.name), data: { name: p.name } })),
+  },
+  {
     type: "nav",
     label: "Navigation",
     singular: "Navigation",
@@ -873,6 +904,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
       "home-trust",
       "stat",
       "home-flagship",
+      "hackathon-partner",
       "section-heading",
       "solution",
       "course",
@@ -937,7 +969,7 @@ CONTENT_SCHEMAS.push({
   isSingleton: false,
   fields: [
     { key: "type", label: "Section type", kind: "select", required: true, options: [
-      "hero", "trust", "flagship", "solutions", "courses", "tech", "team", "cta", "testimonials"
+      "hero", "trust", "flagship", "hackathon-partners", "solutions", "courses", "tech", "team", "cta", "testimonials"
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
@@ -946,6 +978,7 @@ CONTENT_SCHEMAS.push({
     { slug: "hero", data: { type: "hero", label: "Hero", enabled: true } },
     { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true } },
     { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true } },
+    { slug: "hackathon-partners", data: { type: "hackathon-partners", label: "Hackathon partners", enabled: true } },
     { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true } },
     { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true } },
     { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true } },

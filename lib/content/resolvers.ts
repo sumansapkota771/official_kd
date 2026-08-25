@@ -27,6 +27,7 @@ import type {
   HackathonHighlightData,
   HackathonTrackData,
   HackathonTimelineData,
+  HackathonPartnerData,
   NavData,
   PageHeroData,
   SectionHeadingData,
@@ -159,6 +160,10 @@ export async function getHackathonTracks(): Promise<(HackathonTrackData & { slug
 }
 export async function getHackathonTimeline(): Promise<(HackathonTimelineData & { slug: string })[]> {
   const items = await listContent<HackathonTimelineData>("hackathon-timeline");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+export async function getHackathonPartners(): Promise<(HackathonPartnerData & { slug: string })[]> {
+  const items = await listContent<HackathonPartnerData>("hackathon-partner");
   return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
 }
 

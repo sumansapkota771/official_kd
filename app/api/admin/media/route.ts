@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { listMedia, getMediaCount } from "@/lib/media";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { randomBytes } from "crypto";
+import { putUpload } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,11 +54,9 @@ export async function POST(request: Request) {
     const ext = file.name.split(".").pop() || "bin";
     const id = randomBytes(8).toString("hex");
     const filename = `${id}.${ext}`;
-    const uploadsDir = join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(join(uploadsDir, filename), buffer);
+    const url = await putUpload(filename, buffer, file.type);
 
     const { createMedia } = await import("@/lib/media");
     const alt = form.get("alt")?.toString() || "";
@@ -68,7 +65,7 @@ export async function POST(request: Request) {
     const asset = await createMedia({
       filename,
       original_name: file.name,
-      url: `/uploads/${filename}`,
+      url,
       mime_type: file.type,
       size_bytes: file.size,
       alt,
@@ -78,6 +75,7 @@ export async function POST(request: Request) {
     return NextResponse.json(asset);
   } catch (err) {
     console.error("[media/upload]", err);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Upload failed";
+    return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }
 }

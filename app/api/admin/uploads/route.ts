@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { randomBytes } from "crypto";
 import sharp from "sharp";
+import { mimeForExtension, putUpload } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -107,12 +106,10 @@ export async function POST(request: Request) {
     }
 
     const filename = `${randomBytes(8).toString("hex")}.${ext}`;
-    const uploadsDir = join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
-    await writeFile(join(uploadsDir, filename), output);
+    const url = await putUpload(filename, output, mimeForExtension(ext));
 
     return NextResponse.json({
-      url: `/uploads/${filename}`,
+      url,
       bytes: output.length,
       originalBytes: file.size,
     });

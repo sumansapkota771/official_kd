@@ -169,6 +169,34 @@ export async function listContent<T = Record<string, unknown>>(
   });
 }
 
+/**
+ * Every slug ever recorded for a type, soft-deleted rows included.
+ *
+ * `listContent` hides deleted rows, which leaves a caller that fills gaps
+ * from a default list unable to tell "never existed" from "the admin removed
+ * it on purpose" — both look like empty space. Re-adding a section someone
+ * deleted is worse than never adding it, so that caller needs to see the
+ * tombstones. Returns null when the database cannot answer: unverifiable is
+ * not the same as absent, and the caller should leave the order alone.
+ */
+export async function listAllSlugs(type: string): Promise<Set<string> | null> {
+  return cached<Set<string> | null>(`list:${type}:allslugs`, TTL.SHORT, async () => {
+    try {
+      await ensureSeeded(getSchema(type));
+      const res = await db.query<{ slug: string | null }>(
+        "SELECT slug FROM content_items WHERE type = $1",
+        [type]
+      );
+      return new Set(
+        res.rows.map((r) => r.slug).filter((s): s is string => Boolean(s))
+      );
+    } catch (err) {
+      logFallback(`${type} (slugs)`, err);
+      return null;
+    }
+  });
+}
+
 export async function getContentBySlug<T = Record<string, unknown>>(
   type: string,
   slug: string
