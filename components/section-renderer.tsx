@@ -3,6 +3,7 @@ import { Hero } from "@/components/home/hero";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { FlagshipProgram } from "@/components/home/flagship-program";
 import { HackathonPartners } from "@/components/home/hackathon-partners";
+import { DristiLagani } from "@/components/home/dristi-lagani";
 import { SolutionsOverview } from "@/components/home/solutions-overview";
 import { CoursesOverview } from "@/components/home/courses-overview";
 import { TechDelivery } from "@/components/home/tech-delivery";
@@ -22,6 +23,7 @@ const DEFAULT_SECTIONS: SectionConfig[] = [
   { type: "trust", label: "Trust strip", enabled: true },
   { type: "flagship", label: "Flagship program", enabled: true },
   { type: "hackathon-partners", label: "Hackathon partners", enabled: true },
+  { type: "lagani", label: "Dristi Lagani", enabled: true },
   { type: "solutions", label: "Solutions overview", enabled: true },
   { type: "courses", label: "Courses overview", enabled: true },
   { type: "tech", label: "Tech delivery", enabled: true },
@@ -104,6 +106,8 @@ export async function SectionRenderer() {
               return <FlagshipProgram key="flagship" />;
             case "hackathon-partners":
               return <HackathonPartners key="hackathon-partners" />;
+            case "lagani":
+              return <DristiLagani key="lagani" />;
             case "solutions":
               return <SolutionsOverview key="solutions" />;
             case "courses":

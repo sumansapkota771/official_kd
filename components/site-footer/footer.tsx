@@ -70,6 +70,9 @@ export function Footer() {
             <Link href="/hackathon" className="hover:text-brand-green">
               National AI Hackathon
             </Link>
+            <Link href="/dristi-lagani" className="hover:text-brand-green">
+              Dristi Lagani
+            </Link>
             <Link href="/insights" className="hover:text-brand-green">
               Articles
             </Link>

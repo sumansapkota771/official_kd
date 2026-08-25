@@ -154,6 +154,18 @@ export type ContactDetailData = { icon: string; label: string; value: string; hr
 export type HackathonHighlightData = { icon: string; label: string };
 export type HackathonTrackData = { title: string; description: string };
 export type HackathonTimelineData = { label: string; detail: string };
+export type LaganiHighlightData = { icon: string; label: string };
+export type LaganiFocusData = { title: string; description: string };
+export type LaganiProcessData = { label: string; detail: string };
+export type LaganiPortfolioData = {
+  name: string;
+  /** The company's mark. Optional — the tile sets the name as a wordmark
+   *  instead, so a company can be listed before its logo arrives. */
+  logo?: string;
+  /** Round or status, printed under the mark. Free text. */
+  stage?: string;
+  url?: string;
+};
 export type HackathonPartnerData = {
   name: string;
   /** The partner's own mark. Optional: without one the tile sets the name as
@@ -174,7 +186,7 @@ export type SectionHeadingData = {
   description: string;
   eyebrowTone?: "blue" | "green";
 };
-export type HackathonSlideshowData = {
+export type SlideshowImageData = {
   imageUrl: string;
   mobileImageUrl?: string;
   displayOrder: number;
@@ -185,6 +197,10 @@ export type HackathonSlideshowData = {
    *  on. "0" leaves the photograph untouched. */
   overlayOpacity?: string;
 };
+/** Both programme banners take the same slides; the aliases keep each call
+ *  site reading in its own vocabulary. */
+export type HackathonSlideshowData = SlideshowImageData;
+export type LaganiSlideshowData = SlideshowImageData;
 export type HomeHeroData = {
   eyebrow: string;
   title: string;
@@ -198,6 +214,15 @@ export type HomeHeroData = {
 };
 export type HomeTrustData = { label: string };
 export type HomeFlagshipData = {
+  badge: string;
+  title: string;
+  description: string;
+  point1: string;
+  point2: string;
+  ctaLabel: string;
+  ctaHref: string;
+};
+export type HomeLaganiData = {
   badge: string;
   title: string;
   description: string;
@@ -395,6 +420,30 @@ const hackathonTimeline = [
   { label: "Awards ceremony", detail: "Winners announced, prizes and offers extended" },
 ];
 
+/* Placeholder programme copy: structure the admin can edit, deliberately
+   free of figures. Cheque sizes and fund terms are claims about the
+   business, and inventing them here would publish them as fact. */
+const laganiHighlights = [
+  { icon: "sparkles", label: "Pre-seed & seed" },
+  { icon: "workflow", label: "Engineering included" },
+  { icon: "users", label: "Hands-on, not passive" },
+  { icon: "globe", label: "Built for Nepal" },
+];
+
+const laganiFocus = [
+  { title: "Software-first businesses", description: "Companies where the software is the business rather than a side effect of it — SaaS, marketplaces and platforms." },
+  { title: "Applied AI", description: "Teams using AI to take real cost or time out of a workflow, with a customer already feeling that pain today." },
+  { title: "Digital infrastructure for Nepal", description: "Payments, logistics, education and health tooling built for how business actually runs here." },
+];
+
+const laganiProcess = [
+  { label: "Send us the deck", detail: "A short deck, a working demo, or a clear write-up of the problem — whichever you already have." },
+  { label: "First conversation", detail: "A working session on the product and the market, not a pitch performance." },
+  { label: "Technical and commercial review", detail: "We look at the build, the numbers and the team together, and tell you what we find." },
+  { label: "Terms", detail: "A written offer covering capital, engineering support and what each side commits to." },
+  { label: "Build together", detail: "Funding lands and our engineers start work alongside your team." },
+];
+
 const pageHeroes: { slug: string; data: PageHeroData }[] = [
   { slug: "about", data: { eyebrow: "Company", title: "Software and skills, built together", description: "KodeDristi is a Kathmandu-based software company that builds client products and runs applied IT courses from the same engineering bench — #WithYouEveryStep." } },
   { slug: "team", data: { eyebrow: "Company", title: "Team", description: "A small, senior bench across engineering, design and instruction — the same people on your project are the ones teaching our courses." } },
@@ -405,10 +454,12 @@ const pageHeroes: { slug: string; data: PageHeroData }[] = [
   { slug: "products", data: { eyebrow: "Products", title: "Products", description: "In-house software KodeDristi builds, ships and maintains — proof of the same engineering standard we bring to client work." } },
   { slug: "solutions", data: { eyebrow: "Solutions", title: `${solutions.length} delivery tracks. One accountable team.`, description: "Every solution below follows the same disciplined process — a clear problem statement, a defined approach, concrete deliverables and a realistic timeline." } },
   { slug: "contact", data: { eyebrow: "Contact", title: "Let's talk about what you're building", description: "Whether it's a project, a course seat, or a partnership — tell us the details and we'll follow up within one business day." } },
+  { slug: "dristi-lagani", data: { eyebrow: "Investment Program", title: "Dristi Lagani", description: "Capital and an engineering team for early-stage Nepali software companies — we invest, then we build alongside you.", eyebrowTone: "green" } },
   { slug: "hackathon", data: { eyebrow: "Flagship Program", title: "National AI Hackathon", description: "KodeDristi's flagship national competition for student and professional builders — 48 hours, real mentors, real prizes, and a direct line to our hiring and partner network." } },
 ];
 
 const sectionHeadings: { slug: string; data: SectionHeadingData }[] = [
+  { slug: "lagani-portfolio", data: { eyebrow: "Portfolio", title: "Companies we have backed", description: "Every company below took capital and engineering from KodeDristi.", eyebrowTone: "green" } },
   { slug: "hackathon-partners", data: { eyebrow: "Hackathon Partners", title: "The organisations behind the hackathon", description: "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms.", eyebrowTone: "green" } },
   { slug: "solutions-overview", data: { eyebrow: "Solutions", title: `${solutions.length} ways we help you ship`, description: "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix." } },
   { slug: "courses-overview", data: { eyebrow: "Learn", title: "Applied IT courses, taught by practitioners", description: "Six live cohort-based programs — built from the same work our engineering team ships for clients.", eyebrowTone: "green" } },
@@ -449,6 +500,20 @@ const homeFlagship: SeedRow = {
     point2: "Registrations open now",
     ctaLabel: "Register for Hackathon",
     ctaHref: "/hackathon",
+  },
+};
+
+const homeLagani: SeedRow = {
+  slug: "main",
+  data: {
+    badge: "Investment Program",
+    title: "Dristi Lagani",
+    description:
+      "KodeDristi backs early-stage Nepali software companies with capital and an engineering team — so the funding buys runway and the build at the same time.",
+    point1: "Pre-seed and seed",
+    point2: "Open year-round",
+    ctaLabel: "Pitch to Dristi Lagani",
+    ctaHref: "/dristi-lagani",
   },
 };
 
@@ -759,6 +824,58 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       hackathonTimeline.map((t) => ({ slug: slugify(t.label), data: { ...t } })),
   },
   {
+    type: "lagani-highlight",
+    label: "Lagani highlights",
+    singular: "Highlight",
+    titleField: "label",
+    iconField: "icon",
+    fields: [
+      { key: "icon", label: "Icon", kind: "icon" },
+      { key: "label", label: "Label", kind: "text", required: true },
+    ],
+    fallback: () => laganiHighlights.map((h) => ({ slug: slugify(h.label), data: { ...h } })),
+  },
+  {
+    type: "lagani-focus",
+    label: "Lagani investment focus",
+    singular: "Focus area",
+    titleField: "title",
+    fields: [
+      { key: "title", label: "Title", kind: "text", required: true },
+      { key: "description", label: "Description", kind: "textarea" },
+    ],
+    fallback: () => laganiFocus.map((f) => ({ slug: slugify(f.title), data: { ...f } })),
+  },
+  {
+    type: "lagani-process",
+    label: "Lagani funding process",
+    singular: "Step",
+    titleField: "label",
+    fields: [
+      { key: "label", label: "Label", kind: "text", required: true },
+      { key: "detail", label: "Detail", kind: "text" },
+    ],
+    fallback: () => laganiProcess.map((t) => ({ slug: slugify(t.label), data: { ...t } })),
+  },
+  {
+    type: "lagani-portfolio",
+    label: "Lagani portfolio",
+    singular: "Portfolio company",
+    titleField: "name",
+    subtitleField: "stage",
+    fields: [
+      { key: "name", label: "Company", kind: "text", required: true },
+      { key: "logo", label: "Logo", kind: "image", helper: "Ideally a wordmark on a transparent background. Without one the tile sets the name as a wordmark instead." },
+      { key: "stage", label: "Stage", kind: "text", placeholder: "Seed · 2026", helper: "Printed under the mark — e.g. Pre-seed, Seed, Acquired. Leave empty to show none." },
+      { key: "url", label: "Website", kind: "url", placeholder: "https://…" },
+    ],
+    /* Empty on purpose. Every other type seeds from real data, but a
+       portfolio is a claim that KodeDristi funded a specific company —
+       inventing placeholders here would publish investments that never
+       happened. The section hides itself until real entries exist. */
+    fallback: () => [],
+  },
+  {
     type: "hackathon-partner",
     label: "Hackathon partners",
     singular: "Hackathon partner",
@@ -870,6 +987,24 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fallback: () => [homeFlagship],
   },
   {
+    type: "home-lagani",
+    label: "Dristi Lagani banner",
+    singular: "Lagani banner",
+    isSingleton: true,
+    singletonSlug: "main",
+    titleField: "title",
+    fields: [
+      { key: "badge", label: "Badge", kind: "text" },
+      { key: "title", label: "Title", kind: "text", required: true },
+      { key: "description", label: "Description", kind: "textarea" },
+      { key: "point1", label: "Point 1", kind: "text" },
+      { key: "point2", label: "Point 2", kind: "text" },
+      { key: "ctaLabel", label: "Button label", kind: "text" },
+      { key: "ctaHref", label: "Button link", kind: "url" },
+    ],
+    fallback: () => [homeLagani],
+  },
+  {
     type: "home-final-cta",
     label: "Final CTA banner",
     singular: "Final CTA",
@@ -905,6 +1040,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
       "stat",
       "home-flagship",
       "hackathon-partner",
+      "home-lagani",
       "section-heading",
       "solution",
       "course",
@@ -922,6 +1058,17 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   { group: "Contact", types: ["contact-detail"] },
   { group: "Partners", types: ["partner", "partner-benefit"] },
   { group: "Products", types: ["product"] },
+  {
+    group: "Dristi Lagani",
+    types: [
+      "lagani-highlight",
+      "lagani-focus",
+      "lagani-process",
+      "lagani-portfolio",
+      "lagani-slideshow-settings",
+      "lagani-slideshow-image",
+    ],
+  },
   {
     group: "Hackathon",
     types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image"],
@@ -960,6 +1107,37 @@ CONTENT_SCHEMAS.push({
   fallback: () => [],
 });
 
+// Dristi Lagani banner background (admin-manageable)
+CONTENT_SCHEMAS.push({
+  type: "lagani-slideshow-settings",
+  label: "Lagani background",
+  singular: "Background settings",
+  isSingleton: true,
+  singletonSlug: "main",
+  titleField: "intervalSeconds",
+  fields: [
+    { key: "intervalSeconds", label: "Slide interval (seconds)", kind: "text", required: true, placeholder: "6", helper: "Seconds each background image stays before it fades to the next" },
+    { key: "autoPlay", label: "Rotate automatically", kind: "check", helper: "Off shows only the first image. Rotation is also skipped for visitors who ask for reduced motion." },
+  ],
+  fallback: () => [{ slug: "main", data: { intervalSeconds: 5, autoPlay: true } }],
+});
+
+CONTENT_SCHEMAS.push({
+  type: "lagani-slideshow-image",
+  label: "Lagani background images",
+  singular: "Background image",
+  titleField: "imageUrl",
+  subtitleField: "displayOrder",
+  fields: [
+    { key: "imageUrl", label: "Desktop image", kind: "image", required: true, helper: "Background image for the Dristi Lagani banner. Add several and they fade between each other." },
+    { key: "mobileImageUrl", label: "Mobile image (optional)", kind: "image" },
+    { key: "displayOrder", label: "Display order", kind: "text", required: true, placeholder: "1", helper: "Order in which images appear (1, 2, 3...)" },
+    { key: "textTone", label: "Text colour on this image", kind: "select", options: ["light", "dark"], helper: "Look at the image and pick: 'light' for white text (dark photos), 'dark' for black text (bright photos)." },
+    { key: "overlayOpacity", label: "Darken/lighten for legibility", kind: "select", options: ["0", "10", "20", "30", "40"], helper: "Leave at 0 to show the photo untouched. Raise it only if the text is hard to read." },
+  ],
+  fallback: () => [],
+});
+
 // Homepage section ordering and visibility (admin-manageable)
 CONTENT_SCHEMAS.push({
   type: "home-section",
@@ -969,7 +1147,7 @@ CONTENT_SCHEMAS.push({
   isSingleton: false,
   fields: [
     { key: "type", label: "Section type", kind: "select", required: true, options: [
-      "hero", "trust", "flagship", "hackathon-partners", "solutions", "courses", "tech", "team", "cta", "testimonials"
+      "hero", "trust", "flagship", "hackathon-partners", "lagani", "solutions", "courses", "tech", "team", "cta", "testimonials"
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
@@ -979,6 +1157,7 @@ CONTENT_SCHEMAS.push({
     { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true } },
     { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true } },
     { slug: "hackathon-partners", data: { type: "hackathon-partners", label: "Hackathon partners", enabled: true } },
+    { slug: "lagani", data: { type: "lagani", label: "Dristi Lagani", enabled: true } },
     { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true } },
     { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true } },
     { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true } },

@@ -28,12 +28,17 @@ import type {
   HackathonTrackData,
   HackathonTimelineData,
   HackathonPartnerData,
+  LaganiHighlightData,
+  LaganiFocusData,
+  LaganiProcessData,
+  LaganiPortfolioData,
   NavData,
   PageHeroData,
   SectionHeadingData,
   HomeHeroData,
   HomeTrustData,
   HomeFlagshipData,
+  HomeLaganiData,
   HomeFinalCtaData,
 } from "@/lib/content/schemas";
 
@@ -41,6 +46,7 @@ export type SolutionView = Omit<SolutionData, "icon"> & { slug: string; icon: Lu
 export type ProductView = Omit<ProductData, "icon"> & { slug: string; icon: LucideIcon };
 export type ContactDetailView = Omit<ContactDetailData, "icon"> & { icon: LucideIcon };
 export type HackathonHighlightView = Omit<HackathonHighlightData, "icon"> & { icon: LucideIcon };
+export type LaganiHighlightView = Omit<LaganiHighlightData, "icon"> & { icon: LucideIcon };
 export type NavGroup = { label: string; href: string; items: { label: string; href: string; description?: string }[] };
 
 // ---- Solutions ----
@@ -167,6 +173,24 @@ export async function getHackathonPartners(): Promise<(HackathonPartnerData & { 
   return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
 }
 
+// ---- Dristi Lagani ----
+export async function getLaganiHighlights(): Promise<LaganiHighlightView[]> {
+  const items = await listContent<LaganiHighlightData>("lagani-highlight");
+  return items.map((i) => ({ ...i.data, icon: iconForKey(i.data.icon) }));
+}
+export async function getLaganiFocus(): Promise<(LaganiFocusData & { slug: string })[]> {
+  const items = await listContent<LaganiFocusData>("lagani-focus");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+export async function getLaganiProcess(): Promise<(LaganiProcessData & { slug: string })[]> {
+  const items = await listContent<LaganiProcessData>("lagani-process");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+export async function getLaganiPortfolio(): Promise<(LaganiPortfolioData & { slug: string })[]> {
+  const items = await listContent<LaganiPortfolioData>("lagani-portfolio");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+
 // ---- Singletons ----
 export async function getNav(): Promise<NavData> {
   const data = await getSingletonData<NavData>("nav");
@@ -224,6 +248,22 @@ export async function getHomeFlagshipData(): Promise<HomeFlagshipData> {
       point2: "Registrations open now",
       ctaLabel: "Register for Hackathon",
       ctaHref: "/hackathon",
+    }
+  );
+}
+
+export async function getHomeLaganiData(): Promise<HomeLaganiData> {
+  const data = await getSingletonData<HomeLaganiData>("home-lagani");
+  return (
+    data ?? {
+      badge: "Investment Program",
+      title: "Dristi Lagani",
+      description:
+        "KodeDristi backs early-stage Nepali software companies with capital and an engineering team — so the funding buys runway and the build at the same time.",
+      point1: "Pre-seed and seed",
+      point2: "Open year-round",
+      ctaLabel: "Pitch to Dristi Lagani",
+      ctaHref: "/dristi-lagani",
     }
   );
 }
