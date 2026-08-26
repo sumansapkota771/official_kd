@@ -12,8 +12,13 @@ export const DURATION = {
   micro: 0.18,
   /** Dropdowns, toggles, state swaps. */
   ui: 0.32,
-  /** Scroll reveals and section entrances. */
+  /** Section entrances that are not the hero. */
   section: 0.72,
+  /** Scroll reveals. Shorter than `section` on purpose: the hero is the
+   *  only thing on this site that performs, and a reveal at 0.72s on every
+   *  section reads as a queue of animations rather than as content
+   *  settling into place. */
+  reveal: 0.5,
   /** Hero entrance only. */
   cinematic: 1.1,
 } as const;
@@ -29,8 +34,10 @@ export const EASE = {
   inOutQuint: [0.83, 0, 0.17, 1],
 } as const;
 
-/** Travel distance for reveals. Small on purpose — large travel reads as a slideshow. */
-export const REVEAL_DISTANCE = 18;
+/** Travel distance for reveals. Deliberately small, and smaller than it was:
+ *  the point of a supporting reveal is that content arrives already composed.
+ *  Distance is what turns that into a slideshow. */
+export const REVEAL_DISTANCE = 10;
 
 /**
  * Stagger between siblings in a revealing group. Long enough to read as

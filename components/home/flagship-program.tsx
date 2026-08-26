@@ -16,6 +16,10 @@ import { cn } from "@/lib/utils";
  * the image people actually look at, which is the opposite of what a banner
  * is for — the gradient does the same legibility job while leaving the
  * photograph intact.
+ *
+ * The photo carousel that used to live under this banner is now its own
+ * section — see `FlagshipGallerySection` — so it can be toggled, reordered
+ * and given its own heading independently of this one.
  */
 export async function FlagshipProgram({ className }: { className?: string }) {
   const content = await getHomeFlagshipData();

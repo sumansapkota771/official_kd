@@ -90,6 +90,78 @@ async function insertRows(schema: ContentSchema, rows: SeedRow[]): Promise<void>
   }
 }
 
+/**
+ * Creates any default row this type has never had, and puts it where it
+ * belongs.
+ *
+ * Seeding used to fire only when a type held no rows at all, which was fine
+ * exactly once. Every default added afterwards — a new homepage section, say
+ * — silently never existed: the site could paper over it at render time, but
+ * the admin lists real rows, so the section was invisible and unmanageable
+ * there. Anything shipped as a default now becomes a row on first read.
+ *
+ * A slug that exists is never touched, and that includes soft-deleted ones:
+ * the row is still there, so `ON CONFLICT (type, slug) DO NOTHING` skips it
+ * and a section someone deleted stays deleted.
+ *
+ * New rows are spliced in beside the neighbour they ship next to rather than
+ * appended, then the whole type is renumbered so that placement survives.
+ * Appending would be simpler and would quietly move every new section to the
+ * bottom of the homepage.
+ */
+async function syncFallbackRows(
+  schema: ContentSchema,
+  fallback: () => SeedRow[]
+): Promise<void> {
+  const res = await db.query<{ slug: string | null }>(
+    "SELECT slug FROM content_items WHERE type = $1 ORDER BY position ASC, id ASC",
+    [schema.type]
+  );
+  const rows = fallback();
+
+  if (res.rows.length === 0) {
+    await insertRows(schema, rows);
+    return;
+  }
+
+  const stored = res.rows.map((r) => r.slug).filter((s): s is string => Boolean(s));
+  const known = new Set(stored);
+  const missing = rows.filter((r) => !known.has(r.slug));
+  if (missing.length === 0) return;
+
+  const order = [...stored];
+  const placed = new Set(order);
+  const defaults = rows.map((r) => r.slug);
+  defaults.forEach((slug, i) => {
+    if (placed.has(slug)) return;
+    // Anchor to the nearest earlier default that is already present, so a
+    // hand-reordered homepage keeps its order and the new row still lands
+    // next to the section it ships beside.
+    const previous = defaults.slice(0, i).reverse().find((d) => placed.has(d));
+    const at = previous ? order.indexOf(previous) + 1 : 0;
+    order.splice(at, 0, slug);
+    placed.add(slug);
+  });
+
+  for (const row of missing) {
+    await db.query(
+      `INSERT INTO content_items (type, slug, data, position, published)
+       VALUES ($1, $2, $3, $4, true)
+       ON CONFLICT (type, slug) DO NOTHING`,
+      [schema.type, row.slug, JSON.stringify(row.data), order.indexOf(row.slug)]
+    );
+  }
+
+  for (let i = 0; i < order.length; i += 1) {
+    await db.query(
+      "UPDATE content_items SET position = $1 WHERE type = $2 AND slug = $3",
+      [i, schema.type, order[i]]
+    );
+  }
+
+  invalidateCache(`list:${schema.type}`);
+}
+
 function ensureSeeded(schema: ContentSchema): Promise<void> {
   if (!schema.fallback) return Promise.resolve();
   const fallback = schema.fallback;
@@ -97,13 +169,7 @@ function ensureSeeded(schema: ContentSchema): Promise<void> {
   if (existing) return existing;
   const promise = (async () => {
     await ensureSchema();
-    const res = await db.query<{ count: number }>(
-      "SELECT count(*)::int AS count FROM content_items WHERE type = $1",
-      [schema.type]
-    );
-    if (res.rows[0]?.count === 0) {
-      await insertRows(schema, fallback());
-    }
+    await syncFallbackRows(schema, fallback);
   })().catch((err) => {
     seeding.delete(schema.type);
     throw err;

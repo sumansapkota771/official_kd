@@ -47,6 +47,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`h-full antialiased ${albertSans.variable}`}
     >
+      <head>
+        {/* Scroll reveals are written into the server markup as opacity: 0,
+            so with scripting off there is nothing left to turn them back on.
+            `!important` is what lets a stylesheet rule beat those inline
+            styles. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className="min-h-full flex flex-col bg-background text-text-secondary">
         <ThemeProvider>
           <SmoothScroll />

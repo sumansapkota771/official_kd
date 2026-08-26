@@ -17,14 +17,14 @@ export default function Loading() {
       </div>
 
       <div className="flex flex-col items-center gap-4">
-        <div className="relative h-12 w-40">
+        <div className="relative h-12 w-[107px]">
           <Image
             src="/images/logo.png"
             alt="KodeDristi Software Pvt. Ltd."
             fill
             priority
             className="object-contain object-center"
-            sizes="160px"
+            sizes="107px"
           />
         </div>
         <p className="loader-pulse text-[11px] font-semibold uppercase tracking-[0.22em] text-text-muted">

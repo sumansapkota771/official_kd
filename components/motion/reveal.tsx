@@ -56,10 +56,15 @@ export function Reveal({
       initial={{ opacity: 0, ...offset }}
       animate={inView ? { opacity: 1, x: 0, y: 0 } : undefined}
       transition={{
-        duration: reduceMotion ? DURATION.ui : DURATION.section,
+        duration: reduceMotion ? DURATION.ui : DURATION.reveal,
         ease: EASE.outExpo,
         delay,
       }}
+      /* Marks every reveal for the `<noscript>` rule in the root layout,
+         which forces them visible. The motion library writes `opacity: 0`
+         into the server-rendered markup, so without that escape hatch a
+         browser with scripting off would be served a blank page. */
+      data-reveal=""
       className={cn(className)}
     >
       {children}
@@ -132,11 +137,12 @@ export function RevealItem({
           opacity: 1,
           y: 0,
           transition: {
-            duration: reduceMotion ? DURATION.ui : DURATION.section,
+            duration: reduceMotion ? DURATION.ui : DURATION.reveal,
             ease: EASE.outExpo,
           },
         },
       }}
+      data-reveal=""
       className={cn(className)}
     >
       {children}

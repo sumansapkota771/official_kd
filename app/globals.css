@@ -22,9 +22,17 @@
      so text usages get their own darkened ramp of the same hue. */
   --brand-amber-text: #935d08;
 
-  /* Surfaces — warmer neutrals, not pure white/gray */
+  /* Surfaces — warmer neutrals, not pure white/gray. --background itself
+     is unchanged by this pass: the "keep primary #FFFFFF" instruction reads
+     as anchoring the contrast the new secondary sits against, not as
+     licence to flatten this site's own off-white into literal white.
+     --background-secondary is the actual ask: a soft, desaturated green —
+     the same hue family as --brand-green, at a fraction of its saturation
+     (H150 S22% L94%, against the brand green's own H152 S60%), so it reads
+     as a quiet wash rather than a competing colour. This replaces a much
+     brighter, near-neon green that had landed here directly. */
   --background: #fafaf8;
-  --background-secondary: #f2f1ed;
+  --background-secondary: #ecf3f0;
   --surface: #ffffff;
   --surface-elevated: #ffffff;
   --surface-ink: #0f1219;
@@ -32,8 +40,8 @@
   /* Tile — the borderless "Apple grid" surface. Reads as a panel through
      contrast with the page background rather than through a border, so it
      needs its own token: `--surface` is white and would vanish on #fafaf8. */
-  --tile-bg: #f2f1ed;
-  --tile-bg-hover: #ebe9e2;
+  --tile-bg: #ecf3f0;
+  --tile-bg-hover: #deeae4;
   /* Ink tile — the dark showcase card. Fixed in both themes: an ink card is
      ink on a light page and on a dark one, so its palette cannot ride on
      --brand-blue, which is near-black indigo in light mode and would be
@@ -71,6 +79,23 @@
   --footer-text: #c5c8ce;
   --footer-text-muted: #8a8f99;
   --footer-divider: rgba(255, 255, 255, 0.08);
+
+  /* Navbar. White — not the page's own off-white --background, --surface
+     specifically, so the bar reads as a clean white plane rather than
+     picking up the page's warm cream tint. Aliased to the theme's own
+     surface/text tokens rather than fixed values: unlike the footer (which
+     is deliberately dark in both themes), a white bar would fight a dark
+     site theme, so this follows the toggle instead of overriding it. One
+     set of values reused for the bar, the dropdown panel and the utility
+     strip, so hovering a nav item extends the same surface rather than
+     opening a visually different panel. Hover itself never repaints a
+     background — only text colour and a constant-width underline change,
+     so nothing in the row shifts. */
+  --nav-bg: var(--surface);
+  --nav-bg-elevated: var(--surface-elevated);
+  --nav-text: var(--text-primary);
+  --nav-text-muted: var(--text-secondary);
+  --nav-border: var(--border);
 
   /* Announcement banner */
   --announcement-bg: #1a8753;
@@ -202,6 +227,12 @@
   --color-footer-text-muted: var(--footer-text-muted);
   --color-footer-divider: var(--footer-divider);
 
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-bg-elevated: var(--nav-bg-elevated);
+  --color-nav-text: var(--nav-text);
+  --color-nav-text-muted: var(--nav-text-muted);
+  --color-nav-border: var(--nav-border);
+
   --color-announcement: var(--announcement-bg);
 
   --radius-sm: var(--radius-sm);
@@ -280,7 +311,9 @@ html.lenis {
   pointer-events: none;
 }
 
-/* Scrollbar — always visible, green thumb */
+/* Scrollbar — always visible, brand-green thumb. It is a system signal
+   like the route loader, so it takes the green rather than a primary
+   action colour. */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -290,15 +323,15 @@ html.lenis {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--brand-amber);
+  background: var(--brand-green);
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-amber-hover);
+  background: var(--brand-green-hover);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--brand-amber) transparent;
+  scrollbar-color: var(--brand-green) transparent;
 }
 
 body {
@@ -405,14 +438,17 @@ body {
   }
 
   /* Section rhythm — deliberate density variation */
+  /* Halved from the original ramp. All three move together on purpose: the
+     tiers only mean anything relative to each other, so shrinking `.section`
+     alone would have left `.section-tight` the *roomier* of the two. */
   .section {
-    padding-block: clamp(5rem, 3rem + 7vw, 8rem);
+    padding-block: clamp(2.5rem, 1.5rem + 3.5vw, 4rem);
   }
   .section-tight {
-    padding-block: clamp(3rem, 2rem + 4vw, 4.5rem);
+    padding-block: clamp(1.5rem, 1rem + 2vw, 2.25rem);
   }
   .section-loose {
-    padding-block: clamp(6.5rem, 4rem + 10vw, 10rem);
+    padding-block: clamp(3.25rem, 2rem + 5vw, 5rem);
   }
 
   /* Headings: fluid sizes with the heading font */
@@ -531,32 +567,69 @@ body {
 }
 
 /* ---------------------------------------------------------
-   Hero AI scene. The robot/computing illustration floats
-   gently, and a bright pulse glides along the robot's orbital
-   ring — a living "compute orbit" with no WebGL. Reduced-motion
-   users get the static image via the media query below.
+   Hero entrance — the one authored moment on this site.
+
+   Written in CSS rather than through the motion library on
+   purpose: a CSS animation runs at parse time, so the copy is
+   never held invisible waiting for hydration, and a script that
+   fails cannot leave the hero blank. It also lets the headline
+   use clip-path, which is the part that carries the idea.
+
+   The headline is not faded in. A mask opens downward through
+   it, so the lines resolve top to bottom the way type is set,
+   while the block settles up the last fraction of an em. The
+   rule under it draws left to right, and the light behind rises
+   as the words land — the section brightens because the copy
+   arrived, not on a timer of its own.
 --------------------------------------------------------- */
-.hero-ai-float {
-  animation: hero-ai-float 7s ease-in-out infinite;
+
+/* ---------------------------------------------------------
+   Hero entrance.
+
+   CSS, not the motion library: a CSS animation runs at parse
+   time, so the copy is never held invisible waiting for
+   hydration and a failed script cannot leave the hero blank.
+   It also gives the headline clip-path, which is the part
+   carrying the idea — a mask opening downward through the type,
+   the way type is set, rather than one more fade.
+
+   Replayed on every slide change: the copy is keyed by slide,
+   so React remounts it and the animation runs again.
+--------------------------------------------------------- */
+
+.hero-slide > * {
+  animation: hero-rise 760ms var(--ease-out-expo) both;
+  animation-delay: calc(var(--hero-step, 0) * 90ms + 60ms);
+}
+.hero-slide > :nth-child(1) { --hero-step: 0; }
+.hero-slide > :nth-child(2) { --hero-step: 1; }
+.hero-slide > :nth-child(3) { --hero-step: 2; }
+/* Cap: further children share the last slot rather than pushing
+   the sequence longer. */
+.hero-slide > :nth-child(n + 4) { --hero-step: 2; }
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
 }
 
-@keyframes hero-ai-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-16px); }
+/* The headline overrides the shared rise with the mask reveal.
+   The insets end negative so descenders and overhanging glyphs
+   are never shaved by the final frame. */
+.hero-slide > .hero-headline {
+  animation: hero-headline-in 1050ms var(--ease-out-expo) both;
 }
 
-/* A short bright dash travelling the ring's front arc. The dash
-   length (~260 units) is much smaller than the arc (~1005 units),
-   so it reads as a glint sweeping around the robot. */
-.robot-ring-pulse {
-  stroke-dasharray: 260 745;
-  animation: robot-ring-pulse 4s linear infinite;
+@keyframes hero-headline-in {
+  from {
+    clip-path: inset(0 -8% 100% -8%);
+    transform: translateY(0.14em);
+  }
+  to {
+    clip-path: inset(0 -8% -28% -8%);
+    transform: translateY(0);
+  }
 }
-
-@keyframes robot-ring-pulse {
-  to { stroke-dashoffset: -1005; }
-}
-
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

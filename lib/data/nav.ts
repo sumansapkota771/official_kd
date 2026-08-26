@@ -28,18 +28,10 @@ export const navGroups: NavGroup[] = [
       { label: "Digital Marketing", href: "/solutions/digital-marketing", description: "Campaigns and strategy that drive results." },
     ],
   },
-  {
-    label: "Learn",
-    href: "/learn",
-    items: [
-      { label: "AI & Machine Learning", href: "/learn/ai-machine-learning", description: "Applied AI/ML for working developers." },
-      { label: "Full-Stack Web Development", href: "/learn/full-stack-web-development", description: "Next.js, Laravel and production practice." },
-      { label: "Cloud & DevOps", href: "/learn/cloud-devops", description: "Deploy and operate real infrastructure." },
-      { label: "Mobile App Development", href: "/learn/mobile-app-development", description: "Flutter, from idea to app store." },
-      { label: "Data Analytics", href: "/learn/data-analytics", description: "Python, SQL and decision-ready dashboards." },
-      { label: "UI/UX for Product Teams", href: "/learn/ui-ux-for-product-teams", description: "Design systems and product thinking." },
-    ],
-  },
+  /* The Learn group is deliberately absent. Every one of its entries was a
+     course detail page, and courses are presented on the homepage only —
+     leaving the dropdown would put six links to pages the design no longer
+     sends anyone to. */
   {
     label: "Company",
     href: "/about",
@@ -57,6 +49,14 @@ export const navGroups: NavGroup[] = [
     items: [
       { label: "Institutional Partners", href: "/partners#institutional", description: "Universities and training bodies we work with." },
       { label: "Become a Partner", href: "/partners#become-a-partner", description: "Partner with KodeDristi." },
+    ],
+  },
+  {
+    label: "Work",
+    href: "/projects",
+    items: [
+      { label: "All Projects", href: "/projects", description: "Case studies from problem to business result." },
+      { label: "Solutions", href: "/solutions", description: "The delivery tracks behind the work." },
     ],
   },
   {

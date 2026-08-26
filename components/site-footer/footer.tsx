@@ -21,12 +21,12 @@ export function Footer() {
     >
       <Container className="grid gap-8 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-(--footer-cols)">
         <div className="flex flex-col gap-3 sm:col-span-2 md:col-span-3 lg:col-span-1">
-          <div className="relative h-10 w-40">
+          <div className="relative h-10 w-[89px]">
             <Image
               src="/images/logo.png"
               alt="KodeDristi Software Pvt. Ltd."
               fill
-              sizes="160px"
+              sizes="89px"
               className="object-contain object-left"
             />
           </div>

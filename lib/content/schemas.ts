@@ -154,6 +154,71 @@ export type ContactDetailData = { icon: string; label: string; value: string; hr
 export type HackathonHighlightData = { icon: string; label: string };
 export type HackathonTrackData = { title: string; description: string };
 export type HackathonTimelineData = { label: string; detail: string };
+/**
+ * A delivered project, told the same way every time.
+ *
+ * The six narrative fields are fixed and in order: problem, strategy, build,
+ * features, stack, result. That is the whole point of the type — a case
+ * study that picks its own structure is a brochure, and a reader comparing
+ * three of them cannot. Any section left empty is skipped on the page rather
+ * than printed as an empty heading, so a half-written study still reads.
+ */
+export type ProjectData = {
+  name: string;
+  /** One line under the name, on the card and at the top of the study. */
+  tagline: string;
+  /** Card artwork. The grid reserves the well either way. */
+  image?: string;
+  client?: string;
+  industry?: string;
+  year?: string;
+  /** Live site, if there is one to link. */
+  url?: string;
+  businessProblem: string;
+  productStrategy: string;
+  designDevelopment: string;
+  keyFeatures: string[];
+  techStack: string[];
+  businessResult: string;
+};
+/**
+ * One signed industry-academia agreement.
+ *
+ * The image is the artefact — a photo of the signing or a scan of the
+ * document — and `caption` is what surfaces over it on hover. Caption is the
+ * only field that must earn its place: it says what the agreement actually
+ * lets the two sides do, which is the part a logo wall can never carry.
+ */
+/**
+ * One card in the featured-content carousel — an Apple TV–style peek
+ * carousel, run as two independent rows (`row`): a large three-card row
+ * above a denser six-card row. Both rows share this one type and are told
+ * apart purely by which row they belong to and by position within it.
+ */
+export type FeaturedItemData = {
+  name: string;
+  /** Small type/category label above the title — "Case study", "Programme". */
+  category?: string;
+  description?: string;
+  /** The card's full-bleed background. */
+  image: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  /** Optional small logo/badge shown near the category label. */
+  badgeImage?: string;
+  /** Optional short line — a date, a stat, a duration. */
+  metadata?: string;
+  row: "top" | "bottom";
+};
+export type MouPartnershipData = {
+  institution: string;
+  /** Photo of the signing, or the document itself. */
+  image?: string;
+  /** Revealed over the image on hover / focus. One or two sentences. */
+  caption: string;
+  /** Free text — "Signed 2026", "Renewed 2025". */
+  signedOn?: string;
+};
 export type LaganiHighlightData = { icon: string; label: string };
 export type LaganiFocusData = { title: string; description: string };
 export type LaganiProcessData = { label: string; detail: string };
@@ -211,6 +276,14 @@ export type HomeHeroData = {
   secondaryHref: string;
   tertiaryLabel: string;
   tertiaryHref: string;
+};
+export type HomeHeroSlideData = {
+  /** Short name on the rail at the foot of the hero. */
+  label: string;
+  title: string;
+  paragraph: string;
+  ctaLabel: string;
+  ctaHref: string;
 };
 export type HomeTrustData = { label: string };
 export type HomeFlagshipData = {
@@ -454,11 +527,15 @@ const pageHeroes: { slug: string; data: PageHeroData }[] = [
   { slug: "products", data: { eyebrow: "Products", title: "Products", description: "In-house software KodeDristi builds, ships and maintains — proof of the same engineering standard we bring to client work." } },
   { slug: "solutions", data: { eyebrow: "Solutions", title: `${solutions.length} delivery tracks. One accountable team.`, description: "Every solution below follows the same disciplined process — a clear problem statement, a defined approach, concrete deliverables and a realistic timeline." } },
   { slug: "contact", data: { eyebrow: "Contact", title: "Let's talk about what you're building", description: "Whether it's a project, a course seat, or a partnership — tell us the details and we'll follow up within one business day." } },
+  { slug: "projects", data: { eyebrow: "Work", title: "Projects", description: "Everything we have shipped, with the reasoning behind it — the problem, the strategy, the build and what it changed for the business." } },
   { slug: "dristi-lagani", data: { eyebrow: "Investment Program", title: "Dristi Lagani", description: "Capital and an engineering team for early-stage Nepali software companies — we invest, then we build alongside you.", eyebrowTone: "green" } },
   { slug: "hackathon", data: { eyebrow: "Flagship Program", title: "National AI Hackathon", description: "KodeDristi's flagship national competition for student and professional builders — 48 hours, real mentors, real prizes, and a direct line to our hiring and partner network." } },
 ];
 
 const sectionHeadings: { slug: string; data: SectionHeadingData }[] = [
+  { slug: "academia-partnership", data: { eyebrow: "Academia", title: "Industry Academia Partnership", description: "Formal agreements with universities and colleges — shared curriculum, internships and live project work, so students graduate having built something real.", eyebrowTone: "blue" } },
+  { slug: "flagship-gallery", data: { eyebrow: "Gallery", title: "Moments from the programme", description: "A running look at the people and the work — cohorts, sessions and the days that do not make it into a case study.", eyebrowTone: "blue" } },
+  { slug: "projects-overview", data: { eyebrow: "Work", title: "Our remarkable projects", description: "Six of the products we have designed, built and shipped — each one told the same way, from the business problem to the result.", eyebrowTone: "blue" } },
   { slug: "lagani-portfolio", data: { eyebrow: "Portfolio", title: "Companies we have backed", description: "Every company below took capital and engineering from KodeDristi.", eyebrowTone: "green" } },
   { slug: "hackathon-partners", data: { eyebrow: "Hackathon Partners", title: "The organisations behind the hackathon", description: "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms.", eyebrowTone: "green" } },
   { slug: "solutions-overview", data: { eyebrow: "Solutions", title: `${solutions.length} ways we help you ship`, description: "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix." } },
@@ -483,6 +560,35 @@ const homeHero: SeedRow = {
     tertiaryHref: "/hackathon",
   },
 };
+
+/* The three things KodeDristi sells, one per hero slide. Seeded from copy the
+   site already makes elsewhere rather than invented. */
+const homeHeroSlides = [
+  {
+    label: "Build with us",
+    title: "One platform for software, AI and the people who build them.",
+    paragraph:
+      "KodeDristi designs and ships web, mobile, SaaS and AI products for growing businesses — and trains the next generation of engineers to build them.",
+    ctaLabel: "Start a Project",
+    ctaHref: "/contact",
+  },
+  {
+    label: "Learn with us",
+    title: "Applied IT courses, taught by the engineers who ship.",
+    paragraph:
+      "Live, cohort-based programs built from the same delivery work our clients pay for. No theory-only classrooms.",
+    ctaLabel: "Explore Programs",
+    ctaHref: "/learn",
+  },
+  {
+    label: "Grow with us",
+    title: "Capital and an engineering team for what you are building.",
+    paragraph:
+      "Dristi Lagani backs early-stage Nepali software companies — the funding buys runway and the build at the same time.",
+    ctaLabel: "Pitch to Dristi Lagani",
+    ctaHref: "/dristi-lagani",
+  },
+];
 
 const homeTrust: SeedRow = {
   slug: "main",
@@ -824,6 +930,73 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       hackathonTimeline.map((t) => ({ slug: slugify(t.label), data: { ...t } })),
   },
   {
+    type: "project",
+    label: "Projects",
+    singular: "Project",
+    titleField: "name",
+    subtitleField: "client",
+    fields: [
+      { key: "name", label: "Project name", kind: "text", required: true },
+      { key: "tagline", label: "One-line summary", kind: "text", required: true },
+      { key: "image", label: "Card image", kind: "image", helper: "Shown on the projects grid and at the head of the case study." },
+      { key: "client", label: "Client", kind: "text" },
+      { key: "industry", label: "Industry", kind: "text", placeholder: "Logistics" },
+      { key: "year", label: "Year", kind: "text", placeholder: "2026" },
+      { key: "url", label: "Live site", kind: "url", placeholder: "https://…" },
+      { key: "businessProblem", label: "1. Business problem", kind: "textarea", helper: "What was costing the client time or money before you started." },
+      { key: "productStrategy", label: "2. Product strategy", kind: "textarea", helper: "What you decided to build, and why that rather than something else." },
+      { key: "designDevelopment", label: "3. Design and development", kind: "textarea", helper: "How it was designed and built — process, team, timeline." },
+      { key: "keyFeatures", label: "4. Key features", kind: "list", helper: "One per line." },
+      { key: "techStack", label: "5. Technology stack", kind: "list", helper: "One per line." },
+      { key: "businessResult", label: "6. Business result", kind: "textarea", helper: "What changed for the client. Use real figures only — an invented metric is a false claim about someone else's business." },
+    ],
+    /* Empty on purpose. A case study asserts what KodeDristi did for a named
+       client and what it produced; seeding placeholders would publish work
+       and results that never happened. The section hides until real projects
+       are added. */
+    fallback: () => [],
+  },
+  {
+    type: "featured-item",
+    label: "Featured carousel cards",
+    singular: "Featured card",
+    titleField: "name",
+    subtitleField: "row",
+    iconField: "",
+    fields: [
+      { key: "name", label: "Title", kind: "text", required: true },
+      { key: "category", label: "Category label", kind: "text", placeholder: "Case study" },
+      { key: "description", label: "Short description", kind: "textarea" },
+      { key: "image", label: "Background image", kind: "image", required: true },
+      { key: "ctaLabel", label: "Button label", kind: "text", placeholder: "Read the story" },
+      { key: "ctaHref", label: "Button link", kind: "url" },
+      { key: "badgeImage", label: "Logo / badge (optional)", kind: "image" },
+      { key: "metadata", label: "Metadata line (optional)", kind: "text", placeholder: "2026 · Kathmandu" },
+      { key: "row", label: "Row", kind: "select", required: true, options: ["top", "bottom"], helper: "Top is the large 3-card row; bottom is the denser 6-card row." },
+    ],
+    /* Empty on purpose: these are photographs and claims about specific
+       work, and there is none to invent. Each row hides independently
+       until it has real cards. */
+    fallback: () => [],
+  },
+  {
+    type: "mou-partnership",
+    label: "Industry academia MoUs",
+    singular: "MoU",
+    titleField: "institution",
+    subtitleField: "signedOn",
+    fields: [
+      { key: "institution", label: "Institution", kind: "text", required: true },
+      { key: "image", label: "MoU image", kind: "image", helper: "A photo of the signing, or a scan of the document. Shown as the card; the caption reveals over it on hover." },
+      { key: "caption", label: "Hover caption", kind: "textarea", required: true, helper: "What the agreement lets both sides do. One or two sentences — it appears over the image, so long text will be cut off." },
+      { key: "signedOn", label: "Signed", kind: "text", placeholder: "Signed 2026" },
+    ],
+    /* Empty on purpose. An MoU is a claim that a named institution signed
+       something with KodeDristi; placeholders here would publish agreements
+       that do not exist. The section hides until real ones are added. */
+    fallback: () => [],
+  },
+  {
     type: "lagani-highlight",
     label: "Lagani highlights",
     singular: "Highlight",
@@ -877,8 +1050,10 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
   },
   {
     type: "hackathon-partner",
-    label: "Hackathon partners",
-    singular: "Hackathon partner",
+    /* The type slug stays `hackathon-partner` because rows exist under it;
+       only the admin label follows the section's new, broader framing. */
+    label: "Trusted by (partner logos)",
+    singular: "Partner",
     titleField: "name",
     subtitleField: "tier",
     fields: [
@@ -959,6 +1134,21 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fallback: () => [homeHero],
   },
   {
+    type: "home-hero-slide",
+    label: "Hero slides",
+    singular: "Hero slide",
+    titleField: "title",
+    subtitleField: "label",
+    fields: [
+      { key: "label", label: "Rail label", kind: "text", required: true, helper: "Short name shown on the numbered rail at the foot of the hero." },
+      { key: "title", label: "Headline", kind: "textarea", required: true },
+      { key: "paragraph", label: "Paragraph", kind: "textarea" },
+      { key: "ctaLabel", label: "Button label", kind: "text" },
+      { key: "ctaHref", label: "Button link", kind: "url" },
+    ],
+    fallback: () => homeHeroSlides.map((s) => ({ slug: slugify(s.label), data: { ...s } })),
+  },
+  {
     type: "home-trust",
     label: "Trust strip",
     singular: "Trust strip",
@@ -1036,6 +1226,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
     types: [
       "home-section",
       "home-hero",
+      "home-hero-slide",
       "home-trust",
       "stat",
       "home-flagship",
@@ -1058,6 +1249,8 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   { group: "Contact", types: ["contact-detail"] },
   { group: "Partners", types: ["partner", "partner-benefit"] },
   { group: "Products", types: ["product"] },
+  { group: "Projects", types: ["project"] },
+  { group: "Academia", types: ["mou-partnership"] },
   {
     group: "Dristi Lagani",
     types: [
@@ -1071,7 +1264,7 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   },
   {
     group: "Hackathon",
-    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image"],
+    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image", "featured-item"],
   },
 ];
 
@@ -1147,7 +1340,7 @@ CONTENT_SCHEMAS.push({
   isSingleton: false,
   fields: [
     { key: "type", label: "Section type", kind: "select", required: true, options: [
-      "hero", "trust", "flagship", "hackathon-partners", "lagani", "solutions", "courses", "tech", "team", "cta", "testimonials"
+      "hero", "trust", "flagship", "flagship-gallery", "hackathon-partners", "academia", "lagani", "projects", "solutions", "courses", "tech", "team", "cta", "testimonials"
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
@@ -1156,8 +1349,11 @@ CONTENT_SCHEMAS.push({
     { slug: "hero", data: { type: "hero", label: "Hero", enabled: true } },
     { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true } },
     { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true } },
+    { slug: "flagship-gallery", data: { type: "flagship-gallery", label: "Flagship photo carousel", enabled: true } },
     { slug: "hackathon-partners", data: { type: "hackathon-partners", label: "Hackathon partners", enabled: true } },
+    { slug: "academia", data: { type: "academia", label: "Industry academia partnership", enabled: true } },
     { slug: "lagani", data: { type: "lagani", label: "Dristi Lagani", enabled: true } },
+    { slug: "projects", data: { type: "projects", label: "Remarkable projects", enabled: true } },
     { slug: "solutions", data: { type: "solutions", label: "Solutions overview", enabled: true } },
     { slug: "courses", data: { type: "courses", label: "Courses overview", enabled: true } },
     { slug: "tech", data: { type: "tech", label: "Tech delivery", enabled: true } },

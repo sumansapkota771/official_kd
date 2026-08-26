@@ -18,21 +18,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/hackathon`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/dristi-lagani`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/projects`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE}/partners`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/learn`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
   ];
 
   let dynamicPages: MetadataRoute.Sitemap = [];
   try {
+    const projects = await listContent<{ name: string }>("project");
+    dynamicPages = projects
+      .filter((p) => p.slug)
+      .map((p) => ({
+        url: `${BASE}/projects/${p.slug}`,
+        lastModified: p.updatedAt ? new Date(p.updatedAt) : now,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }));
     const articles = await listContent<ArticleData>("article");
-    dynamicPages = articles
+    dynamicPages = dynamicPages.concat(
+      articles
       .filter((a) => a.slug)
       .map((a) => ({
         url: `${BASE}/insights/${a.slug}`,
         lastModified: a.updatedAt ? new Date(a.updatedAt) : now,
         changeFrequency: "weekly" as const,
         priority: 0.7,
-      }));
+      }))
+    );
   } catch {
     // DB down — return static pages only
   }

@@ -16,9 +16,10 @@ import { cn } from "@/lib/utils";
  * and a logo wall floated on the page background has nothing to hold it
  * together.
  *
- * The marks sit straight on the panel fill with no tile behind them. The
- * band is the only surface in play, so it carries the separation from the
- * page on its own — which it does in both themes, page → panel.
+ * Panel band outside, white cards inside. Three surfaces in sequence — page,
+ * panel, card — which is the pairing the rest of the site uses and the only
+ * one that holds up in both themes. The cards also give every logo the white
+ * ground it was drawn for, which a tinted panel does not.
  *
  * Renders nothing when the list is empty. A sponsor wall with no sponsors is
  * worse than no sponsor wall.
@@ -41,12 +42,12 @@ export async function HackathonPartners({ className }: { className?: string }) {
           <Container className="flex flex-col gap-12 sm:gap-14">
             <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
               <SectionHeading
-                eyebrow={heading?.eyebrow ?? "Hackathon Partners"}
+                eyebrow={heading?.eyebrow ?? "Partners"}
                 eyebrowTone={heading?.eyebrowTone ?? "green"}
-                title={heading?.title ?? "The organisations behind the hackathon"}
+                title={heading?.title ?? "Trusted By Leading Organizations"}
                 description={
                   heading?.description ??
-                  "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms."
+                  "Institutions, sponsors and community partners we build, teach and run programmes with."
                 }
               />
               <Button href="/contact" variant="pill-outline" size="lg" className="shrink-0">
@@ -54,12 +55,14 @@ export async function HackathonPartners({ className }: { className?: string }) {
               </Button>
             </Reveal>
 
-            {/* Two up on a phone so a wordmark still gets a readable line
-                length, four on desktop so a long roster stays two rows. */}
+            {/* Two up on a phone, then three, then four. The gap is uniform
+                in both axes now that these are cards again — the old
+                asymmetric gutters existed to separate bare marks floating on
+                the panel, and a card supplies its own edge. */}
             <RevealGroup
               as="ul"
               stagger={0.04}
-              className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 sm:gap-x-12 lg:grid-cols-4"
+              className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4"
             >
               {partners.map((partner) => (
                 <RevealItem key={partner.slug} as="li" className="flex">
@@ -75,21 +78,25 @@ export async function HackathonPartners({ className }: { className?: string }) {
 }
 
 const tileClasses =
-  "flex w-full flex-col items-center justify-center text-center";
+  "flex h-full w-full flex-col items-center justify-center gap-3 px-4 py-7 text-center sm:px-5 sm:py-8";
 
 /**
- * One partner: the mark and nothing else.
+ * One partner, as a card.
  *
- * No panel behind it — give every logo its own tile and the wall reads as a
- * grid of boxes rather than as a row of partners. The fixed well is what
- * holds the alignment instead: a tall logo, a wide logo and a plain wordmark
- * all occupy the same optical height, so the row scans as one line rather
- * than as ransom-note.
+ * Every mark gets the same box and the same fixed well, which is the only
+ * thing that makes a mixed roster — a wide wordmark, a square badge, a name
+ * with no logo at all — read as one set rather than as whatever each partner
+ * happened to send. The card supplies the edge, so the marks no longer need
+ * exaggerated gutters to look separated.
+ *
+ * White surface with a drawn border, matching the project cards: on a panel
+ * band the fill alone would not separate them, and a logo needs a white
+ * ground far more than a tinted one.
  */
 function PartnerTile({ partner }: { partner: HackathonPartnerData & { slug: string } }) {
   const mark = (
     <>
-      <div className="relative flex h-16 w-full items-center justify-center sm:h-20">
+      <div className="relative flex h-12 w-full items-center justify-center sm:h-14">
         {partner.logo ? (
           <Image
             src={partner.logo}
@@ -102,19 +109,25 @@ function PartnerTile({ partner }: { partner: HackathonPartnerData & { slug: stri
           /* No logo yet: set the name as a wordmark rather than show a
              placeholder glyph. It is the partner's name either way, so the
              tile is finished, not pending. */
-          <span className="text-[17px] font-semibold leading-tight tracking-[-0.02em] text-balance text-text-primary sm:text-[19px]">
+          <span className="text-[15px] font-semibold leading-tight tracking-[-0.02em] text-balance text-text-primary sm:text-[17px]">
             {partner.name}
           </span>
         )}
       </div>
 
-      {partner.tier && (
-        <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-text-muted sm:text-xs">
-          {partner.tier}
-        </p>
-      )}
+      {/* Always rendered, even when empty. Only some partners carry a tier,
+          and letting the line appear and vanish made rows of cards differ in
+          height by ~30px — which is exactly the raggedness a uniform card
+          grid exists to remove. An empty paragraph reserves the space and
+          announces nothing. */}
+      <p className="min-h-[15px] text-[10px] font-semibold uppercase leading-[15px] tracking-wider text-text-muted sm:min-h-[17px] sm:text-[11px] sm:leading-[17px]">
+        {partner.tier}
+      </p>
     </>
   );
+
+  const surface =
+    "rounded-[var(--radius-tile)] border border-brand-blue/15 bg-white transition-colors duration-ui ease-out-quint";
 
   if (partner.url?.trim()) {
     return (
@@ -122,17 +135,12 @@ function PartnerTile({ partner }: { partner: HackathonPartnerData & { slug: stri
         href={partner.url}
         target="_blank"
         rel="noreferrer noopener"
-        className={cn(
-          tileClasses,
-          /* `.card-hover` warms a fill; there is no fill any more, so the
-             mark itself is what responds. */
-          "focus-ring transition-opacity duration-ui ease-out-quint hover:opacity-70"
-        )}
+        className={cn(tileClasses, surface, "focus-ring hover:border-brand-blue/50")}
       >
         {mark}
       </a>
     );
   }
 
-  return <div className={tileClasses}>{mark}</div>;
+  return <div className={cn(tileClasses, surface)}>{mark}</div>;
 }

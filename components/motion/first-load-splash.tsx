@@ -90,14 +90,14 @@ export function FirstLoadSplash() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="relative h-24 w-[260px]">
+                <div className="relative h-24 w-[214px]">
                   <Image
                     src="/images/logo.png"
                     alt="KodeDristi Software Pvt. Ltd."
                     fill
                     priority
                     className="object-contain object-center"
-                    sizes="260px"
+                    sizes="214px"
                   />
                 </div>
               </motion.div>

@@ -11,7 +11,6 @@ import { NavDropdown } from "@/components/site-header/nav-dropdown";
 import { ThemeToggle } from "@/components/site-header/theme-toggle";
 import { MobileMenu } from "@/components/site-header/mobile-menu";
 import { SignInButton } from "@/components/auth/sign-in-button";
-import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -55,14 +54,18 @@ export function Navbar() {
     <button
       onClick={() => setMobileOpen(true)}
       aria-label="Open menu"
-      className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-sm)] border border-border text-text-secondary lg:hidden"
+      className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-sm)] border border-nav-border text-nav-text-muted transition-colors hover:border-nav-text hover:text-nav-text lg:hidden"
     >
-      <Menu01Icon className="h-6.75 w-6.75" />
+      <Menu01Icon className="h-6.25 w-6.25" />
     </button>
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/85">
+    /* The whole stack — promo banner excepted, which keeps its own bright
+       green so a limited-seats offer still pops — shares one flat dark-green
+       chrome, at one blur level, so hovering a nav item extends the same bar
+       rather than opening a visually different panel. */
+    <header className="sticky top-0 z-50 w-full border-b border-nav-border bg-nav-bg/95 backdrop-blur-xl supports-backdrop-filter:bg-nav-bg/85">
       {/* Announcement bar */}
       <AnimatePresence initial={false}>
         {topBarsVisible && announcementOpen && (
@@ -79,11 +82,14 @@ export function Navbar() {
                 Next cohort
               </span>
               <span>AI &amp; Machine Learning Bootcamp starts 1 September — limited seats.</span>
+              {/* Points at contact, not at the course page. Courses are
+                  presented on the homepage now and their detail pages are no
+                  longer linked from anywhere in the header. */}
               <Link
-                href="/learn/ai-machine-learning"
+                href="/contact"
                 className="inline-flex shrink-0 items-center gap-1 font-semibold underline underline-offset-2 hover:no-underline"
               >
-                See the course <ArrowRight01Icon className="h-4.5 w-4.5" />
+                Enquire <ArrowRight01Icon className="h-4.5 w-4.5" />
               </Link>
               <button
                 onClick={() => setAnnouncementOpen(false)}
@@ -106,71 +112,60 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-border bg-background-secondary"
+            className="overflow-hidden border-b border-nav-border bg-nav-bg/95 backdrop-blur-xl"
           >
-            <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-2 text-xs">
-              <span className="hidden truncate font-semibold tracking-[0.16em] text-text-muted sm:inline">
+            <div className="mx-auto flex max-w-[1720px] items-center justify-between gap-4 px-5 py-2 text-xs sm:px-8 lg:px-14">
+              <span className="hidden truncate font-semibold tracking-[0.16em] text-nav-text-muted sm:inline">
                 ONE PARTNER. EVERY SOLUTION. EVERY STEP OF THE WAY.
               </span>
-              <div className="flex items-center gap-3 text-text-secondary sm:gap-4">
-                <a href="tel:+9779842863398" className="flex items-center gap-1.5 font-medium hover:text-link">
+              <div className="flex items-center gap-3 text-nav-text-muted sm:gap-4">
+                <a href="tel:+9779842863398" className="flex items-center gap-1.5 font-medium transition-colors hover:text-nav-text">
                   <Call02Icon className="h-5.25 w-5.25" />
                   <span className="hidden sm:inline">+977 9842863398</span>
                 </a>
                 <span className="hidden items-center gap-1.5 md:flex">
                   <Time02Icon className="h-5.25 w-5.25" /> 9:00 AM – 7:00 PM
                 </span>
-                <ThemeToggle />
+                <ThemeToggle className="border-nav-border text-nav-text-muted hover:border-nav-text hover:text-nav-text" />
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Logo + nav row — single DOM structure with absolute positioning for smooth CSS animation */}
-      <div
-        className={cn(
-          "mx-auto max-w-7xl relative transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          isHome ? (scrolled ? "h-[54px]" : "h-[156px] sm:h-[168px]") : "h-[54px]"
-        )}
-      >
+      {/* One fixed row: mark, nav, actions.
+
+          This used to be a 168px block on the homepage with the logo centred,
+          shrinking to 54px and sliding left on scroll. It is gone. A header
+          that resizes itself as you scroll moves the nav out from under the
+          pointer mid-reach, and it cost the hero the top sixth of the first
+          viewport to do it. The mark sits left at one size, always. */}
+      {/* 44px — apple.com's own primary bar height, down from the previous
+          62px. Everything inside is sized to sit comfortably within that,
+          not just centred over the leftover space. */}
+      <div className="mx-auto flex h-11 max-w-[1720px] items-center gap-6 px-5 sm:px-8 lg:px-14">
         <Link
           href="/"
           aria-label="KodeDristi home"
-          className={cn(
-            "absolute z-10 block shrink-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform",
-            isHome
-              ? scrolled
-                ? "left-5 top-1/2 -translate-y-1/2 h-12 w-[150px]"
-                : "left-1/2 -translate-x-1/2 top-1 h-[84px] w-[240px] sm:h-24 sm:w-[300px]"
-              : "left-5 top-1/2 -translate-y-1/2 h-12 w-[150px]"
-          )}
+          className="focus-ring flex shrink-0 items-center gap-2.5"
         >
-          <Image
-            src="/images/logo.png"
-            alt="KodeDristi Software Pvt. Ltd."
-            fill
-            priority
-            className="object-contain object-center"
-            sizes="300px"
-          />
+          <span className="relative block h-7 w-[62px]">
+            <Image
+              src="/images/logo.png"
+              alt=""
+              fill
+              priority
+              className="object-contain"
+              sizes="62px"
+            />
+          </span>
         </Link>
 
-        <div
-          className={cn(
-            "absolute left-5 right-5 flex items-center justify-between transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            isHome
-              ? scrolled
-                ? "top-1/2 -translate-y-1/2 pl-[160px] sm:pl-[180px]"
-                : "bottom-3 pt-2"
-              : "top-1/2 -translate-y-1/2 pl-[160px] sm:pl-[180px]"
-          )}
-        >
-          {navLinks}
-          <div className="ml-auto flex items-center gap-3">
-            <SignInButton />
-            {hamburger}
-          </div>
+        {navLinks}
+
+        <div className="ml-auto flex items-center gap-3">
+          <SignInButton compact />
+          {hamburger}
         </div>
       </div>
 

@@ -40,7 +40,7 @@ export function MobileMenu({
             className="fixed inset-y-0 right-0 z-50 flex h-dvh w-[86%] max-w-sm flex-col bg-surface shadow-2xl lg:hidden"
           >
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <div className="relative h-9 w-32">
+              <div className="relative h-9 w-20">
                 <Image
                   src="/images/logo.png"
                   alt="KodeDristi"

@@ -73,10 +73,13 @@ export function NavDropdown({
               onMouseEnter={handleEnter}
               onMouseLeave={handleLeave}
             >
-              <div className="border-b-[0.5px] border-border bg-surface-elevated/90 backdrop-blur-xl shadow-menu">
-                <div className="mx-auto max-w-7xl px-5 py-6">
+              {/* Same bg-nav-bg/95 + backdrop-blur-xl the header itself uses, at
+                  the same opacity — the point is that this reads as the bar
+                  continuing downward, not as a separate card that opened. */}
+              <div className="border-b border-nav-border bg-nav-bg/95 backdrop-blur-xl shadow-menu supports-backdrop-filter:bg-nav-bg/85">
+                <div className="mx-auto max-w-[1720px] px-5 py-6 sm:px-8 lg:px-14">
                   <div className="mb-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-nav-text-muted">
                       {group.label}
                     </p>
                   </div>
@@ -106,11 +109,11 @@ export function NavDropdown({
                           onClick={() => setOpen(false)}
                           className="focus-ring group flex cursor-pointer flex-col gap-0.5 rounded-lg px-3 py-3 transition-colors"
                         >
-                          <p className="text-sm font-semibold text-text-secondary transition-colors group-hover:text-text-primary">
+                          <p className="text-sm font-semibold text-nav-text-muted transition-colors group-hover:text-nav-text">
                             {item.label}
                           </p>
                           {item.description && (
-                            <p className="text-xs leading-relaxed text-text-muted">
+                            <p className="text-xs leading-relaxed text-nav-text-muted/80">
                               {item.description}
                             </p>
                           )}
@@ -134,11 +137,15 @@ export function NavDropdown({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
+      {/* No background on hover or open — by request. Layout stability
+          comes from the border always being reserved space (2px, transparent
+          by default) rather than appearing on hover; only its colour
+          transitions, so nothing in the row shifts width or position. */}
       <Link
         href={group.href}
         className={cn(
-          "focus-ring flex cursor-pointer items-center gap-1 px-3 py-2 text-sm font-medium text-text-secondary transition-colors duration-200",
-          open ? "text-text-primary" : "hover:text-text-primary"
+          "focus-ring flex cursor-pointer items-center gap-1 border-b-2 border-transparent px-3 py-1.5 text-sm font-medium text-nav-text-muted transition-colors duration-200",
+          open ? "border-brand-green text-nav-text" : "hover:border-nav-border hover:text-nav-text"
         )}
       >
         <span>{group.label}</span>

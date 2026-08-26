@@ -163,7 +163,14 @@ export function ShowcaseCard({
             sizes="(min-width: 1024px) 50vw, (min-width: 640px) 50vw, 100vw"
             className={cn(
               imageFit === "contain" ? "object-contain" : "object-cover",
-              "object-center"
+              "object-center",
+              /* The well is a fixed crop and the picture moves inside it, so
+                 the tile reads as a window onto the work rather than as a
+                 box that grew. Nothing around it shifts — the tile's own
+                 overflow does the cropping. `contain` art is left alone:
+                 pushing a logo past its own bounding box just clips it. */
+              imageFit === "cover" &&
+                "transition-transform duration-700 ease-out-expo will-change-transform group-hover/tile:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100"
             )}
           />
         ) : (

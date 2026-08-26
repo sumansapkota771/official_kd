@@ -18,13 +18,13 @@ export function PageHero({
 }) {
   return (
     <section className={cn("relative overflow-hidden bg-background-secondary border-b border-border", className)}>
-      {/* Decorative corner accent — breaks the blank-hero template feel */}
+      {/* A solid rule down the leading edge, not a radial wash in the
+          corner. It answers the same "do not ship a blank hero" problem
+          without fading one colour into another, and it marks the same left
+          spine the copy is set against. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-[0.04]"
-        style={{
-          background: "radial-gradient(circle, var(--brand-blue) 0%, transparent 70%)",
-        }}
+        className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-brand-blue"
       />
       <Container className="relative flex flex-col items-start gap-5 py-16 sm:py-20 lg:py-24">
         {eyebrow && (

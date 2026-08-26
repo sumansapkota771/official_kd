@@ -2,15 +2,18 @@ import { listAllSlugs, listContent } from "@/lib/content/store";
 import { Hero } from "@/components/home/hero";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { FlagshipProgram } from "@/components/home/flagship-program";
+import { FlagshipGallerySection } from "@/components/home/flagship-gallery-section";
 import { HackathonPartners } from "@/components/home/hackathon-partners";
+import { AcademiaPartnership } from "@/components/home/academia-partnership";
 import { DristiLagani } from "@/components/home/dristi-lagani";
+import { ProjectsOverview } from "@/components/home/projects-overview";
 import { SolutionsOverview } from "@/components/home/solutions-overview";
 import { CoursesOverview } from "@/components/home/courses-overview";
 import { TechDelivery } from "@/components/home/tech-delivery";
 import { TeamOverview } from "@/components/home/team-overview";
 import { FinalCta } from "@/components/home/final-cta";
 import { Testimonials } from "@/components/home/testimonials";
-import { getHomeHeroData } from "@/lib/content/resolvers";
+import { getHomeHeroData, getHomeHeroSlides } from "@/lib/content/resolvers";
 
 type SectionConfig = {
   type: string;
@@ -22,8 +25,11 @@ const DEFAULT_SECTIONS: SectionConfig[] = [
   { type: "hero", label: "Hero", enabled: true },
   { type: "trust", label: "Trust strip", enabled: true },
   { type: "flagship", label: "Flagship program", enabled: true },
+  { type: "flagship-gallery", label: "Flagship photo carousel", enabled: true },
   { type: "hackathon-partners", label: "Hackathon partners", enabled: true },
+  { type: "academia", label: "Industry academia partnership", enabled: true },
   { type: "lagani", label: "Dristi Lagani", enabled: true },
+  { type: "projects", label: "Remarkable projects", enabled: true },
   { type: "solutions", label: "Solutions overview", enabled: true },
   { type: "courses", label: "Courses overview", enabled: true },
   { type: "tech", label: "Tech delivery", enabled: true },
@@ -90,7 +96,10 @@ export async function SectionRenderer() {
     // DB down — use defaults
   }
 
-  const hero = await getHomeHeroData();
+  const [hero, heroSlides] = await Promise.all([
+    getHomeHeroData(),
+    getHomeHeroSlides(),
+  ]);
 
   return (
     <>
@@ -99,15 +108,21 @@ export async function SectionRenderer() {
         .map((section) => {
           switch (section.type) {
             case "hero":
-              return <Hero key="hero" content={hero} />;
+              return <Hero key="hero" content={hero} slides={heroSlides} />;
             case "trust":
               return <TrustStrip key="trust" />;
             case "flagship":
               return <FlagshipProgram key="flagship" />;
+            case "flagship-gallery":
+              return <FlagshipGallerySection key="flagship-gallery" />;
             case "hackathon-partners":
               return <HackathonPartners key="hackathon-partners" />;
+            case "academia":
+              return <AcademiaPartnership key="academia" />;
             case "lagani":
               return <DristiLagani key="lagani" />;
+            case "projects":
+              return <ProjectsOverview key="projects" />;
             case "solutions":
               return <SolutionsOverview key="solutions" />;
             case "courses":

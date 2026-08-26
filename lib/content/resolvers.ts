@@ -28,6 +28,9 @@ import type {
   HackathonTrackData,
   HackathonTimelineData,
   HackathonPartnerData,
+  ProjectData,
+  MouPartnershipData,
+  FeaturedItemData,
   LaganiHighlightData,
   LaganiFocusData,
   LaganiProcessData,
@@ -36,6 +39,7 @@ import type {
   PageHeroData,
   SectionHeadingData,
   HomeHeroData,
+  HomeHeroSlideData,
   HomeTrustData,
   HomeFlagshipData,
   HomeLaganiData,
@@ -173,6 +177,29 @@ export async function getHackathonPartners(): Promise<(HackathonPartnerData & { 
   return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
 }
 
+// ---- Projects ----
+export async function getProjects(): Promise<(ProjectData & { slug: string })[]> {
+  const items = await listContent<ProjectData>("project");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+export async function getProject(slug: string): Promise<(ProjectData & { slug: string }) | null> {
+  const item = await getContentBySlug<ProjectData>("project", slug);
+  if (!item) return null;
+  return { ...item.data, slug: item.slug ?? "" };
+}
+
+// ---- Featured carousel ----
+export async function getFeaturedItems(): Promise<(FeaturedItemData & { slug: string })[]> {
+  const items = await listContent<FeaturedItemData>("featured-item");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+
+// ---- Industry academia ----
+export async function getMouPartnerships(): Promise<(MouPartnershipData & { slug: string })[]> {
+  const items = await listContent<MouPartnershipData>("mou-partnership");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+
 // ---- Dristi Lagani ----
 export async function getLaganiHighlights(): Promise<LaganiHighlightView[]> {
   const items = await listContent<LaganiHighlightData>("lagani-highlight");
@@ -225,6 +252,11 @@ export async function getHomeHeroData(): Promise<HomeHeroData> {
       tertiaryHref: "/hackathon",
     }
   );
+}
+
+export async function getHomeHeroSlides(): Promise<(HomeHeroSlideData & { slug: string })[]> {
+  const items = await listContent<HomeHeroSlideData>("home-hero-slide");
+  return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
 }
 
 export async function getHomeTrustData(): Promise<HomeTrustData> {
