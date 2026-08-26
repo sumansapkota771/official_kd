@@ -5,7 +5,6 @@ import {
   ShowcaseCard,
   showcaseGridInner,
   showcaseGridOuter,
-  showcaseTone,
 } from "@/components/ui/showcase-card";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getSectionHeading, getSolutions } from "@/lib/content/resolvers";
@@ -46,10 +45,10 @@ export async function SolutionsOverview({ className }: { className?: string }) {
         {/* Two up. The tiles are large enough that a third column would shrink
             the image wells below the size that makes them worth having. */}
         <RevealGroup className={showcaseGridInner}>
-          {solutions.map((solution, i) => (
+          {solutions.map((solution) => (
             <RevealItem key={solution.slug} className="flex">
               <ShowcaseCard
-                tone={showcaseTone(i)}
+                tone="light"
                 title={solution.name}
                 description={solution.tagline}
                 href={`/solutions/${solution.slug}`}

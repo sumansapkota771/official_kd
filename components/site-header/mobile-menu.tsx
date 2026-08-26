@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown01Icon, Cancel01Icon } from "hugeicons-react";
-import { navGroups } from "@/lib/data/nav";
+import type { NavGroup } from "@/lib/data/nav";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/site-header/theme-toggle";
 import { LangToggle } from "@/components/site-header/lang-toggle";
@@ -15,9 +15,11 @@ import { cn } from "@/lib/utils";
 export function MobileMenu({
   open,
   onClose,
+  navGroups,
 }: {
   open: boolean;
   onClose: () => void;
+  navGroups: NavGroup[];
 }) {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 

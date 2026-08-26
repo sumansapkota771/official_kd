@@ -2,9 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail01Icon, Location01Icon, Call02Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
-import { navGroups } from "@/lib/data/nav";
+import type { NavGroup } from "@/lib/data/nav";
 
-export function Footer() {
+export function Footer({ navGroups }: { navGroups: NavGroup[] }) {
   const year = new Date().getFullYear();
 
   return (

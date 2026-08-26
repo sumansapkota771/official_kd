@@ -9,6 +9,8 @@ import { GlobalChrome } from "@/components/global-chrome";
 import { SmoothScroll } from "@/components/motion/smooth-scroll";
 import { AnalyticsTracker } from "@/components/auth/analytics-tracker";
 import { CookieConsent } from "@/components/auth/cookie-consent";
+import { navGroups } from "@/lib/data/nav";
+import { getSolutions } from "@/lib/content/resolvers";
 
 const albertSans = Albert_Sans({
   subsets: ["latin"],
@@ -40,7 +42,33 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/**
+ * The Solutions dropdown used to be pure static data. It went stale the
+ * moment someone unpublished a solution in the admin — the nav kept
+ * linking to it regardless, and every one of those links 404’d. Rebuilding
+ * this group from the actual published list on every request means an
+ * unpublish is instantly reflected everywhere the nav renders (desktop,
+ * mobile, footer all take the same resolved list), and it can never drift
+ * out of sync again — there is nothing left to keep in sync.
+ */
+async function getLiveNavGroups() {
+  const solutions = await getSolutions();
+  return navGroups.map((group) =>
+    group.label === "Solutions"
+      ? {
+          ...group,
+          items: solutions.map((s) => ({
+            label: s.name,
+            href: `/solutions/${s.slug}`,
+            description: s.tagline,
+          })),
+        }
+      : group
+  );
+}
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const liveNavGroups = await getLiveNavGroups();
   return (
     <html
       lang="en"
@@ -66,7 +94,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             Skip to content
           </a>
-          <GlobalChrome navbar={<Navbar />} footer={<Footer />}>
+          <GlobalChrome navbar={<Navbar navGroups={liveNavGroups} />} footer={<Footer navGroups={liveNavGroups} />}>
             {children}
           </GlobalChrome>
           <AnalyticsTracker />

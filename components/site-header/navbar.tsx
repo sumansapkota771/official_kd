@@ -6,13 +6,13 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Menu01Icon, Call02Icon, Time02Icon, Cancel01Icon, ArrowRight01Icon } from "hugeicons-react";
-import { navGroups } from "@/lib/data/nav";
+import type { NavGroup } from "@/lib/data/nav";
 import { NavDropdown } from "@/components/site-header/nav-dropdown";
 import { ThemeToggle } from "@/components/site-header/theme-toggle";
 import { MobileMenu } from "@/components/site-header/mobile-menu";
 import { SignInButton } from "@/components/auth/sign-in-button";
 
-export function Navbar() {
+export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -169,7 +169,7 @@ export function Navbar() {
         </div>
       </div>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} navGroups={navGroups} />
     </header>
   );
 }

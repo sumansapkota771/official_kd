@@ -5,7 +5,6 @@ import {
   ShowcaseCard,
   showcaseGridInner,
   showcaseGridOuter,
-  showcaseTone,
 } from "@/components/ui/showcase-card";
 import { Button } from "@/components/ui/button";
 import { getPageHero, getSolutions } from "@/lib/content/resolvers";
@@ -38,10 +37,15 @@ export default async function SolutionsPage() {
       <section className="section">
         <div className={showcaseGridOuter}>
           <div className={showcaseGridInner}>
-            {solutions.map((solution, i) => (
+            {/* Every card the same light (green-tinted) tone here, not the
+                homepage grid's light/ink checkerboard — this page is the
+                full catalogue rather than a curated pair-up, and a long run
+                of alternating dark and light tiles reads as noisier than a
+                single, calm, consistent surface. */}
+            {solutions.map((solution) => (
               <ShowcaseCard
                 key={solution.slug}
-                tone={showcaseTone(i)}
+                tone="light"
                 title={solution.name}
                 description={solution.tagline}
                 href={`/solutions/${solution.slug}`}
