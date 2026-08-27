@@ -6,6 +6,7 @@ import {
   showcaseGridOuter,
   showcaseTone,
 } from "@/components/ui/showcase-card";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getArticles, getPageHero } from "@/lib/content/resolvers";
 import { ArticleJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
@@ -42,32 +43,33 @@ export default async function InsightsPage() {
 
       <section className="section">
         <div className={showcaseGridOuter}>
-          <div className={showcaseGridInner}>
+          <RevealGroup className={showcaseGridInner}>
             {articles.map((article, i) => (
-              <ShowcaseCard
-                key={article.slug}
-                tone={showcaseTone(i)}
-                eyebrow={article.category}
-                title={article.title}
-                description={article.excerpt}
-                href={`/insights/${article.slug}`}
-                actionLabel="Read article"
-                image={article.image}
-                meta={
-                  <>
-                    <span>
-                      {new Date(article.date).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span>{article.readTime}</span>
-                  </>
-                }
-              />
+              <RevealItem key={article.slug} className="flex">
+                <ShowcaseCard
+                  tone={showcaseTone(i)}
+                  eyebrow={article.category}
+                  title={article.title}
+                  description={article.excerpt}
+                  href={`/insights/${article.slug}`}
+                  actionLabel="Read article"
+                  image={article.image}
+                  meta={
+                    <>
+                      <span>
+                        {new Date(article.date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                      <span>{article.readTime}</span>
+                    </>
+                  }
+                />
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
     </>

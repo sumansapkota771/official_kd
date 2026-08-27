@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
-import {
-  ShowcaseCard,
-  showcaseGridInner,
-  showcaseGridOuter,
-  showcaseTone,
-} from "@/components/ui/showcase-card";
+import { Container } from "@/components/ui/container";
+import { TeamCard } from "@/components/team/team-card";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { getPageHero, getTeamMembers } from "@/lib/content/resolvers";
 
@@ -36,25 +33,22 @@ export default async function TeamPage() {
       </PageHero>
 
       <section className="section">
-        <div className={showcaseGridOuter}>
-          <div className={showcaseGridInner}>
-            {team.map((person, i) => (
-              <ShowcaseCard
-                key={person.name}
-                tone={showcaseTone(i)}
-                eyebrow={person.role}
-                title={person.name}
-                description={person.bio}
-                href="/careers"
-                actionLabel="Work with us"
-                image={person.image}
-                /* Headshots are portraits, not scenery: cropping one to fill
-                   the well is how you behead people. */
-                imageFit="contain"
-              />
+        <Container>
+          {/* Four across at desktop, two on a phone. A portrait wall wants
+              density — at two columns the faces get large enough to read as
+              individual profiles rather than as one group. */}
+          <RevealGroup
+            as="ul"
+            stagger={0.04}
+            className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
+          >
+            {team.map((person) => (
+              <RevealItem key={person.slug ?? person.name} as="li" className="flex">
+                <TeamCard person={person} />
+              </RevealItem>
             ))}
-          </div>
-        </div>
+          </RevealGroup>
+        </Container>
       </section>
     </>
   );

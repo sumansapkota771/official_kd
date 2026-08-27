@@ -8,6 +8,7 @@ import {
   showcaseGridOuter,
   showcaseTone,
 } from "@/components/ui/showcase-card";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
@@ -69,31 +70,32 @@ export default async function LearnPage() {
           <SectionHeading eyebrow="Catalogue" eyebrowTone="green" title="Choose your track" />
         </Container>
         <div className={cn("mt-8", showcaseGridOuter)}>
-          <div className={showcaseGridInner}>
+          <RevealGroup className={showcaseGridInner}>
             {courses.map((course, i) => (
-              <ShowcaseCard
-                key={course.slug}
-                tone={showcaseTone(i)}
-                eyebrow={course.level}
-                title={course.name}
-                description={course.summary}
-                href={`/learn/${course.slug}`}
-                actionLabel="View details"
-                secondary={{ label: "Enroll", href: "/contact" }}
-                image={course.image}
-                meta={
-                  <>
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="h-4 w-4" /> {course.duration}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Signal className="h-4 w-4" /> {course.fee}
-                    </span>
-                  </>
-                }
-              />
+              <RevealItem key={course.slug} className="flex">
+                <ShowcaseCard
+                  tone={showcaseTone(i)}
+                  eyebrow={course.level}
+                  title={course.name}
+                  description={course.summary}
+                  href={`/learn/${course.slug}`}
+                  actionLabel="View details"
+                  secondary={{ label: "Enroll", href: "/contact" }}
+                  image={course.image}
+                  meta={
+                    <>
+                      <span className="flex items-center gap-1.5">
+                        <Clock className="h-4 w-4" /> {course.duration}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <Signal className="h-4 w-4" /> {course.fee}
+                      </span>
+                    </>
+                  }
+                />
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 

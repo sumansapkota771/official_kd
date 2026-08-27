@@ -8,6 +8,7 @@ import {
   showcaseGridOuter,
   showcaseTone,
 } from "@/components/ui/showcase-card";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { ProductTalkForm } from "@/components/contact/product-talk-form";
@@ -47,20 +48,21 @@ export default async function ProductsPage() {
 
       <section className="section">
         <div className={showcaseGridOuter}>
-          <div className={showcaseGridInner}>
+          <RevealGroup className={showcaseGridInner}>
             {products.map((product, i) => (
-              <ShowcaseCard
-                key={product.slug}
-                tone={showcaseTone(i)}
-                title={product.name}
-                description={product.tagline}
-                href={`/products/${product.slug}`}
-                actionLabel="View product"
-                secondary={{ label: "Talk to us", href: "/contact" }}
-                image={product.image}
-              />
+              <RevealItem key={product.slug} className="flex">
+                <ShowcaseCard
+                  tone={showcaseTone(i)}
+                  title={product.name}
+                  description={product.tagline}
+                  href={`/products/${product.slug}`}
+                  actionLabel="View product"
+                  secondary={{ label: "Talk to us", href: "/contact" }}
+                  image={product.image}
+                />
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 

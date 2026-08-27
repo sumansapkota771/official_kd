@@ -7,6 +7,7 @@ import {
   showcaseGridOuter,
 } from "@/components/ui/showcase-card";
 import { Button } from "@/components/ui/button";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getPageHero, getSolutions } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
@@ -36,26 +37,27 @@ export default async function SolutionsPage() {
 
       <section className="section">
         <div className={showcaseGridOuter}>
-          <div className={showcaseGridInner}>
+          <RevealGroup className={showcaseGridInner}>
             {/* Every card the same light (green-tinted) tone here, not the
                 homepage grid's light/ink checkerboard — this page is the
                 full catalogue rather than a curated pair-up, and a long run
                 of alternating dark and light tiles reads as noisier than a
                 single, calm, consistent surface. */}
             {solutions.map((solution) => (
-              <ShowcaseCard
-                key={solution.slug}
-                tone="light"
-                title={solution.name}
-                description={solution.tagline}
-                href={`/solutions/${solution.slug}`}
-                actionLabel="View solution"
-                secondary={{ label: "Get a quote", href: "/contact" }}
-                image={solution.image}
-                className="min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] [&_[data-image-slot]]:min-h-[220px] sm:[&_[data-image-slot]]:min-h-[280px]"
-              />
+              <RevealItem key={solution.slug} className="flex">
+                <ShowcaseCard
+                  tone="light"
+                  title={solution.name}
+                  description={solution.tagline}
+                  href={`/solutions/${solution.slug}`}
+                  actionLabel="View solution"
+                  secondary={{ label: "Get a quote", href: "/contact" }}
+                  image={solution.image}
+                  className="min-h-[420px] sm:min-h-[500px] lg:min-h-[560px] [&_[data-image-slot]]:min-h-[220px] sm:[&_[data-image-slot]]:min-h-[280px]"
+                />
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
     </>

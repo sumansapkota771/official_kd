@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { TeamCard } from "@/components/team/team-card";
 import { getLeadership, getSectionHeading } from "@/lib/content/resolvers";
 import { cn } from "@/lib/utils";
 
@@ -31,20 +32,17 @@ export async function TeamOverview({ className }: { className?: string }) {
           </Button>
         </Reveal>
 
-        <RevealGroup className="grid gap-3 sm:gap-4 sm:grid-cols-3">
+        {/* The same portrait tile the /team wall uses, so the homepage
+            preview and the full page cannot drift into two different
+            treatments of the same people. */}
+        <RevealGroup
+          as="ul"
+          stagger={0.05}
+          className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
+        >
           {leadership.map((person) => (
-            <RevealItem key={person.slug} className="flex">
-              <div className="card group/person w-full p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-sm)] bg-brand-blue text-sm font-bold text-white transition-colors duration-ui ease-out-quint group-hover/person:bg-brand-blue-hover">
-                  {person.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <h3 className="mt-4 font-semibold text-text-primary">{person.name}</h3>
-                <p className="mt-0.5 text-sm font-medium text-brand-green-hover">{person.role}</p>
-                <p className="mt-2 text-sm leading-relaxed text-text-muted">{person.bio}</p>
-              </div>
+            <RevealItem key={person.slug} as="li" className="flex">
+              <TeamCard person={person} />
             </RevealItem>
           ))}
         </RevealGroup>

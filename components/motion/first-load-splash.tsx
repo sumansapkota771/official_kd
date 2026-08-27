@@ -12,10 +12,10 @@ import { AnimatePresence, motion } from "framer-motion";
  * the layout mounted across client-side navigations, so the effect never
  * re-runs on subsequent route changes.
  *
- * The treatment echoes the hero's glass-core 3D language:
- *  - the logo springs in over a soft, breathing blue→green glass halo,
- *  - a sonar ring pings outward like a glass sphere,
- *  - a thin green beam sweeps the track beneath it.
+ * Deliberately bare: the mark on the page's own background, easing up to
+ * full size, and nothing else. It previously sat inside a breathing halo and
+ * a sonar ring with a progress beam beneath, all of which have been removed —
+ * a splash that decorates itself competes with the site it is introducing.
  *
  * It holds for a minimum time so it reads as deliberate, then fades out once
  * the window has loaded (capped by MAX_WAIT_MS as a backstop). Under
@@ -81,32 +81,26 @@ export function FirstLoadSplash() {
           role="status"
           aria-label="KodeDristi is loading"
         >
-          <div className="relative flex flex-col items-center gap-8">
-            <div className="relative">
-              <div className="splash-halo absolute -inset-10 rounded-full" aria-hidden="true" />
-              <div className="splash-ring absolute -inset-6 rounded-full" aria-hidden="true" />
-              <motion.div
-                initial={{ opacity: 0, scale: 0.86, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="relative h-24 w-[214px]">
-                  <Image
-                    src="/images/logo.png"
-                    alt="KodeDristi Software Pvt. Ltd."
-                    fill
-                    priority
-                    className="object-contain object-center"
-                    sizes="214px"
-                  />
-                </div>
-              </motion.div>
+          {/* The mark alone. The halo, the sonar ring and the progress track
+              that used to surround it are gone by request — with them removed
+              the logo is the whole splash, and its own settle is the only
+              motion left. */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="relative h-24 w-[214px]">
+              <Image
+                src="/images/logo.png"
+                alt="KodeDristi Software Pvt. Ltd."
+                fill
+                priority
+                className="object-contain object-center"
+                sizes="214px"
+              />
             </div>
-
-            <div className="h-[3px] w-56 overflow-hidden rounded-full bg-surface-elevated">
-              <div className="loader-bar h-full w-2/5 rounded-full bg-brand-green" />
-            </div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

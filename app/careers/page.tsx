@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
@@ -36,15 +37,17 @@ export default async function CareersPage() {
       </PageHero>
 
       <section className="section">
-        <Container className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {perks.map((perk) => (
-            <div key={perk.title} className="tile p-5">
-              <h3 className="font-semibold text-text-primary">{perk.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-text-muted">
-                {perk.description}
-              </p>
-            </div>
-          ))}
+        <Container>
+          <RevealGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {perks.map((perk) => (
+              <RevealItem key={perk.title} className="tile p-5">
+                <h3 className="font-semibold text-text-primary">{perk.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                  {perk.description}
+                </p>
+              </RevealItem>
+            ))}
+          </RevealGroup>
         </Container>
       </section>
 

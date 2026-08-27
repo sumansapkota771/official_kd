@@ -150,6 +150,13 @@ export type TeamMemberData = {
   bio: string;
   /** Headshot for the team showcase card — see SolutionData.image. */
   image?: string;
+  /**
+   * Optional second portrait that cross-fades in on hover — the candid to the
+   * first photo's formal one. Entirely optional: a member with only one photo
+   * gets a slow push-in instead, so the grid never depends on every person
+   * having sat for two shots.
+   */
+  hoverImage?: string;
   leadership?: boolean;
 };
 export type StatData = { value: string; label: string };
@@ -795,7 +802,8 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       { key: "name", label: "Name", kind: "text", required: true },
       { key: "role", label: "Role", kind: "text" },
       { key: "bio", label: "Bio", kind: "textarea" },
-      { key: "image", label: "Card image", kind: "image", helper: "Headshot shown on the team card. Leave empty and the card keeps the space reserved." },
+      { key: "image", label: "Card image", kind: "image", helper: "Portrait shown on the team card. Leave empty and the card falls back to the initial." },
+      { key: "hoverImage", label: "Hover image (optional)", kind: "image", helper: "A second portrait that cross-fades in when the card is hovered. Leave empty and the single photo gently pushes in instead." },
       { key: "leadership", label: "Show in leadership sections", kind: "check" },
     ],
     fallback: serializeTeam,

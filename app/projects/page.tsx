@@ -3,6 +3,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/ui/project-card";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getPageHero, getProjects } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
@@ -42,13 +43,13 @@ export default async function ProjectsPage() {
               and we will walk you through the closest one.
             </p>
           ) : (
-            <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+            <RevealGroup as="ul" className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {projects.map((project) => (
-                <li key={project.slug} className="flex">
+                <RevealItem key={project.slug} as="li" className="flex">
                   <ProjectCard project={project} />
-                </li>
+                </RevealItem>
               ))}
-            </ul>
+            </RevealGroup>
           )}
         </Container>
       </section>
