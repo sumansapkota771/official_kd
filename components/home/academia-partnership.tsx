@@ -9,11 +9,16 @@ import { cn } from "@/lib/utils";
 /**
  * Signed agreements with universities and colleges.
  *
- * The artefact leads: each card is the MoU photo itself, and the explanation
- * of what the agreement actually permits is held back until hover or focus.
- * That ordering is deliberate — a wall of paragraphs about partnership reads
- * as marketing, whereas a wall of signed documents reads as evidence, and the
- * words are there the moment anyone wants them.
+ * The artefact leads: each card carries the institution's own mark, and the
+ * explanation of what the agreement actually permits is held back until
+ * hover or focus. That ordering is deliberate — a wall of paragraphs about
+ * partnership reads as marketing, whereas a wall of institutional marks
+ * reads as evidence, and the words are there the moment anyone wants them.
+ *
+ * Every mark is `object-contain`, never cropped, inside a fixed well — the
+ * roster mixes near-square crests with whatever aspect a given institution's
+ * logo happens to be, and letting `object-cover` fill the box the way a
+ * photograph would sliced pieces off some of them.
  *
  * Hidden until real agreements exist. Naming an institution KodeDristi has
  * not signed with would be a false claim about somebody else.
@@ -71,6 +76,11 @@ export async function AcademiaPartnership({ className }: { className?: string })
  * And the panel is always in the DOM at full opacity for screen readers,
  * moved out of view by transform rather than `display` or `hidden`, so the
  * text is announced normally regardless of pointer state.
+ *
+ * The caption panel carries its own solid ground rather than leaning on a
+ * dimmed backdrop image: with the mark now `object-contain`, most of the well
+ * behind the panel is bare `--background-secondary`, not photo content, so
+ * there is nothing to darken for contrast — the panel has to bring its own.
  */
 function MouCard({ mou }: { mou: MouPartnershipData & { slug: string } }) {
   return (
@@ -90,10 +100,15 @@ function MouCard({ mou }: { mou: MouPartnershipData & { slug: string } }) {
             fill
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className={cn(
-              "object-cover object-center",
-              "transition-[transform,filter] duration-700 ease-out-expo",
-              "group-hover/mou:scale-[1.03] group-hover/mou:brightness-[0.55]",
-              "group-focus-within/mou:scale-[1.03] group-focus-within/mou:brightness-[0.55]",
+              /* Padding lives on the image itself, not the well — a wrapper's
+                 own padding is ignored by an absolutely-positioned `fill`
+                 child, which paints edge to edge regardless. Every mark gets
+                 the same content box to scale down into, so a wide wordmark
+                 and a square crest read at a comparable size instead of
+                 whichever one happens to fill more of an uncropped box. */
+              "object-contain object-center p-10 sm:p-12",
+              "transition-transform duration-700 ease-out-expo",
+              "group-hover/mou:scale-[1.03] group-focus-within/mou:scale-[1.03]",
               "motion-reduce:transition-none motion-reduce:group-hover/mou:scale-100"
             )}
           />
@@ -114,7 +129,7 @@ function MouCard({ mou }: { mou: MouPartnershipData & { slug: string } }) {
             would read as two states swapping. */}
         <div
           className={cn(
-            "absolute inset-x-0 bottom-0 p-4 sm:p-5",
+            "absolute inset-x-0 bottom-0 bg-surface-ink/92 p-4 sm:p-5",
             "translate-y-full transition-transform duration-500 ease-out-expo",
             "group-hover/mou:translate-y-0 group-focus-within/mou:translate-y-0",
             /* Reduced motion keeps the reveal but drops the travel: the

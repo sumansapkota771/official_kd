@@ -73,12 +73,19 @@
   /* On-brand text */
   --text-on-green: #052e1c;
 
-  /* Footer (always dark) */
-  --footer-bg: #0f1219;
-  --footer-heading: #ffffff;
-  --footer-text: #c5c8ce;
-  --footer-text-muted: #8a8f99;
-  --footer-divider: rgba(255, 255, 255, 0.08);
+  /* Footer. Aliased to the theme's own secondary-surface/text tokens rather
+     than fixed dark values — the site's own closing sections (this and the
+     final CTA) used to break into an unrelated near-black/indigo block at
+     the bottom of an otherwise light, green-tinted page. Riding the same
+     --background-secondary wash the homepage tiles use keeps the page one
+     continuous material down to the last pixel, and it still follows the
+     dark-mode toggle instead of fighting it, the same reasoning the navbar
+     above already uses. */
+  --footer-bg: var(--background-secondary);
+  --footer-heading: var(--text-primary);
+  --footer-text: var(--text-secondary);
+  --footer-text-muted: var(--text-muted);
+  --footer-divider: var(--border);
 
   /* Navbar. White — not the page's own off-white --background, --surface
      specifically, so the bar reads as a clean white plane rather than
