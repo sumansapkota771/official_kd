@@ -15,6 +15,13 @@ const SECONDS_PER_STEP = 5.5;
  *  the hold, in both relative and absolute terms, gets longer. */
 const GLIDE_PORTION = 0.1;
 
+/** How much wider each large-row image is than the width that would tile
+ *  three of them edge to edge with no overlap. At 1.4x, the centre image
+ *  sits fully on screen and its two neighbours are each cut roughly to
+ *  their inner ~60%, peeking in from the left and right edges rather than
+ *  sitting fully inside the viewport. */
+const LARGE_OVERFLOW_SCALE = 1.4;
+
 /**
  * Builds a `@keyframes` rule that steps through `count` positions and holds
  * at each, rather than scrolling continuously.
@@ -85,43 +92,89 @@ export function FeaturedCarousel({
   // treatment SectionBackdropSlideshow already gives its own rotating
   // images. `aria-label` would be meaningless on an aria-hidden element,
   // so it is not one.
+  /* The large row's image width starts from the size that would tile
+     `items.length` of them edge to edge with no overlap, then scales that
+     up — wider than the viewport can fit three of at once, so the outer two
+     now bleed past the left/right edges and get clipped by this row's own
+     `overflow-hidden`. Only the large row gets this treatment; the small
+     row keeps its own peeking vw width unchanged. */
+  const largeItemWidth = `calc(${LARGE_OVERFLOW_SCALE} * (100vw - ${items.length - 1} * var(--gallery-gap)) / ${items.length})`;
+
+  /* The animation's own transform is unchanged and still anchors the track
+     flush at its own left edge at rest (translateX(0%) starts item 0 at
+     x=0) — that was exactly right when the three images filled the row with
+     no overflow, but now that they're wider than the row, "flush left"
+     dumps the entire excess width onto the right edge instead of splitting
+     it evenly, so the middle image lands well right of centre rather than
+     on it. A second, *static* wrapper around the animated track corrects
+     this with one constant leftward shift, sized to exactly half of
+     however much the 3-image group now overspills 100vw — pushing the
+     group's own centre back onto the viewport's centre. Because every
+     image is the same width and gap, that overspill amount is the same
+     regardless of which three consecutive images the animation is
+     currently showing, so one fixed correction is enough for every hold
+     position, not just the first. */
+  const centerCorrection =
+    size === "large"
+      ? `calc(-${(LARGE_OVERFLOW_SCALE - 1) / 2} * (100vw - ${items.length - 1} * var(--gallery-gap)))`
+      : undefined;
+
   return (
-    <div aria-hidden="true" className={cn("overflow-hidden", className)}>
+    <div
+      aria-hidden="true"
+      /* --gallery-gap lives here, on the outermost element, rather than on
+         the animated track below — the static offset wrapper also needs to
+         read it (for `centerCorrection`), and a custom property is only
+         visible to the element that sets it and that element's *own*
+         descendants. Set on the track itself, it would have been invisible
+         to the track's own parent, which is exactly the offset wrapper. */
+      className={cn(
+        "overflow-hidden [--gallery-gap:--spacing(3)] sm:[--gallery-gap:--spacing(4)]",
+        className
+      )}
+    >
       {items.length > 1 && <style>{stepKeyframes(animName, items.length, direction)}</style>}
-      {/* One gap value for every row, matching the vertical seam between
-          the two rows in the section wrapper — the whole block reads off
-          one spacing unit rather than two different rhythms. */}
-      <div
-        className={cn("flex gap-3 sm:gap-4")}
-        style={
-          items.length > 1
-            ? { animation: `${animName} ${duration}s cubic-bezier(0.65,0,0.35,1) infinite`, width: "max-content" }
-            : undefined
-        }
-      >
-        {doubled.map((item, i) => (
-          <div
-            key={`${item.slug}-${i}`}
-            className={cn(
-              "relative shrink-0 overflow-hidden bg-surface-ink",
-              size === "large"
-                ? "aspect-[16/10] w-[82vw] sm:w-[31vw] sm:max-w-[460px]"
-                : "aspect-[4/3] w-[46vw] sm:w-[15vw] sm:max-w-[210px]"
-            )}
-          >
-            <Image
-              src={item.image}
-              alt={item.name}
-              fill
-              sizes={size === "large" ? "(min-width: 640px) 31vw, 82vw" : "(min-width: 640px) 15vw, 46vw"}
-              className="object-cover object-center"
-              /* Every image in the row is a legitimate first paint, not a
-                 lazy off-screen one: the whole point of a self-driving row
-                 is that it is already moving when the section arrives. */
-              priority={i < items.length}
-            />
-          </div>
-        ))}
+      {/* Static offset wrapper — only present for the large row, and only
+          ever set once per render, never animated itself. */}
+      <div style={centerCorrection ? { transform: `translateX(${centerCorrection})` } : undefined}>
+        {/* One gap value for every row, matching the vertical seam between
+            the two rows in the section wrapper — the whole block reads off
+            one spacing unit rather than two different rhythms. */}
+        <div
+          className={cn("flex gap-3 sm:gap-4")}
+          style={
+            items.length > 1
+              ? { animation: `${animName} ${duration}s cubic-bezier(0.65,0,0.35,1) infinite`, width: "max-content" }
+              : undefined
+          }
+        >
+          {doubled.map((item, i) => (
+            <div
+              key={`${item.slug}-${i}`}
+              className={cn(
+                "relative shrink-0 overflow-hidden bg-surface-ink",
+                size === "large" ? "aspect-4/3" : "aspect-4/3 w-[46vw] sm:w-[15vw] sm:max-w-52.5"
+              )}
+              style={size === "large" ? { width: largeItemWidth } : undefined}
+            >
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes={
+                  size === "large"
+                    ? `${Math.ceil((100 * LARGE_OVERFLOW_SCALE) / items.length)}vw`
+                    : "(min-width: 640px) 15vw, 46vw"
+                }
+                className="object-cover object-center"
+                /* Every image in the row is a legitimate first paint, not a
+                   lazy off-screen one: the whole point of a self-driving row
+                   is that it is already moving when the section arrives. */
+                priority={i < items.length}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

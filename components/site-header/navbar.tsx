@@ -7,7 +7,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-
 import { usePathname } from "next/navigation";
 import { Menu01Icon, Call02Icon, Time02Icon, Cancel01Icon, ArrowRight01Icon } from "hugeicons-react";
 import type { NavGroup } from "@/lib/data/nav";
-import { NavDropdown } from "@/components/site-header/nav-dropdown";
+import { NavGroups } from "@/components/site-header/nav-dropdown";
 import { ThemeToggle } from "@/components/site-header/theme-toggle";
 import { MobileMenu } from "@/components/site-header/mobile-menu";
 import { SignInButton } from "@/components/auth/sign-in-button";
@@ -42,14 +42,6 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
 
   const topBarsVisible = isHome ? !scrolled : !hidden;
 
-  const navLinks = (
-    <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
-      {navGroups.map((group) => (
-        <NavDropdown key={group.label} group={group} />
-      ))}
-    </nav>
-  );
-
   const hamburger = (
     <button
       onClick={() => setMobileOpen(true)}
@@ -62,10 +54,11 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
 
   return (
     /* The whole stack — promo banner excepted, which keeps its own bright
-       green so a limited-seats offer still pops — shares one flat dark-green
-       chrome, at one blur level, so hovering a nav item extends the same bar
-       rather than opening a visually different panel. */
-    <header className="sticky top-0 z-50 w-full border-b border-nav-border bg-nav-bg/95 backdrop-blur-xl supports-backdrop-filter:bg-nav-bg/85">
+       green so a limited-seats offer still pops — shares one flat, fully
+       opaque --nav-bg, so hovering a nav item extends the exact same colour
+       rather than a translucent one that would pick up a slightly different
+       tint from whatever page content happens to sit behind it. */
+    <header className="sticky top-0 z-50 w-full border-b border-nav-border bg-nav-bg">
       {/* Announcement bar */}
       <AnimatePresence initial={false}>
         {topBarsVisible && announcementOpen && (
@@ -75,7 +68,14 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden bg-announcement text-white"
+            /* Positioned + z-50: the dropdown's own curtain is a sibling
+               elsewhere in this header at z-40, and without an explicit
+               stacking order here that curtain paints over this bar's own
+               content (position:fixed layers ignore DOM order). Every piece
+               of the header's own chrome needs this, not just the row the
+               dropdown hangs from, since this bar can be visible at the
+               same time as an open dropdown. */
+            className="relative z-50 overflow-hidden bg-announcement text-white"
           >
             <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-5 py-2 text-center text-[11px] font-medium sm:gap-3 sm:text-xs">
               <span className="hidden rounded-full bg-white/15 px-2 py-0.5 font-semibold uppercase tracking-wide sm:inline">
@@ -112,7 +112,7 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-nav-border bg-nav-bg/95 backdrop-blur-xl"
+            className="relative z-50 overflow-hidden border-b border-nav-border bg-nav-bg"
           >
             <div className="mx-auto flex max-w-[1720px] items-center justify-between gap-4 px-5 py-2 text-xs sm:px-8 lg:px-14">
               <span className="hidden truncate font-semibold tracking-[0.16em] text-nav-text-muted sm:inline">
@@ -143,7 +143,7 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
       {/* 44px — apple.com's own primary bar height, down from the previous
           62px. Everything inside is sized to sit comfortably within that,
           not just centred over the leftover space. */}
-      <div className="mx-auto flex h-11 max-w-[1720px] items-center gap-6 px-5 sm:px-8 lg:px-14">
+      <div className="relative z-50 mx-auto flex h-11 max-w-[1720px] items-center gap-6 px-5 sm:px-8 lg:px-14">
         <Link
           href="/"
           aria-label="KodeDristi home"
@@ -161,7 +161,7 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
           </span>
         </Link>
 
-        {navLinks}
+        <NavGroups groups={navGroups} />
 
         <div className="ml-auto flex items-center gap-3">
           <SignInButton compact />
