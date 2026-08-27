@@ -101,19 +101,30 @@ export async function HackathonPartners({ className }: { className?: string }) {
 /**
  * One partner, as a bare mark.
  *
- * A plain `<img>`, not `next/image`: the fixed-box `fill` approach forces
- * every logo into the same width and height, which is exactly the uniform
- * card footprint this redesign is dropping. A fixed *height* with `w-auto`
- * lets each mark keep its own natural proportions — a wordmark reads wide,
- * a badge reads square — while every mark still sits on the same baseline,
- * which is what actually reads as "one wall" rather than the box did.
+ * Every logo file is pre-normalised to the same 400x200 canvas, with its
+ * padding trimmed off and its mark scaled to a constant ink area (see
+ * the normalisation pass in the repo history). That is the half of this
+ * that CSS cannot do: several uploads were a small mark centred on a much
+ * larger canvas, so any CSS box would have rendered mostly empty space.
+ *
+ * Because every file now shares one canvas and one optical weight, the box
+ * here is simply that canvas's 2:1 ratio at a fixed size — no `w-auto`,
+ * which previously let a wide wordmark render at many times the area of a
+ * square badge despite both being "the same height".
+ *
+ * A plain `<img>` rather than `next/image`: these are already uniform and
+ * tiny (~7KB each), so the resizing pipeline has nothing left to add.
+ * `width`/`height` are declared so the row reserves its space before the
+ * images land.
  */
 function PartnerMark({ partner }: { partner: HackathonPartnerData & { slug: string } }) {
   const mark = partner.logo ? (
     <img
       src={partner.logo}
       alt={partner.name}
-      className="h-9 w-auto object-contain sm:h-11"
+      width={400}
+      height={200}
+      className="h-10 w-20 object-contain object-left sm:h-12 sm:w-24 lg:h-16 lg:w-32"
       loading="lazy"
     />
   ) : (
