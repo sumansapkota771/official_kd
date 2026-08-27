@@ -140,32 +140,42 @@ export function Navbar({ navGroups }: { navGroups: NavGroup[] }) {
           that resizes itself as you scroll moves the nav out from under the
           pointer mid-reach, and it cost the hero the top sixth of the first
           viewport to do it. The mark sits left at one size, always. */}
-      {/* 44px — apple.com's own primary bar height, down from the previous
-          62px. Everything inside is sized to sit comfortably within that,
-          not just centred over the leftover space. */}
-      <div className="relative z-50 mx-auto flex h-11 max-w-[1720px] items-center gap-6 px-5 sm:px-8 lg:px-14">
-        <Link
-          href="/"
-          aria-label="KodeDristi home"
-          className="focus-ring flex shrink-0 items-center gap-2.5"
-        >
-          <span className="relative block h-7 w-[62px]">
-            <Image
-              src="/images/logo.png"
-              alt=""
-              fill
-              priority
-              className="object-contain"
-              sizes="62px"
-            />
-          </span>
-        </Link>
+      {/* Two elements, not one: the bar's fill has to span the full viewport
+          while its contents stay inside the 1720px measure. The fill also has
+          to live on this wrapper rather than being inherited from <header>,
+          because the dropdown's curtain is a fixed z-40 layer *inside* the
+          header — it paints over the header's own background, so a
+          transparent row here would be tinted by it while the dropdown panel,
+          which carries its own fill, stayed pure white. That mismatch is
+          exactly the "colour difference" between bar and panel. */}
+      <div className="relative z-50 bg-nav-bg">
+        {/* 44px — apple.com's own primary bar height, down from the previous
+            62px. Everything inside is sized to sit comfortably within that,
+            not just centred over the leftover space. */}
+        <div className="mx-auto flex h-11 max-w-[1720px] items-center gap-6 px-5 sm:px-8 lg:px-14">
+          <Link
+            href="/"
+            aria-label="KodeDristi home"
+            className="focus-ring flex shrink-0 items-center gap-2.5"
+          >
+            <span className="relative block h-7 w-[62px]">
+              <Image
+                src="/images/logo.png"
+                alt=""
+                fill
+                priority
+                className="object-contain"
+                sizes="62px"
+              />
+            </span>
+          </Link>
 
-        <NavGroups groups={navGroups} />
+          <NavGroups groups={navGroups} />
 
-        <div className="ml-auto flex items-center gap-3">
-          <SignInButton compact />
-          {hamburger}
+          <div className="ml-auto flex items-center gap-3">
+            <SignInButton compact />
+            {hamburger}
+          </div>
         </div>
       </div>
 

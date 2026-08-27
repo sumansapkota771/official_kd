@@ -42,6 +42,18 @@ export type ContentField = {
   kind: FieldKind;
   required?: boolean;
   options?: string[];
+  /**
+   * For `select`: fill `options` from the live slugs of another content type
+   * instead of hardcoding them, resolved server-side before the editor
+   * renders. Without this a dropdown that points at user-created rows — "which
+   * gallery does this photo belong to" — would freeze at whatever list existed
+   * when the schema was written, and adding a gallery in the admin would leave
+   * its photos unassignable.
+   */
+  optionsFrom?: string;
+  /** Display labels for `options`, keyed by value. A slug is what has to be
+   *  stored, but it is not what an admin should have to read. */
+  optionLabels?: Record<string, string>;
   placeholder?: string;
   helper?: string;
 };
@@ -190,25 +202,41 @@ export type ProjectData = {
  * lets the two sides do, which is the part a logo wall can never carry.
  */
 /**
- * One card in the featured-content carousel — an Apple TV–style peek
- * carousel, run as two independent rows (`row`): a large three-card row
- * above a denser six-card row. Both rows share this one type and are told
- * apart purely by which row they belong to and by position within it.
+ * One photo collection — rendered as a card on the homepage and as its own
+ * page at `/gallery/<slug>`.
+ *
+ * The homepage shows these two-up, so the copy is written to be read at a
+ * glance: a name, one line saying what the collection is, and a cover image.
+ * Everything longer belongs on the gallery's own page.
  */
-export type FeaturedItemData = {
+export type GalleryData = {
   name: string;
-  /** Small type/category label above the title — "Case study", "Programme". */
-  category?: string;
-  description?: string;
-  /** The card's full-bleed background. */
-  image: string;
+  /** The "what is it" line under the title on the homepage card. */
+  description: string;
+  /** The image representing the collection on the homepage card. */
+  coverImage: string;
+  /** Overrides the "View Gallery" button label when a collection wants its
+   *  own wording. */
   ctaLabel?: string;
-  ctaHref?: string;
-  /** Optional small logo/badge shown near the category label. */
-  badgeImage?: string;
-  /** Optional short line — a date, a stat, a duration. */
-  metadata?: string;
-  row: "top" | "bottom";
+};
+
+/**
+ * One photo inside a gallery.
+ *
+ * `gallery` holds the owning gallery's slug rather than a numeric id: slugs
+ * are what the CMS already keys rows by and what the URL uses, so a photo
+ * survives its gallery being edited, and the admin dropdown can be built
+ * from live gallery slugs with no join.
+ *
+ * `title` and `description` are what the card reveals — on hover on a
+ * desktop pointer, and permanently on a touch screen, where there is no
+ * hover to reveal them with.
+ */
+export type GalleryPhotoData = {
+  gallery: string;
+  image: string;
+  title: string;
+  description?: string;
 };
 export type MouPartnershipData = {
   institution: string;
@@ -534,7 +562,7 @@ const pageHeroes: { slug: string; data: PageHeroData }[] = [
 
 const sectionHeadings: { slug: string; data: SectionHeadingData }[] = [
   { slug: "academia-partnership", data: { eyebrow: "Academia", title: "Industry Academia Partnership", description: "Formal agreements with universities and colleges — shared curriculum, internships and live project work, so students graduate having built something real.", eyebrowTone: "blue" } },
-  { slug: "flagship-gallery", data: { eyebrow: "Gallery", title: "Moments from the programme", description: "A running look at the people and the work — cohorts, sessions and the days that do not make it into a case study.", eyebrowTone: "blue" } },
+  { slug: "gallery", data: { eyebrow: "Gallery", title: "Moments from the programmes", description: "A running look at the people and the work — cohorts, sessions and the days that do not make it into a case study.", eyebrowTone: "blue" } },
   { slug: "projects-overview", data: { eyebrow: "Work", title: "Our remarkable projects", description: "Six of the products we have designed, built and shipped — each one told the same way, from the business problem to the result.", eyebrowTone: "blue" } },
   { slug: "lagani-portfolio", data: { eyebrow: "Portfolio", title: "Companies we have backed", description: "Every company below took capital and engineering from KodeDristi.", eyebrowTone: "green" } },
   { slug: "hackathon-partners", data: { eyebrow: "Hackathon Partners", title: "The organisations behind the hackathon", description: "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms.", eyebrowTone: "green" } },
@@ -957,26 +985,68 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     fallback: () => [],
   },
   {
-    type: "featured-item",
-    label: "Featured carousel cards",
-    singular: "Featured card",
+    type: "gallery",
+    label: "Galleries",
+    singular: "Gallery",
     titleField: "name",
-    subtitleField: "row",
+    subtitleField: "description",
     iconField: "",
     fields: [
-      { key: "name", label: "Title", kind: "text", required: true },
-      { key: "category", label: "Category label", kind: "text", placeholder: "Case study" },
-      { key: "description", label: "Short description", kind: "textarea" },
-      { key: "image", label: "Background image", kind: "image", required: true },
-      { key: "ctaLabel", label: "Button label", kind: "text", placeholder: "Read the story" },
-      { key: "ctaHref", label: "Button link", kind: "url" },
-      { key: "badgeImage", label: "Logo / badge (optional)", kind: "image" },
-      { key: "metadata", label: "Metadata line (optional)", kind: "text", placeholder: "2026 · Kathmandu" },
-      { key: "row", label: "Row", kind: "select", required: true, options: ["top", "bottom"], helper: "Top is the large 3-card row; bottom is the denser 6-card row." },
+      { key: "name", label: "Gallery name", kind: "text", required: true, helper: "The heading on the homepage card, and the title of the gallery's own page." },
+      { key: "description", label: "What is it", kind: "textarea", required: true, helper: "One or two sentences describing the collection. Shown under the title on the homepage card." },
+      { key: "coverImage", label: "Cover image", kind: "image", required: true, helper: "The single image representing this gallery on the homepage." },
+      { key: "ctaLabel", label: "Button label (optional)", kind: "text", placeholder: "View Gallery" },
     ],
-    /* Empty on purpose: these are photographs and claims about specific
-       work, and there is none to invent. Each row hides independently
-       until it has real cards. */
+    /* Two seeded galleries, matching the site's two programmes. They carry
+       no cover image: a gallery is a claim that these photographs exist, and
+       inventing one would put a stock picture on the homepage under a real
+       programme's name. The card renders its image well empty until a real
+       photo is uploaded. */
+    fallback: () => [
+      {
+        slug: "hackathon",
+        data: {
+          name: "National AI Hackathon",
+          description:
+            "Photographs from the flagship national competition — the teams, the mentors, the judging and the closing ceremony.",
+          coverImage: "",
+        },
+      },
+      {
+        slug: "dristi-lagani",
+        data: {
+          name: "Dristi Lagani",
+          description:
+            "The investment programme in pictures — founder sessions, build weeks and the companies we have backed.",
+          coverImage: "",
+        },
+      },
+    ],
+  },
+  {
+    type: "gallery-photo",
+    label: "Gallery photos",
+    singular: "Photo",
+    titleField: "title",
+    subtitleField: "gallery",
+    iconField: "",
+    fields: [
+      {
+        key: "gallery",
+        label: "Gallery",
+        kind: "select",
+        required: true,
+        // Filled from the live `gallery` rows, so adding a gallery makes it
+        // selectable here immediately.
+        optionsFrom: "gallery",
+        helper: "Which gallery this photo belongs to.",
+      },
+      { key: "image", label: "Photo", kind: "image", required: true },
+      { key: "title", label: "What is it", kind: "text", required: true, helper: "Revealed over the photo on hover on desktop, and shown under it on mobile." },
+      { key: "description", label: "Description", kind: "textarea", helper: "Optional. Appears with the title — on hover on desktop, always on mobile." },
+    ],
+    /* Empty on purpose: these are photographs of real events, and there is
+       none to invent. Each gallery hides until it has real photos. */
     fallback: () => [],
   },
   {
@@ -1264,8 +1334,12 @@ export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
   },
   {
     group: "Hackathon",
-    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image", "featured-item"],
+    types: ["hackathon-highlight", "hackathon-track", "hackathon-timeline", "hackathon-slideshow-settings", "hackathon-slideshow-image"],
   },
+  /* Its own group rather than a member of "Hackathon": galleries are not
+     hackathon-specific, and burying "Gallery photos" under one programme is
+     what would make the second gallery's photos hard to find. */
+  { group: "Gallery", types: ["gallery", "gallery-photo"] },
 ];
 
 // Hackathon slideshow settings (admin-manageable)
@@ -1340,7 +1414,7 @@ CONTENT_SCHEMAS.push({
   isSingleton: false,
   fields: [
     { key: "type", label: "Section type", kind: "select", required: true, options: [
-      "hero", "trust", "flagship", "flagship-gallery", "hackathon-partners", "academia", "lagani", "projects", "solutions", "courses", "tech", "team", "cta", "testimonials"
+      "hero", "trust", "flagship", "gallery", "hackathon-partners", "academia", "lagani", "projects", "solutions", "courses", "tech", "team", "cta", "testimonials"
     ]},
     { key: "label", label: "Display name", kind: "text", required: true },
     { key: "enabled", label: "Visible on page", kind: "check" },
@@ -1349,7 +1423,7 @@ CONTENT_SCHEMAS.push({
     { slug: "hero", data: { type: "hero", label: "Hero", enabled: true } },
     { slug: "trust", data: { type: "trust", label: "Trust strip", enabled: true } },
     { slug: "flagship", data: { type: "flagship", label: "Flagship program", enabled: true } },
-    { slug: "flagship-gallery", data: { type: "flagship-gallery", label: "Flagship photo carousel", enabled: true } },
+    { slug: "gallery", data: { type: "gallery", label: "Galleries", enabled: true } },
     { slug: "hackathon-partners", data: { type: "hackathon-partners", label: "Hackathon partners", enabled: true } },
     { slug: "academia", data: { type: "academia", label: "Industry academia partnership", enabled: true } },
     { slug: "lagani", data: { type: "lagani", label: "Dristi Lagani", enabled: true } },

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { listContentRaw } from "@/lib/content/store";
 import { getSchema } from "@/lib/content/schemas";
 import { ContentEditor } from "@/components/admin/content/content-editor";
+import { resolveFieldOptions } from "@/lib/content/field-options";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,13 @@ export default async function AdminContentEditPage({
   const item = items.find((i) => String(i.id) === id) ?? null;
   if (!item) notFound();
 
+  const fields = await resolveFieldOptions(schema.fields);
+
   return (
     <ContentEditor
       type={type}
       singular={schema.singular}
-      fields={schema.fields}
+      fields={fields}
       isSingleton={schema.isSingleton}
       singletonSlug={schema.singletonSlug}
       initial={item}

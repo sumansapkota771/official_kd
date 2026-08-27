@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getSchema, slugify } from "@/lib/content/schemas";
 import { listContentRaw } from "@/lib/content/store";
 import { ContentEditor } from "@/components/admin/content/content-editor";
+import { resolveFieldOptions } from "@/lib/content/field-options";
 
 export const dynamic = "force-dynamic";
 
@@ -33,11 +34,13 @@ export default async function AdminContentNewPage({
     }
   }
 
+  const fields = await resolveFieldOptions(schema.fields);
+
   return (
     <ContentEditor
       type={type}
       singular={schema.singular}
-      fields={schema.fields}
+      fields={fields}
       isSingleton={schema.isSingleton}
       singletonSlug={schema.singletonSlug}
       suggestedSlug={suggestedSlug}

@@ -17,9 +17,9 @@ import { cn } from "@/lib/utils";
  * is for — the gradient does the same legibility job while leaving the
  * photograph intact.
  *
- * The photo carousel that used to live under this banner is now its own
- * section — see `FlagshipGallerySection` — so it can be toggled, reordered
- * and given its own heading independently of this one.
+ * The photographs that used to run under this banner are now their own
+ * section — see `GalleryShowcase` — so they can be toggled, reordered and
+ * given their own heading independently of this one.
  */
 export async function FlagshipProgram({ className }: { className?: string }) {
   const content = await getHomeFlagshipData();

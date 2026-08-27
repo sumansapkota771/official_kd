@@ -195,7 +195,10 @@ export function ContentEditor({
           <option value="">Select…</option>
           {options.map((opt) => (
             <option key={opt} value={opt}>
-              {opt}
+              {/* The stored value is a slug; the label is what the row is
+                  actually called, so the admin picks "National AI Hackathon"
+                  rather than "hackathon". */}
+              {field.optionLabels?.[opt] ?? opt}
             </option>
           ))}
         </select>

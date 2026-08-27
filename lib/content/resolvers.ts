@@ -30,7 +30,8 @@ import type {
   HackathonPartnerData,
   ProjectData,
   MouPartnershipData,
-  FeaturedItemData,
+  GalleryData,
+  GalleryPhotoData,
   LaganiHighlightData,
   LaganiFocusData,
   LaganiProcessData,
@@ -188,10 +189,46 @@ export async function getProject(slug: string): Promise<(ProjectData & { slug: s
   return { ...item.data, slug: item.slug ?? "" };
 }
 
-// ---- Featured carousel ----
-export async function getFeaturedItems(): Promise<(FeaturedItemData & { slug: string })[]> {
-  const items = await listContent<FeaturedItemData>("featured-item");
+// ---- Galleries ----
+export type GalleryView = GalleryData & { slug: string };
+export type GalleryPhotoView = GalleryPhotoData & { slug: string };
+
+export async function getGalleries(): Promise<GalleryView[]> {
+  const items = await listContent<GalleryData>("gallery");
   return items.map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+
+export async function getGallery(slug: string): Promise<GalleryView | null> {
+  const item = await getContentBySlug<GalleryData>("gallery", slug);
+  if (!item) return null;
+  return { ...item.data, slug: item.slug ?? "" };
+}
+
+/**
+ * Photos for one gallery, in admin order.
+ *
+ * Filtering happens here rather than in SQL because `gallery` lives inside
+ * the row's JSON blob, and `listContent` is the one place that already
+ * applies the published/soft-deleted rules — reaching around it with a raw
+ * query would mean re-implementing those and eventually diverging from them.
+ */
+export async function getGalleryPhotos(gallerySlug: string): Promise<GalleryPhotoView[]> {
+  const items = await listContent<GalleryPhotoData>("gallery-photo");
+  return items
+    .filter((i) => i.data.gallery === gallerySlug)
+    .map((i) => ({ ...i.data, slug: i.slug ?? "" }));
+}
+
+/** How many photos each gallery holds, keyed by gallery slug — one pass, so
+ *  a homepage showing N galleries does not run N queries. */
+export async function getGalleryPhotoCounts(): Promise<Record<string, number>> {
+  const items = await listContent<GalleryPhotoData>("gallery-photo");
+  const counts: Record<string, number> = {};
+  for (const item of items) {
+    const key = item.data.gallery;
+    if (key) counts[key] = (counts[key] ?? 0) + 1;
+  }
+  return counts;
 }
 
 // ---- Industry academia ----

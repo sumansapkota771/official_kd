@@ -2,7 +2,7 @@ import { listAllSlugs, listContent } from "@/lib/content/store";
 import { Hero } from "@/components/home/hero";
 import { TrustStrip } from "@/components/home/trust-strip";
 import { FlagshipProgram } from "@/components/home/flagship-program";
-import { FlagshipGallerySection } from "@/components/home/flagship-gallery-section";
+import { GalleryShowcase } from "@/components/home/gallery-showcase";
 import { HackathonPartners } from "@/components/home/hackathon-partners";
 import { AcademiaPartnership } from "@/components/home/academia-partnership";
 import { DristiLagani } from "@/components/home/dristi-lagani";
@@ -25,7 +25,7 @@ const DEFAULT_SECTIONS: SectionConfig[] = [
   { type: "hero", label: "Hero", enabled: true },
   { type: "trust", label: "Trust strip", enabled: true },
   { type: "flagship", label: "Flagship program", enabled: true },
-  { type: "flagship-gallery", label: "Flagship photo carousel", enabled: true },
+  { type: "gallery", label: "Galleries", enabled: true },
   { type: "hackathon-partners", label: "Hackathon partners", enabled: true },
   { type: "academia", label: "Industry academia partnership", enabled: true },
   { type: "lagani", label: "Dristi Lagani", enabled: true },
@@ -113,8 +113,8 @@ export async function SectionRenderer() {
               return <TrustStrip key="trust" />;
             case "flagship":
               return <FlagshipProgram key="flagship" />;
-            case "flagship-gallery":
-              return <FlagshipGallerySection key="flagship-gallery" />;
+            case "gallery":
+              return <GalleryShowcase key="gallery" />;
             case "hackathon-partners":
               return <HackathonPartners key="hackathon-partners" />;
             case "academia":
