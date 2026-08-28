@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
@@ -18,11 +19,20 @@ import { cn } from "@/lib/utils";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Dristi Lagani",
-  description:
-    "KodeDristi's investment programme for early-stage Nepali software companies — capital and an engineering team, not just a cheque.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("dristi-lagani", {
+    title: "Dristi Lagani",
+    description:
+      "KodeDristi's investment programme for early-stage Nepali software companies — capital and an engineering team, not just a cheque.",
+    path: "/dristi-lagani",
+  });
+}
 
 export default async function DristiLaganiPage() {
   const [highlights, focus, process, portfolio, hero, portfolioHeading] =

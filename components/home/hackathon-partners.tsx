@@ -1,40 +1,27 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { Reveal } from "@/components/motion/reveal";
+import { LogoWall } from "@/components/ui/logo-wall";
 import { getHackathonPartners, getSectionHeading } from "@/lib/content/resolvers";
-import type { HackathonPartnerData } from "@/lib/content/schemas";
 import { cn } from "@/lib/utils";
 
-const ROW_COUNT = 4;
-
 /**
- * Splits the roster into `ROW_COUNT` roughly-even groups, front-loaded (a
- * remainder lands on the last row rather than the first) — the row count is
- * a layout decision independent of how many partners happen to exist, so it
- * has to hold whether the roster has 8 or 80, not just the current 19.
- */
-function chunkIntoRows<T>(items: T[], rows: number): T[][] {
-  const perRow = Math.ceil(items.length / rows);
-  const result: T[][] = [];
-  for (let i = 0; i < items.length; i += perRow) {
-    result.push(items.slice(i, i + perRow));
-  }
-  return result;
-}
-
-/**
- * The partner wall that follows the hackathon banner.
+ * "Trusted By Leading Organizations" — the logo wall that follows the
+ * hackathon banner.
  *
- * A bare logo wall on the page's own white, not a tinted panel of cards —
- * every mark sits at its own natural size on a shared baseline height, the
- * way a press/"as seen in" strip is conventionally built. No border, no
- * fill, no per-mark caption: the marks alone are what a wall like this is
- * for, and a card around each one would be furniture the reference design
- * does not have.
+ * The layout lives in `LogoWall`, which the /partners page uses too, so both
+ * walls normalise their marks the same way: one card size, one padding, each
+ * logo fitted rather than filled. This component's job is only the heading,
+ * the button and the data.
  *
- * Renders nothing when the list is empty. A sponsor wall with no sponsors is
- * worse than no sponsor wall.
+ * It used to lay the marks out as four hand-chunked rows of bare images at
+ * their natural widths, which meant a wide wordmark rendered several times
+ * the area of a square badge and the last row ended wherever it ran out.
+ * Equal cards remove both problems at once.
+ *
+ * Renders nothing when the list is empty. A wall with no organisations on it
+ * is worse than no wall.
  */
 export async function HackathonPartners({ className }: { className?: string }) {
   const [partners, heading] = await Promise.all([
@@ -62,91 +49,14 @@ export async function HackathonPartners({ className }: { className?: string }) {
           </Button>
         </Reveal>
 
-        {/* Four explicit rows, not a single flex-wrap list left to break
-            wherever the viewport happens to end a line — each row is its own
-            list (an outer <ul> holding grouped <div>s of <li>s is not valid
-            markup), so the stagger animation runs per row too.
-
-            Each row is a grid of exactly as many equal-width columns as it
-            has marks, not a flex row sized to content — flex-wrap left every
-            row only as wide as its own logos plus gaps, so the shorter rows
-            stopped well short of the right edge instead of lining up under
-            the ones above them. Equal `1fr` tracks stretch every row to the
-            full container width and keep columns aligned down the section;
-            each mark still sits at the *start* of its own column rather than
-            being centred or stretched, so the row reads as a wall of marks,
-            not a wall of boxes. */}
-        <div className="flex flex-col gap-y-8 sm:gap-y-10">
-          {chunkIntoRows(partners, ROW_COUNT).map((row, i) => (
-            <div key={i} style={{ "--row-cols": row.length } as React.CSSProperties}>
-              <RevealGroup
-                as="ul"
-                stagger={0.03}
-                className="grid grid-cols-2 items-center justify-items-start gap-x-6 gap-y-6 sm:grid-cols-3 sm:gap-x-10 lg:grid-cols-[repeat(var(--row-cols),1fr)] lg:gap-x-14"
-              >
-                {row.map((partner) => (
-                  <RevealItem key={partner.slug} as="li" className="flex">
-                    <PartnerMark partner={partner} />
-                  </RevealItem>
-                ))}
-              </RevealGroup>
-            </div>
-          ))}
-        </div>
+        <LogoWall
+          items={partners.map((p) => ({
+            name: p.name,
+            logo: p.logo,
+            url: p.url,
+          }))}
+        />
       </Container>
     </section>
   );
-}
-
-/**
- * One partner, as a bare mark.
- *
- * Every logo file is pre-normalised to the same 400x200 canvas, with its
- * padding trimmed off and its mark scaled to a constant ink area (see
- * the normalisation pass in the repo history). That is the half of this
- * that CSS cannot do: several uploads were a small mark centred on a much
- * larger canvas, so any CSS box would have rendered mostly empty space.
- *
- * Because every file now shares one canvas and one optical weight, the box
- * here is simply that canvas's 2:1 ratio at a fixed size — no `w-auto`,
- * which previously let a wide wordmark render at many times the area of a
- * square badge despite both being "the same height".
- *
- * A plain `<img>` rather than `next/image`: these are already uniform and
- * tiny (~7KB each), so the resizing pipeline has nothing left to add.
- * `width`/`height` are declared so the row reserves its space before the
- * images land.
- */
-function PartnerMark({ partner }: { partner: HackathonPartnerData & { slug: string } }) {
-  const mark = partner.logo ? (
-    <img
-      src={partner.logo}
-      alt={partner.name}
-      width={400}
-      height={200}
-      className="h-10 w-20 object-contain object-left sm:h-12 sm:w-24 lg:h-16 lg:w-32"
-      loading="lazy"
-    />
-  ) : (
-    /* No logo yet: set the name as a wordmark rather than show a
-       placeholder glyph. It is the partner's name either way. */
-    <span className="text-[15px] font-semibold leading-tight tracking-[-0.02em] text-text-primary sm:text-[17px]">
-      {partner.name}
-    </span>
-  );
-
-  if (partner.url?.trim()) {
-    return (
-      <a
-        href={partner.url}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="focus-ring flex items-center opacity-90 transition-opacity duration-ui ease-out-quint hover:opacity-100"
-      >
-        {mark}
-      </a>
-    );
-  }
-
-  return <div className="flex items-center">{mark}</div>;
 }

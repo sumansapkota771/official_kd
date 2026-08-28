@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -8,11 +9,20 @@ import { getPageHero, getProjects } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Software KodeDristi has designed, built and shipped — each project told from the business problem through to the result.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("projects", {
+    title: "Projects",
+    description:
+      "Software KodeDristi has designed, built and shipped — each project told from the business problem through to the result.",
+    path: "/projects",
+  });
+}
 
 export default async function ProjectsPage() {
   const [projects, hero] = await Promise.all([getProjects(), getPageHero("projects")]);

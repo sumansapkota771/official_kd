@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
@@ -9,10 +10,20 @@ import { getPageHero, getPerks, getRoles } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Careers",
-  description: "Open roles at KodeDristi and how we hire.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("careers", {
+    title: "Careers",
+    description:
+      "Open roles at KodeDristi and how we hire.",
+    path: "/careers",
+  });
+}
 
 export default async function CareersPage() {
   const [perks, roles, hero] = await Promise.all([

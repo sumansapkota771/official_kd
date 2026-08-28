@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight, Compass, Download, Heart, MapPin, Target, Users } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
@@ -13,11 +14,20 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "KodeDristi's mission, values, leadership, capabilities and work culture — the company behind #WithYouEveryStep.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("about", {
+    title: "About",
+    description:
+      "KodeDristi's mission, values, leadership, capabilities and work culture — the company behind #WithYouEveryStep.",
+    path: "/about",
+  });
+}
 
 export default async function AboutPage() {
   const [values, capabilities, leadership, hero] = await Promise.all([

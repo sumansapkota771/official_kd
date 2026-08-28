@@ -1,4 +1,5 @@
 import Script from "next/script";
+import { getSiteSettings } from "@/lib/content/resolvers";
 
 type OrganizationLD = {
   type: "Organization";
@@ -86,23 +87,31 @@ export function JsonLd({ schema }: { schema: Schema | Schema[] }) {
   );
 }
 
-export function OrganizationJsonLd() {
+/**
+ * Structured data reads the same `site-settings` row the footer does, so a
+ * phone number changed in the admin is corrected in search results too
+ * rather than being a fourth copy nobody remembers to update.
+ */
+export async function OrganizationJsonLd() {
+  const settings = await getSiteSettings();
   return (
     <JsonLd
       schema={{
         type: "Organization",
-        name: "KodeDristi Software Pvt. Ltd.",
+        name: settings.companyName,
         url: "https://official-kd.vercel.app",
         logo: "https://official-kd.vercel.app/og-default.png",
         description:
           "Software delivery, AI automation, and applied IT courses in Kathmandu, Nepal.",
         address: {
-          streetAddress: "Kathmandu",
+          streetAddress: settings.address,
           addressLocality: "Kathmandu",
           addressCountry: "NP",
         },
         contactPoint: {
-          telephone: "+977-9842863398",
+          // `tel:+9779851362001` -> `+9779851362001`. The stored href is
+          // what a phone dials, which is the same digits schema.org wants.
+          telephone: settings.phoneHref.replace(/^tel:/, "") || settings.phone,
           contactType: "customer service",
         },
         sameAs: [],

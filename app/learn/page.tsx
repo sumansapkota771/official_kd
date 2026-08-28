@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight, Clock, Signal } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
@@ -21,11 +22,20 @@ import { CourseJsonLd, FAQJsonLd } from "@/components/seo/json-ld";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Learn — IT Courses",
-  description:
-    "Live, cohort-based IT courses from KodeDristi — AI & ML, full-stack web development, cloud & DevOps, mobile, data analytics and UI/UX.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("learn", {
+    title: "Learn — IT Courses",
+    description:
+      "Live, cohort-based IT courses from KodeDristi — AI & ML, full-stack web development, cloud & DevOps, mobile, data analytics and UI/UX.",
+    path: "/learn",
+  });
+}
 
 export default async function LearnPage() {
   const [courses, processSteps, faqs, hero] = await Promise.all([

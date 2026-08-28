@@ -14,17 +14,46 @@ import {
   Search01Icon,
   Menu01Icon,
   Cancel01Icon,
+  Home01Icon,
+  File01Icon,
+  PackageIcon,
+  Building01Icon,
+  Note01Icon,
+  SearchVisualIcon,
+  Settings02Icon,
 } from "hugeicons-react";
 import { LogoutButton } from "@/components/admin/logout-button";
 import type { AdminNavGroup } from "@/lib/content/schemas";
 import { cn } from "@/lib/utils";
 
+/**
+ * The main navigation, in the order the website itself is built: the
+ * dashboard, then the homepage, then the other pages, then the collections
+ * that are edited most often, then media, search and settings.
+ *
+ * It mirrors the site rather than the database on purpose. "Section
+ * headings" and "Home trust" are what the content types are called; "the
+ * homepage" is what the person editing it is thinking about, and a menu
+ * written in the second vocabulary is the one they can use without being
+ * taught the first.
+ */
 const PRIMARY = [
   { href: "/admin", label: "Dashboard", icon: DashboardSquare01Icon, exact: true },
-  { href: "/admin/content", label: "All content", icon: ContentWritingIcon, exact: true },
+  { href: "/admin/homepage", label: "Homepage", icon: Home01Icon, exact: false },
+  { href: "/admin/pages", label: "Pages", icon: File01Icon, exact: false },
+  { href: "/admin/projects", label: "Projects", icon: PackageIcon, exact: false },
+  { href: "/admin/partners", label: "Partners", icon: Building01Icon, exact: false },
+  { href: "/admin/blog", label: "Blog", icon: Note01Icon, exact: false },
   { href: "/admin/media", label: "Media", icon: Image01Icon, exact: false },
+  { href: "/admin/seo", label: "SEO", icon: SearchVisualIcon, exact: false },
+  { href: "/admin/settings", label: "Site settings", icon: Settings02Icon, exact: false },
+];
+
+/** Everything that is not part of editing the website itself. */
+const SECONDARY = [
   { href: "/admin/submissions", label: "Submissions", icon: InboxUnreadIcon, exact: false },
   { href: "/admin/users", label: "Users", icon: UserMultipleIcon, exact: false },
+  { href: "/admin/content", label: "All content", icon: ContentWritingIcon, exact: true },
 ];
 
 /**
@@ -39,6 +68,42 @@ const PRIMARY = [
  * Thirty-odd types only stay navigable because they are grouped and
  * filterable, so both are load-bearing here rather than decoration.
  */
+type NavLinkSpec = {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  exact: boolean;
+};
+
+/** One sidebar link. `exact` matters for the two roots — `/admin` and
+ *  `/admin/content` both prefix-match half the panel. */
+function NavLink({
+  link,
+  pathname,
+  onClick,
+}: {
+  link: NavLinkSpec;
+  pathname: string;
+  onClick: () => void;
+}) {
+  const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
+  return (
+    <Link
+      href={link.href}
+      onClick={onClick}
+      className={cn(
+        "focus-ring flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+        active
+          ? "bg-brand-blue text-white"
+          : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
+      )}
+    >
+      <link.icon className="h-6.75 w-6.75" />
+      {link.label}
+    </Link>
+  );
+}
+
 export function AdminNav({
   adminName,
   contentGroups,
@@ -78,18 +143,27 @@ export function AdminNav({
       .filter((g) => g.items.length > 0);
   }, [contentGroups, q]);
 
+  /** True when the type currently being edited lives in this group, so the
+   *  tree opens onto where you are rather than shut. */
+  function groupHasActive(group: string): boolean {
+    if (!activeType) return false;
+    const found = contentGroups.find((g) => g.group === group);
+    return Boolean(found?.items.some((i) => i.type === activeType));
+  }
+
   function groupIsOpen(group: string): boolean {
     // A filtered tree is already short, and collapsing it would hide the hits.
     if (q) return true;
     const manual = toggled[group];
     if (manual !== undefined) return manual;
-    /* Open by default, deliberately. Expanding only the active group reads
-       tidier but costs a click to reach anything else — and from the
-       dashboard, where no group is active, it would collapse the entire tree
-       and put every collection item three clicks away again, which is the
-       whole problem this nav exists to solve. Collapsing stays available as
-       a per-group preference. */
-    return true;
+    /* Collapsed by default, except for the group being edited.
+       This tree used to be the only way to reach anything, so it stayed
+       open — thirty-odd rows above the fold, but better than an extra click
+       on every edit. The links above it now cover the same ground in the
+       site's own vocabulary, so the tree is the fallback rather than the
+       route, and leaving it expanded only pushes the things people actually
+       click below the fold. Expanding stays a per-group preference. */
+    return groupHasActive(group);
   }
 
   return (
@@ -134,30 +208,21 @@ export function AdminNav({
             footer stays pinned however long the tree gets. */}
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-3 pb-4 pt-3 lg:pt-0">
           <nav className="flex flex-col gap-1">
-            {PRIMARY.map((link) => {
-              const active = link.exact
-                ? pathname === link.href
-                : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={close}
-                  className={cn(
-                    "focus-ring flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-brand-blue text-white"
-                      : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
-                  )}
-                >
-                  <link.icon className="h-6.75 w-6.75" />
-                  {link.label}
-                </Link>
-              );
-            })}
+            {PRIMARY.map((link) => (
+              <NavLink key={link.href} link={link} pathname={pathname} onClick={close} />
+            ))}
+          </nav>
+
+          <nav className="flex flex-col gap-1 border-t border-border pt-3">
+            {SECONDARY.map((link) => (
+              <NavLink key={link.href} link={link} pathname={pathname} onClick={close} />
+            ))}
           </nav>
 
           <div className="flex flex-col gap-2">
+            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+              Every content type
+            </p>
             <div className="relative">
               <Search01Icon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-text-muted" />
               <input

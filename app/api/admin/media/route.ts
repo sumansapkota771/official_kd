@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { listMedia, getMediaCount } from "@/lib/media";
-import { randomBytes } from "crypto";
-import { putUpload } from "@/lib/storage";
+import { listMedia, getMediaCount, createMedia } from "@/lib/media";
+import { processUpload, UploadError } from "@/lib/uploads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,9 +11,6 @@ async function requireAdmin(): Promise<boolean> {
   return Boolean(session && session.role === "admin");
 }
 
-const MAX_SIZE = 5 * 1024 * 1024;
-const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
-
 export async function GET(request: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,19 +18,32 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const mime = url.searchParams.get("mime") || undefined;
+  const q = url.searchParams.get("q") || undefined;
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 100);
-  const offset = parseInt(url.searchParams.get("offset") || "0", 10);
+  const offset = Math.max(parseInt(url.searchParams.get("offset") || "0", 10), 0);
 
-  const [items, total] = await Promise.all([
-    listMedia({ mime, limit, offset }),
-    getMediaCount(mime),
-  ]);
-
-  return NextResponse.json({ items, total, limit, offset });
+  try {
+    const [items, total] = await Promise.all([
+      listMedia({ mime, q, limit, offset }),
+      getMediaCount({ mime, q }),
+    ]);
+    return NextResponse.json({ items, total, limit, offset });
+  } catch (err) {
+    console.error("[media/list]", err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }
 
+/**
+ * Adds a file to the library.
+ *
+ * Shares the content editor's pipeline, so the two ways of getting a picture
+ * into the site accept exactly the same files at exactly the same size
+ * limit — see `processUpload`.
+ */
 export async function POST(request: Request) {
-  if (!(await requireAdmin())) {
+  const session = await getSession();
+  if (!session || session.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -44,36 +53,27 @@ export async function POST(request: Request) {
     if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "File too large (max 5 MB)" }, { status: 400 });
-    }
-    if (!ALLOWED.has(file.type)) {
-      return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
-    }
 
-    const ext = file.name.split(".").pop() || "bin";
-    const id = randomBytes(8).toString("hex");
-    const filename = `${id}.${ext}`;
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const url = await putUpload(filename, buffer, file.type);
-
-    const { createMedia } = await import("@/lib/media");
-    const alt = form.get("alt")?.toString() || "";
-    const caption = form.get("caption")?.toString() || "";
+    const processed = await processUpload(file);
 
     const asset = await createMedia({
-      filename,
-      original_name: file.name,
-      url,
-      mime_type: file.type,
-      size_bytes: file.size,
-      alt,
-      caption,
+      filename: processed.filename,
+      original_name: processed.originalName,
+      url: processed.url,
+      mime_type: processed.mimeType,
+      size_bytes: processed.sizeBytes,
+      width: processed.width,
+      height: processed.height,
+      alt: form.get("alt")?.toString() || "",
+      caption: form.get("caption")?.toString() || "",
+      uploaded_by: session.email,
     });
 
     return NextResponse.json(asset);
   } catch (err) {
+    if (err instanceof UploadError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     console.error("[media/upload]", err);
     const message = err instanceof Error ? err.message : "Upload failed";
     return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });

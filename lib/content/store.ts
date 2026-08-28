@@ -453,6 +453,28 @@ export async function reorderContent(type: string, orderedIds: number[]): Promis
   invalidateCache(`list:${type}`);
 }
 
+/**
+ * How many live rows each content type holds, in one query.
+ *
+ * The homepage and page screens draw a badge beside every part they list —
+ * a dozen types on one screen — and a count each would be a dozen round
+ * trips to decorate a page. Returns an empty map when the database is
+ * unreachable: a missing badge is a far better failure than a missing
+ * screen.
+ */
+export async function getTypeCounts(): Promise<Map<string, number>> {
+  try {
+    await ensureSchema();
+    const res = await db.query<{ type: string; count: number }>(
+      "SELECT type, count(*)::int AS count FROM content_items WHERE deleted_at IS NULL GROUP BY type"
+    );
+    return new Map(res.rows.map((r) => [r.type, r.count]));
+  } catch (err) {
+    logFallback("counts", err);
+    return new Map();
+  }
+}
+
 export async function getTypeSummary(): Promise<
   {
     type: string;
@@ -477,9 +499,12 @@ export async function getTypeSummary(): Promise<
     await ensureSchema();
     await Promise.all(CONTENT_SCHEMAS.filter((s) => s.fallback).map(ensureSeeded));
     const res = await db.query<{ type: string; count: number; publishedCount: number }>(
+      /* Soft-deleted rows are excluded to match every read path. Without the
+         filter a type an admin had emptied still reported its old total, and
+         the admin screens count rows they will never be shown. */
       `SELECT type, count(*)::int AS count,
               count(*) FILTER (WHERE published)::int AS publishedCount
-       FROM content_items GROUP BY type`
+       FROM content_items WHERE deleted_at IS NULL GROUP BY type`
     );
     const byType = new Map(res.rows.map((r) => [r.type, r]));
     return ordered.map(({ type, group }) => {

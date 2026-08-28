@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { runContentMigrations } from "@/lib/content/migrations";
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
@@ -81,8 +82,12 @@ let schemaReady: Promise<void> | null = null;
 
 export function ensureSchema(): Promise<void> {
   if (!schemaReady) {
+    /* Data migrations are chained onto the table creation rather than run
+       separately, so everything that reads content — all of which already
+       awaits this — sees the corrected rows. They never reject: see
+       runContentMigrations. */
     schemaReady = db.query(SCHEMA).then(
-      () => undefined,
+      () => runContentMigrations(),
       (err) => {
         schemaReady = null;
         throw err;

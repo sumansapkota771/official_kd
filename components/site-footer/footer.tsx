@@ -1,11 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail01Icon, Location01Icon, Call02Icon } from "hugeicons-react";
+import { Mail01Icon, Location01Icon, Call02Icon, Clock01Icon } from "hugeicons-react";
 import { Container } from "@/components/ui/container";
+import { getSiteSettings } from "@/lib/content/resolvers";
 import type { NavGroup } from "@/lib/data/nav";
 
-export function Footer({ navGroups }: { navGroups: NavGroup[] }) {
+/**
+ * Contact details come from the `site-settings` row rather than from this
+ * file, so the phone number and opening hours are one edit in the admin
+ * instead of three edits across the footer, the contact page and the
+ * structured data.
+ */
+export async function Footer({ navGroups }: { navGroups: NavGroup[] }) {
+  const settings = await getSiteSettings();
   const year = new Date().getFullYear();
+  const hours = [settings.officeHours, settings.officeDays]
+    .filter((part) => part && part.trim())
+    .join(" · ");
 
   return (
     <footer
@@ -31,19 +42,29 @@ export function Footer({ navGroups }: { navGroups: NavGroup[] }) {
             />
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-footer-text-muted">
-            One platform for software delivery, applied AI and technical learning.
-            <span className="block font-semibold text-footer-text">#WithYouEveryStep</span>
+            {settings.tagline}
+            {settings.footerNote && (
+              <span className="block font-semibold text-footer-text">{settings.footerNote}</span>
+            )}
           </p>
           <div className="flex flex-col gap-1.5 text-sm text-footer-text-muted">
-            <a href="tel:+9779842863398" className="flex items-center gap-2 hover:text-footer-heading">
-              <Call02Icon className="h-5 w-5 text-brand-green" /> +977 9842863398
+            {/* A `tel:` link, so tapping the number on a phone dials it. The
+                printed number stays local; the href carries the country
+                code, which is why the two are stored separately. */}
+            <a href={settings.phoneHref} className="flex items-center gap-2 hover:text-footer-heading">
+              <Call02Icon className="h-5 w-5 text-brand-green" /> {settings.phone}
             </a>
-            <a href="mailto:hello@kodedristi.com" className="flex items-center gap-2 hover:text-footer-heading">
-              <Mail01Icon className="h-5 w-5 text-brand-green" /> hello@kodedristi.com
+            <a href={`mailto:${settings.email}`} className="flex items-center gap-2 hover:text-footer-heading">
+              <Mail01Icon className="h-5 w-5 text-brand-green" /> {settings.email}
             </a>
             <span className="flex items-center gap-2">
-              <Location01Icon className="h-5 w-5 text-brand-green" /> Kathmandu, Nepal
+              <Location01Icon className="h-5 w-5 text-brand-green" /> {settings.address}
             </span>
+            {hours && (
+              <span className="flex items-center gap-2">
+                <Clock01Icon className="h-5 w-5 text-brand-green" /> {hours}
+              </span>
+            )}
           </div>
         </div>
 
@@ -65,7 +86,7 @@ export function Footer({ navGroups }: { navGroups: NavGroup[] }) {
 
       <div className="border-t border-footer-divider">
         <Container className="flex flex-col items-center justify-between gap-2 py-4 text-xs text-footer-text-muted sm:flex-row">
-          <p>&copy; {year} KodeDristi Software Pvt. Ltd. All rights reserved.</p>
+          <p>&copy; {year} {settings.companyName} All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/hackathon" className="hover:text-brand-green">
               National AI Hackathon

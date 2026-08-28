@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/showcase-card";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { LogoWall } from "@/components/ui/logo-wall";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { ProductTalkForm } from "@/components/contact/product-talk-form";
 import { getFaqs } from "@/lib/content/resolvers";
@@ -20,11 +22,20 @@ import { getTestimonials } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Products",
-  description:
-    "Okil.ai, Billing Software, Accounting Software and LMS — in-house products built and maintained by KodeDristi.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("products", {
+    title: "Products",
+    description:
+      "Okil.ai, Billing Software, Accounting Software and LMS — in-house products built and maintained by KodeDristi.",
+    path: "/products",
+  });
+}
 
 export default async function ProductsPage() {
   const [products, partners, testimonials, faqs, hero] = await Promise.all([
@@ -68,14 +79,17 @@ export default async function ProductsPage() {
 
       <section className="section-tight border-y border-border bg-background-secondary">
         <Container className="flex flex-col items-center gap-6">
-          <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Trusted by teams and institutions</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-            {partners.map((p) => (
-              <span key={p.name} className="text-sm font-semibold text-text-secondary/60">
-                {p.name}
-              </span>
-            ))}
-          </div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Trusted By Leading Organizations</p>
+          <LogoWall
+            className="w-full"
+            columns="compact"
+            items={partners.map((p) => ({
+              name: p.name,
+              logo: p.logo,
+              alt: p.alt,
+              url: p.url,
+            }))}
+          />
         </Container>
       </section>
 

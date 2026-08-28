@@ -45,6 +45,8 @@ import type {
   HomeFlagshipData,
   HomeLaganiData,
   HomeFinalCtaData,
+  SiteSettingsData,
+  PageSeoData,
 } from "@/lib/content/schemas";
 
 export type SolutionView = Omit<SolutionData, "icon"> & { slug: string; icon: LucideIcon };
@@ -350,6 +352,45 @@ export async function getHomeFinalCtaData(): Promise<HomeFinalCtaData> {
       secondaryHref: "/learn",
     }
   );
+}
+
+/**
+ * The company facts shared by the footer, the contact page and the
+ * structured data.
+ *
+ * Falls back to the shipped defaults rather than to nulls: a footer with no
+ * phone number is worse than a footer with last week's phone number, and
+ * every caller would otherwise need its own placeholder.
+ */
+export const SITE_SETTINGS_DEFAULTS: SiteSettingsData = {
+  companyName: "KodeDristi Software Pvt. Ltd.",
+  tagline: "One platform for software delivery, applied AI and technical learning.",
+  phone: "9851362001",
+  phoneHref: "tel:+9779851362001",
+  email: "hello@kodedristi.com",
+  address: "Kathmandu, Nepal",
+  officeHours: "10:00 AM – 6:00 PM",
+  officeDays: "",
+  footerNote: "#WithYouEveryStep",
+};
+
+export async function getSiteSettings(): Promise<SiteSettingsData> {
+  const data = await getSingletonData<Partial<SiteSettingsData>>("site-settings");
+  if (!data) return SITE_SETTINGS_DEFAULTS;
+  // Merged field by field, so a row saved before a field existed — or one an
+  // admin blanked — still yields a usable value instead of an empty footer.
+  const merged = { ...SITE_SETTINGS_DEFAULTS };
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === "string" && value.trim()) {
+      (merged as Record<string, string>)[key] = value;
+    }
+  }
+  return merged;
+}
+
+export async function getPageSeo(page: string): Promise<PageSeoData | null> {
+  const item = await getContentBySlug<PageSeoData>("page-seo", page);
+  return item?.data ?? null;
 }
 
 export type ContentOptions = { slug: string; name: string }[];

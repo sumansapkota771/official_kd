@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { updateMedia, deleteMedia, type MediaAsset } from "@/lib/media";
+import {
+  updateMedia,
+  deleteMedia,
+  replaceMediaFile,
+  type MediaAsset,
+} from "@/lib/media";
+import { processUpload, UploadError } from "@/lib/uploads";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,6 +38,52 @@ export async function PATCH(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   return NextResponse.json(updated);
+}
+
+/**
+ * Swaps the file behind an existing asset, keeping its id, alt text and
+ * caption.
+ *
+ * A new URL comes back rather than the old one being overwritten in place:
+ * stored filenames are random and immutable, which is what lets them be
+ * cached for a year — and what stops a browser from showing the previous
+ * picture after the swap.
+ */
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await requireAdmin())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  try {
+    const form = await request.formData();
+    const file = form.get("file");
+    if (!file || !(file instanceof File)) {
+      return NextResponse.json({ error: "No file" }, { status: 400 });
+    }
+
+    const processed = await processUpload(file);
+    const updated = await replaceMediaFile(parseInt(id, 10), {
+      filename: processed.filename,
+      original_name: processed.originalName,
+      url: processed.url,
+      mime_type: processed.mimeType,
+      size_bytes: processed.sizeBytes,
+      width: processed.width,
+      height: processed.height,
+    });
+    if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(updated);
+  } catch (err) {
+    if (err instanceof UploadError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
+    console.error("[media/replace]", err);
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }
 
 export async function DELETE(

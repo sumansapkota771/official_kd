@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
+import { LogoWall } from "@/components/ui/logo-wall";
 import {
   getPageHero,
   getPartnerBenefits,
@@ -12,11 +14,20 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Partners",
-  description:
-    "KodeDristi's institutional and academic partners, and how to become a partner.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("partners", {
+    title: "Partners",
+    description:
+      "KodeDristi's institutional and academic partners, and how to become a partner.",
+    path: "/partners",
+  });
+}
 
 export default async function PartnersPage() {
   const [partners, partnerBenefits, hero] = await Promise.all([
@@ -42,14 +53,18 @@ export default async function PartnersPage() {
 
       <section id="institutional" className="section">
         <Container className="flex flex-col gap-8">
-          <SectionHeading eyebrow="Institutional Partners" title="Who we work with" />
-          <div className="card flex flex-wrap items-center gap-x-10 gap-y-4 p-6">
-            {partners.map((p) => (
-              <span key={p.name} className="text-sm font-semibold text-text-secondary">
-                {p.name}
-              </span>
-            ))}
-          </div>
+          <SectionHeading eyebrow="Partners" title="Trusted By Leading Organizations" />
+          {/* The same wall the homepage uses, so a logo added in the admin
+              looks identical in both places rather than being a name here
+              and a mark there. */}
+          <LogoWall
+            items={partners.map((p) => ({
+              name: p.name,
+              logo: p.logo,
+              alt: p.alt,
+              url: p.url,
+            }))}
+          />
         </Container>
       </section>
 

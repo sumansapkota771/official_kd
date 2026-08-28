@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getSchema, slugify } from "@/lib/content/schemas";
 import { revalidatePublicRoutes } from "@/lib/content/revalidate";
+import { processUpload, UploadError } from "@/lib/uploads";
 import {
   deleteContentItem,
   listContentRaw,
@@ -40,49 +41,37 @@ export async function POST(request: Request) {
   if (!(await requireAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  // Support file uploads (multipart/form-data) through the content endpoint
+  /* Uploads posted here go through the same pipeline as everywhere else.
+     This branch used to write straight into `public/uploads`, which fails on
+     any read-only deployment and, where it succeeds, is served from a
+     build-time snapshot that will never contain the file. */
   const contentType = request.headers.get("content-type") || "";
   if (contentType.includes("multipart/form-data")) {
     try {
       const form = await request.formData();
-      const file = form.get("file") as File | null;
-      if (!file) return NextResponse.json({ error: "file is required" }, { status: 400 });
-      if (typeof file.size !== "number" || file.size === 0) {
-        return NextResponse.json({ error: "Invalid file" }, { status: 400 });
+      const file = form.get("file");
+      if (!file || !(file instanceof File)) {
+        return NextResponse.json({ error: "file is required" }, { status: 400 });
       }
-      const maxBytes = 5 * 1024 * 1024; // 5 MB — matches media upload limit
-      if (file.size > maxBytes) {
-        return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 413 });
+      const processed = await processUpload(file);
+      try {
+        const { createMedia } = await import("@/lib/media");
+        await createMedia({
+          filename: processed.filename,
+          original_name: processed.originalName,
+          url: processed.url,
+          mime_type: processed.mimeType,
+          size_bytes: processed.sizeBytes,
+          width: processed.width,
+          height: processed.height,
+        });
+      } catch (err) {
+        console.warn("[content] stored the file but could not record it in Media.", err);
       }
-      const mime = file.type || "";
-      if (!mime.startsWith("image/")) {
-        return NextResponse.json({ error: "Only image uploads are allowed" }, { status: 400 });
-      }
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fs = await import("fs");
-      const path = await import("path");
-      const { randomBytes } = await import("crypto");
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      await fs.promises.mkdir(uploadsDir, { recursive: true });
-      const id = randomBytes(8).toString("hex");
-      const ext = file.name.split(".").pop() || "bin";
-      const safeName = `${id}.${ext}`;
-      const outPath = path.join(uploadsDir, safeName);
-      await fs.promises.writeFile(outPath, buffer);
-      const url = `/uploads/${safeName}`;
-
-      const { createMedia } = await import("@/lib/media");
-      await createMedia({
-        filename: safeName,
-        original_name: file.name,
-        url,
-        mime_type: mime,
-        size_bytes: file.size,
-      });
-
-      return NextResponse.json({ url });
+      return NextResponse.json({ url: processed.url });
     } catch (err) {
-      return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+      const status = err instanceof UploadError ? 400 : 500;
+      return NextResponse.json({ error: (err as Error).message }, { status });
     }
   }
 

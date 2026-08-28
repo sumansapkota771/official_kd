@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import {
@@ -12,11 +13,20 @@ import { getPageHero, getSolutions } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Solutions",
-  description:
-    "Web & mobile apps, SaaS products, AI & automation, custom software, cloud and DevOps, domain & hosting, design and marketing — KodeDristi's full service catalogue.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("solutions", {
+    title: "Solutions",
+    description:
+      "Web & mobile apps, SaaS products, AI & automation, custom software, cloud and DevOps, domain & hosting, design and marketing — KodeDristi's full service catalogue.",
+    path: "/solutions",
+  });
+}
 
 export default async function SolutionsPage() {
   const solutions = await getSolutions();

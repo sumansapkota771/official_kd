@@ -143,7 +143,20 @@ export type TestimonialData = {
    *  card is blank until the video buffers. */
   posterUrl?: string;
 };
-export type PartnerData = { name: string };
+/**
+ * One organisation on the "Trusted By Leading Organizations" wall.
+ *
+ * `logo` is optional on purpose: a partner can be listed the day the
+ * agreement is signed rather than the day their logo file turns up, and the
+ * card sets the name as a wordmark until it does. `alt` overrides the
+ * accessible name when the mark says something the row's `name` does not.
+ */
+export type PartnerData = {
+  name: string;
+  logo?: string;
+  alt?: string;
+  url?: string;
+};
 export type TeamMemberData = {
   name: string;
   role: string;
@@ -348,6 +361,56 @@ export type HomeFinalCtaData = {
   secondaryHref: string;
 };
 
+/**
+ * The facts about the company that appear in more than one place.
+ *
+ * Phone number, address and opening hours were previously written into the
+ * footer, the contact aside and the Organization JSON-LD separately, which
+ * is three edits for one change and three chances to leave one behind. They
+ * live here once and every surface reads from them.
+ *
+ * `phoneHref` is stored rather than derived: the printed number is local
+ * ("9851362001") while the link has to carry the country code for a phone to
+ * dial it, and inferring one from the other guesses wrong the moment a
+ * second number or a landline is added.
+ */
+export type SiteSettingsData = {
+  companyName: string;
+  tagline: string;
+  phone: string;
+  phoneHref: string;
+  email: string;
+  address: string;
+  officeHours: string;
+  officeDays?: string;
+  footerNote?: string;
+};
+
+/**
+ * Per-page search metadata.
+ *
+ * One row per page, keyed by the same page slug the page hero uses, so the
+ * two are edited side by side in the admin. Every field is optional: an
+ * empty one falls back to what the page already computes, which is what
+ * keeps a page that nobody has filled in from losing the title it had.
+ */
+export type PageSeoData = {
+  /** What the page is called in the admin — never rendered on the site. */
+  pageName: string;
+  /** The route this row describes, e.g. "/about". Used for the canonical URL
+   *  and to build the admin's "view page" link. */
+  path: string;
+  seoTitle?: string;
+  metaDescription?: string;
+  canonicalUrl?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** Checked keeps the page out of search results. */
+  noIndex?: boolean;
+};
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -501,10 +564,10 @@ const faqs: { q: string; a: string; group: "learn" | "products" }[] = [
 ];
 
 const contactDetails = [
-  { icon: "phone", label: "Phone", value: "+977 9842863398", href: "tel:+9779842863398" },
+  { icon: "phone", label: "Phone", value: "9851362001", href: "tel:+9779851362001" },
   { icon: "mail", label: "Email", value: "hello@kodedristi.com", href: "mailto:hello@kodedristi.com" },
   { icon: "map-pin", label: "Location", value: "Kathmandu, Nepal" },
-  { icon: "clock", label: "Hours", value: "9:00 AM – 7:00 PM, Sun–Fri" },
+  { icon: "clock", label: "Office Hours", value: "10:00 AM – 6:00 PM" },
 ];
 
 const hackathonHighlights = [
@@ -572,7 +635,7 @@ const sectionHeadings: { slug: string; data: SectionHeadingData }[] = [
   { slug: "gallery", data: { eyebrow: "Gallery", title: "Moments from the programmes", description: "A running look at the people and the work — cohorts, sessions and the days that do not make it into a case study.", eyebrowTone: "blue" } },
   { slug: "projects-overview", data: { eyebrow: "Work", title: "Our remarkable projects", description: "Six of the products we have designed, built and shipped — each one told the same way, from the business problem to the result.", eyebrowTone: "blue" } },
   { slug: "lagani-portfolio", data: { eyebrow: "Portfolio", title: "Companies we have backed", description: "Every company below took capital and engineering from KodeDristi.", eyebrowTone: "green" } },
-  { slug: "hackathon-partners", data: { eyebrow: "Hackathon Partners", title: "The organisations behind the hackathon", description: "Sponsors, academic hosts and community partners who put up the prizes, the mentors and the rooms.", eyebrowTone: "green" } },
+  { slug: "hackathon-partners", data: { eyebrow: "Partners", title: "Trusted By Leading Organizations", description: "Institutions, sponsors and community partners we build, teach and run programmes with.", eyebrowTone: "green" } },
   { slug: "solutions-overview", data: { eyebrow: "Solutions", title: `${solutions.length} ways we help you ship`, description: "From a single web app to a full AI-driven platform — pick a starting point, or let us scope the right mix." } },
   { slug: "courses-overview", data: { eyebrow: "Learn", title: "Applied IT courses, taught by practitioners", description: "Six live cohort-based programs — built from the same work our engineering team ships for clients.", eyebrowTone: "green" } },
   { slug: "tech-delivery", data: { eyebrow: "Technology", title: "A stack chosen for reliability, not resume-padding", description: "" } },
@@ -786,10 +849,26 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
   },
   {
     type: "partner",
-    label: "Partners",
-    singular: "Partner",
+    label: "Trusted organizations",
+    singular: "Organization",
     titleField: "name",
-    fields: [{ key: "name", label: "Name", kind: "text", required: true }],
+    fields: [
+      { key: "name", label: "Name", kind: "text", required: true },
+      {
+        key: "logo",
+        label: "Logo",
+        kind: "image",
+        helper:
+          "Shown centred inside an equal-size card. Any aspect ratio is fine — the logo is fitted, never stretched or cropped. Leave empty to print the name as a wordmark instead.",
+      },
+      {
+        key: "alt",
+        label: "Logo alt text",
+        kind: "text",
+        helper: "Describes the logo for screen readers. Defaults to the name above.",
+      },
+      { key: "url", label: "Website", kind: "url", placeholder: "https://example.com" },
+    ],
     fallback: serializePartners,
   },
   {
@@ -1298,7 +1377,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
 // ---------------------------------------------------------------------------
 
 export const CONTENT_GROUPS: { group: string; types: string[] }[] = [
-  { group: "Site-wide", types: ["nav", "page-hero"] },
+  { group: "Site-wide", types: ["site-settings", "nav", "page-hero", "page-seo"] },
   {
     group: "Homepage",
     types: [
@@ -1443,6 +1522,91 @@ CONTENT_SCHEMAS.push({
     { slug: "cta", data: { type: "cta", label: "Final CTA", enabled: true } },
     { slug: "testimonials", data: { type: "testimonials", label: "Testimonials", enabled: true } },
   ],
+});
+
+/**
+ * Every page that gets its own SEO row, in site order.
+ *
+ * Detail routes (`/projects/[slug]`, `/insights/[slug]`) are deliberately
+ * absent: those already carry their own per-item SEO fields on the item
+ * itself, and a second row per project would be two places to edit one
+ * page's title.
+ */
+export const SEO_PAGES: { slug: string; pageName: string; path: string }[] = [
+  { slug: "home", pageName: "Homepage", path: "/" },
+  { slug: "about", pageName: "About", path: "/about" },
+  { slug: "team", pageName: "Team", path: "/team" },
+  { slug: "careers", pageName: "Careers", path: "/careers" },
+  { slug: "solutions", pageName: "Solutions", path: "/solutions" },
+  { slug: "products", pageName: "Products", path: "/products" },
+  { slug: "projects", pageName: "Projects", path: "/projects" },
+  { slug: "learn", pageName: "Learn", path: "/learn" },
+  { slug: "insights", pageName: "Insights", path: "/insights" },
+  { slug: "partners", pageName: "Partners", path: "/partners" },
+  { slug: "hackathon", pageName: "Hackathon", path: "/hackathon" },
+  { slug: "dristi-lagani", pageName: "Dristi Lagani", path: "/dristi-lagani" },
+  { slug: "contact", pageName: "Contact", path: "/contact" },
+];
+
+// Site-wide settings (admin-manageable). One row, read by the footer, the
+// contact page aside and the Organization structured data.
+CONTENT_SCHEMAS.push({
+  type: "site-settings",
+  label: "Site settings",
+  singular: "Site settings",
+  isSingleton: true,
+  singletonSlug: "main",
+  titleField: "companyName",
+  fields: [
+    { key: "companyName", label: "Company name", kind: "text", required: true },
+    { key: "tagline", label: "Footer tagline", kind: "textarea", helper: "The short paragraph under the logo in the footer." },
+    { key: "phone", label: "Phone (as printed)", kind: "text", required: true, placeholder: "9851362001" },
+    { key: "phoneHref", label: "Phone (dial link)", kind: "text", required: true, placeholder: "tel:+9779851362001", helper: "What a phone actually dials. Include the country code." },
+    { key: "email", label: "Email", kind: "text", required: true },
+    { key: "address", label: "Address", kind: "text", required: true },
+    { key: "officeHours", label: "Office hours", kind: "text", required: true, placeholder: "10:00 AM – 6:00 PM" },
+    { key: "officeDays", label: "Office days", kind: "text", placeholder: "Sunday – Friday", helper: "Optional. Printed after the hours where there is room for it." },
+    { key: "footerNote", label: "Footer strapline", kind: "text", helper: "The bold line at the end of the footer paragraph." },
+  ],
+  fallback: () => [
+    {
+      slug: "main",
+      data: {
+        companyName: "KodeDristi Software Pvt. Ltd.",
+        tagline: "One platform for software delivery, applied AI and technical learning.",
+        phone: "9851362001",
+        phoneHref: "tel:+9779851362001",
+        email: "hello@kodedristi.com",
+        address: "Kathmandu, Nepal",
+        officeHours: "10:00 AM – 6:00 PM",
+        officeDays: "",
+        footerNote: "#WithYouEveryStep",
+      },
+    },
+  ],
+});
+
+// Per-page SEO. Seeded for every routable page so the admin never has to
+// know which slug a page expects — the rows are already there to edit.
+CONTENT_SCHEMAS.push({
+  type: "page-seo",
+  label: "Page SEO",
+  singular: "Page",
+  titleField: "pageName",
+  subtitleField: "path",
+  fields: [
+    { key: "pageName", label: "Page", kind: "text", required: true, helper: "Admin label only — never shown on the site." },
+    { key: "path", label: "Path", kind: "text", required: true, placeholder: "/about" },
+    { key: "seoTitle", label: "SEO title", kind: "text", helper: "Leave empty to keep the page's built-in title. Aim for under 60 characters." },
+    { key: "metaDescription", label: "Meta description", kind: "textarea", helper: "The snippet under the title in search results. Aim for 150–160 characters." },
+    { key: "canonicalUrl", label: "Canonical URL", kind: "url", helper: "Only needed when this page duplicates another. Empty means the page is its own canonical." },
+    { key: "ogTitle", label: "Social title", kind: "text", helper: "Falls back to the SEO title." },
+    { key: "ogDescription", label: "Social description", kind: "textarea", helper: "Falls back to the meta description." },
+    { key: "ogImage", label: "Social share image", kind: "image", helper: "Shown when the page is shared. 1200x630 works everywhere." },
+    { key: "ogImageAlt", label: "Share image alt text", kind: "text" },
+    { key: "noIndex", label: "Hide from search engines", kind: "check", helper: "Adds noindex. The page stays reachable by anyone with the link." },
+  ],
+  fallback: () => SEO_PAGES.map((p) => ({ slug: p.slug, data: { pageName: p.pageName, path: p.path } })),
 });
 
 const schemaMap = new Map(CONTENT_SCHEMAS.map((s) => [s.type, s]));

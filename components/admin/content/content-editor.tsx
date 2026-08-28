@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft01Icon, Loading01Icon } from "hugeicons-react";
 import { ICON_KEYS, ICON_MAP } from "@/lib/content/icons";
+import {
+  MediaPickerDialog,
+  pickerButtonClass,
+  type MediaItem,
+} from "@/components/admin/media-picker";
 import { slugify, type ContentField, type ContentItem } from "@/lib/content/schemas";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +65,9 @@ export function ContentEditor({
   // Upload state keyed by field key
   const [uploadingKeys, setUploadingKeys] = useState<Record<string, boolean>>({});
   const [uploadErrors, setUploadErrors] = useState<Record<string, string | null>>({});
+  /* Which image field, if any, has the library open. One at a time by
+     construction: the dialog is modal, so a second could not be reached. */
+  const [pickerKey, setPickerKey] = useState<string | null>(null);
 
   // Clear jsonDrafts when initial data changes (e.g. navigating to a different item)
   useEffect(() => {
@@ -144,6 +152,27 @@ export function ContentEditor({
     } finally {
       setUploadingKeys((s) => ({ ...s, [key]: false }));
     }
+  }
+
+  /**
+   * Takes an asset from the library into the field that opened the picker.
+   *
+   * The asset's alt text is copied into a sibling `alt` field when the schema
+   * has one and it is still empty — alt written once in the library should
+   * not have to be retyped on every row that reuses the image, and an alt
+   * the admin has already customised is left alone.
+   */
+  function selectFromLibrary(key: string, item: MediaItem) {
+    setData((prev) => {
+      const next = { ...prev, [key]: item.url };
+      const altKey = key === "image" ? "alt" : `${key}Alt`;
+      const hasAltField = fields.some((f) => f.key === altKey);
+      if (hasAltField && item.alt.trim() && !asString(prev[altKey]).trim()) {
+        next[altKey] = item.alt;
+      }
+      return next;
+    });
+    setPickerKey(null);
   }
 
   function fieldControl(field: ContentField) {
@@ -286,51 +315,53 @@ export function ContentEditor({
       const uploading = Boolean(uploadingKeys[key]);
       const error = uploadErrors[key] ?? null;
       return (
-        <div className="flex flex-col gap-2">
-          {currentUrl ? (
-            <div className="flex items-center gap-3">
-              <img src={currentUrl} alt={field.label} className="h-24 w-40 rounded-md object-cover" />
-              <div className="flex flex-col gap-2">
-                <div className="text-sm text-text-primary">Uploaded</div>
-                <div className="flex gap-2">
-                  <label className="focus-ring inline-flex h-9 items-center rounded-full border border-border bg-background px-3 text-sm font-medium text-text-secondary cursor-pointer">
-                    Replace
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) uploadFileForKey(key, f);
-                      }}
-                      className="hidden"
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setField(key, "")}
-                    className="focus-ring inline-flex h-9 items-center rounded-full border border-border bg-background px-3 text-sm font-medium text-text-secondary"
-                  >
-                    Remove
-                  </button>
-                </div>
-                {uploading && <div className="text-xs text-text-muted">Uploading…</div>}
-                {error && <div className="text-xs text-red-500">{error}</div>}
-              </div>
+        <div className="flex flex-col gap-3">
+          {currentUrl && (
+            /* `object-contain` on a checked-off well, not `object-cover`.
+               The preview used to crop, which for a logo meant the admin was
+               shown a tighter picture than the site renders — and could not
+               tell a badly framed upload from a well framed one. */
+            <div className="flex h-28 w-44 items-center justify-center rounded-xl border-[0.5px] border-border bg-background p-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={currentUrl}
+                alt={field.label}
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
-          ) : (
-            <label className="focus-ring inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-text-secondary cursor-pointer">
-              Upload image
+          )}
+
+          <div className="flex flex-wrap items-center gap-2">
+            <label className={pickerButtonClass}>
+              {currentUrl ? "Replace" : "Upload image"}
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
                   if (f) uploadFileForKey(key, f);
+                  // Cleared so re-picking the same file fires onChange again.
+                  e.target.value = "";
                 }}
                 className="hidden"
               />
             </label>
-          )}
+            <button type="button" onClick={() => setPickerKey(key)} className={pickerButtonClass}>
+              Choose from library
+            </button>
+            {currentUrl && (
+              <button
+                type="button"
+                onClick={() => setField(key, "")}
+                className={pickerButtonClass}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+
+          {uploading && <div className="text-xs text-text-muted">Uploading…</div>}
+          {error && <div className="text-xs text-red-500">{error}</div>}
           {field.helper && <div className="text-xs text-text-muted">{field.helper}</div>}
         </div>
       );
@@ -411,6 +442,12 @@ export function ContentEditor({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {pickerKey && (
+        <MediaPickerDialog
+          onSelect={(item) => selectFromLibrary(pickerKey, item)}
+          onClose={() => setPickerKey(null)}
+        />
+      )}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link

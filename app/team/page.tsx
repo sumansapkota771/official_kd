@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/container";
@@ -9,10 +10,20 @@ import { getPageHero, getTeamMembers } from "@/lib/content/resolvers";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Team",
-  description: "The people behind KodeDristi's client work and course programs.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("team", {
+    title: "Team",
+    description:
+      "The people behind KodeDristi's client work and course programs.",
+    path: "/team",
+  });
+}
 
 export default async function TeamPage() {
   const [team, hero] = await Promise.all([getTeamMembers(), getPageHero("team")]);

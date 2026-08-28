@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/content/seo";
 import { PageHero } from "@/components/ui/page-hero";
 import {
   ShowcaseCard,
@@ -12,11 +13,20 @@ import { ArticleJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "News & Insights",
-  description:
-    "Articles on AI software development in Nepal, custom software, cloud migration and more from the KodeDristi engineering team.",
-};
+/**
+ * Title, description, canonical and social tags come from this page's
+ * `page-seo` row when one has been filled in, and from the literals below
+ * when it has not - so the admin can rewrite them without a deploy, and a
+ * row nobody has touched changes nothing.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("insights", {
+    title: "News & Insights",
+    description:
+      "Articles on AI software development in Nepal, custom software, cloud migration and more from the KodeDristi engineering team.",
+    path: "/insights",
+  });
+}
 
 export default async function InsightsPage() {
   const articles = await getArticles();
